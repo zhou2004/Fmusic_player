@@ -31,7 +31,7 @@ git clone git@gitee.com:zhou2004jj/fmusic_player.git
 进入项目目录
 
 ```bash
-cd fmusic_player
+cd Fmusic_player
 ```
 
 安装依赖(1)
