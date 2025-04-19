@@ -1,0 +1,25 @@
+{
+  "name" : "nice",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "80d54ff62d528339c626a6fbc3489a7f25956ade",
+  "dependencies" : [ {
+    "name" : "openssl",
+    "version>=" : "1.1.1n"
+  }, {
+    "name" : "rapidjson",
+    "version>=" : "2023-07-17#1"
+  }, {
+    "name" : "taglib",
+    "version>=" : "2.0.2"
+  }, {
+    "name" : "libiconv",
+    "version>=" : "1.18#1"
+  }, {
+    "name" : "kissfft",
+    "version>=" : "131.1.0"
+  } ],
+  "overrides" : [ {
+    "name" : "openssl",
+    "version" : "1.1.1n"
+  } ]
+}
