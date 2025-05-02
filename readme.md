@@ -25,7 +25,7 @@
 克隆项目代码
 
 ```bash
-git clone git@gitee.com:zhou2004jj/fmusic_player.git
+git clone https://github.com/zhou2004/Fmusic_player.git
 ```
 
 进入项目目录
