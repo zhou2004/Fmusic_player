@@ -39,95 +39,131 @@ public:
 	QJsonObject music_pos;
 	int max_time;
 	std::map<std::tuple<int, int, int, int>, std::pair<int, int>> timestampMap;
-    K_LyricData parseLyrics(const std::string& data) {
-    	this->lyricData.lines.clear();  // 清空之前的歌词
-    	std::vector<K_LyricLine>().swap(this->lyricData.lines); // 清空之前的歌词
-    	std::istringstream stream(data);
-    	std::string line;
+	void parseLyrics(const std::string& data) {
+		try {
+			// 清空之前的歌词
+			lyricData.lines.clear();
 
-    	std::regex linePattern(R"(\[(\d+),(\d+)\](.*))");
-    	std::regex lyricPattern(R"(<(\d+),(\d+),(\d+)>([^<]+))");
+			std::istringstream stream(data);
+			std::string line;
 
-    	while (std::getline(stream, line)) {
-        	std::smatch lineMatch;
-        	if (std::regex_search(line, lineMatch, linePattern)) {
-            	K_LyricLine lyricLine;
-            	lyricLine.line_start_time = std::stoi(lineMatch[1].str());
-            	lyricLine.line_duration = std::stoi(lineMatch[2].str());
+			std::regex linePattern(R"(\[(\d+),(\d+)\](.*))");
+			std::regex lyricPattern(R"(<(\d+),(\d+),(\d+)>([^<]+))");
 
-            	std::string::const_iterator searchStart(lineMatch[3].first);
-            	while (std::regex_search(searchStart, line.cend(), lineMatch, lyricPattern)) {
-                	K_Lyric lyric;
-                	lyric.start_time = std::stoi(lineMatch[1].str());
-                	lyric.duration = std::stoi(lineMatch[2].str());
-                	lyric.text = lineMatch[4].str();
+			while (std::getline(stream, line)) {
+				std::smatch lineMatch;
+				if (std::regex_search(line, lineMatch, linePattern)) {
+					K_LyricLine lyricLine;
+					lyricLine.line_start_time = std::stoi(lineMatch[1].str());
+					lyricLine.line_duration = std::stoi(lineMatch[2].str());
 
-                	lyricLine.lyrics.emplace_back(lyric);
+					std::string::const_iterator searchStart(lineMatch[3].first);
+					while (std::regex_search(searchStart, line.cend(), lineMatch, lyricPattern)) {
+						K_Lyric lyric;
+						lyric.start_time = std::stoi(lineMatch[1].str());
+						lyric.duration = std::stoi(lineMatch[2].str());
+						lyric.text = lineMatch[4].str();
 
-                	searchStart = lineMatch.suffix().first;
-            	}
+						lyricLine.lyrics.emplace_back(lyric);
 
-            	this->lyricData.lines.emplace_back(lyricLine);
-        	}
-    	}
-    	this->max_time = this->lyricData.lines[this->lyricData.lines.size()-1].line_start_time + this->lyricData.lines[this->lyricData.lines.size()-1].line_duration -1;
-    	buildTimestampMap(this->lyricData);
+						searchStart = lineMatch.suffix().first;
+					}
 
-    	return this->lyricData;
+					lyricData.lines.emplace_back(lyricLine);
+				}
+			}
+
+			if (!lyricData.lines.empty()) {
+				max_time = lyricData.lines.back().line_start_time + lyricData.lines.back().line_duration - 1;
+			}
+
+			buildTimestampMap(lyricData);
+		} catch (const std::exception& e) {
+			// 捕获并处理异常
+			std::cerr << "Error in parseLyrics function: " << e.what() << std::endl;
+			// 清空数据以防异常后数据不一致
+			lyricData.lines.clear();
+			max_time = 0;
+			timestampMap.clear();
+		}
 	}
 
 	std::map<std::tuple<int, int, int, int>, std::pair<int, int>> buildTimestampMap(const K_LyricData& lyricData) {
-    	this->timestampMap.clear();
-    	std::map<std::tuple<int, int, int, int>, std::pair<int, int>> timestampMap;
-    	for (int lineIndex = 0; lineIndex < lyricData.lines.size(); ++lineIndex) {
-        	for (int lyricIndex = 0; lyricIndex < lyricData.lines[lineIndex].lyrics.size(); ++lyricIndex) {
-            	const K_Lyric& lyric = lyricData.lines[lineIndex].lyrics[lyricIndex];
-            	int startTime = lyric.start_time;
-            	int endTime = startTime + lyric.duration;
-            	int lineStartTime = lyricData.lines[lineIndex].line_start_time;
-        		int lineEndTime = lineStartTime + lyricData.lines[lineIndex].line_duration -1;
-        		if (lyricIndex == lyricData.lines[lineIndex].lyrics.size()-1) {
-        			// 使用四个 int 作为键
-        			this->timestampMap[std::make_tuple(lineStartTime, lineEndTime, startTime, lyricData.lines[lineIndex+1].line_start_time -lineStartTime -1)] = {lineIndex, lyricIndex};
-        		}else {
-        			// 使用四个 int 作为键
-        			this->timestampMap[std::make_tuple(lineStartTime, lineEndTime, startTime, endTime)] = {lineIndex, lyricIndex};
-        		}
-        	}
-    	}
+        try {
+            this->timestampMap.clear();
+            std::map<std::tuple<int, int, int, int>, std::pair<int, int>> timestampMap;
 
-    	return this->timestampMap;
-	}
+            for (int lineIndex = 0; lineIndex < lyricData.lines.size(); ++lineIndex) {
+                for (int lyricIndex = 0; lyricIndex < lyricData.lines[lineIndex].lyrics.size(); ++lyricIndex) {
+                    const K_Lyric& lyric = lyricData.lines[lineIndex].lyrics[lyricIndex];
+                    int startTime = lyric.start_time;
+                    int endTime = startTime + lyric.duration;
+                    int lineStartTime = lyricData.lines[lineIndex].line_start_time;
+                    int lineEndTime = lineStartTime + lyricData.lines[lineIndex].line_duration - 1;
 
+                    if (lyricIndex == lyricData.lines[lineIndex].lyrics.size() - 1) {
+                        if (lineIndex == lyricData.lines.size() - 1) {
+                            // Handle the last line and last lyric
+                            this->timestampMap[std::make_tuple(lineStartTime, lineEndTime, startTime, endTime)] = {lineIndex, lyricIndex};
+                        } else {
+                            // Use the start time of the next line
+                            int nextLineStartTime = lyricData.lines[lineIndex + 1].line_start_time;
+                            this->timestampMap[std::make_tuple(lineStartTime, lineEndTime, startTime, nextLineStartTime - lineStartTime - 1)] = {lineIndex, lyricIndex};
+                        }
+                    } else {
+                        this->timestampMap[std::make_tuple(lineStartTime, lineEndTime, startTime, endTime)] = {lineIndex, lyricIndex};
+                    }
+                }
+            }
 
-	QJsonObject findLyricAtTime(int time) {
-    	for (const auto& entry : this->timestampMap) {
-        	const auto& range = entry.first; // 范围 {lineStartTime, lineEndTime, startTime, endTime}
-        	const auto& indices = entry.second; // {lineIndex, lyricIndex}
+            return this->timestampMap;
+        } catch (const std::exception& e) {
+            std::cerr << "Error in buildTimestampMap function: " << e.what() << std::endl;
+            this->timestampMap.clear();
+            return this->timestampMap;
+        }
+    }
 
-        	if (time >= std::get<0>(range) && time <= (std::get<0>(range) + std::get<3>(range))) {
-            	int lineIndex = indices.first;
-            	int lyricIndex = indices.second;
-            	const K_Lyric& lyric = this->lyricData.lines[lineIndex].lyrics[lyricIndex];
-            	float percent = float(time - this->lyricData.lines[lineIndex].line_start_time - this->lyricData.lines[lineIndex].lyrics[lyricIndex].start_time)/float(this->lyricData.lines[lineIndex].lyrics[lyricIndex].duration);
-            	// std::cout << "percent: " << percent << std::endl;
-            	// std::cout << "At time " << time << ", Line " << lineIndex + 1 << ", Lyric " << lyricIndex + 1 << ": " << lyric.text << std::endl;
-				music_pos["lineIndex"] = qint16(lineIndex);
-        		music_pos["lyricIndex"] = qint16(lyricIndex);
-        		music_pos["percent"] = percent;
-        		// return lineIndex;
-        		return music_pos;
-        	}
-    	}
-    	std::cout << "No lyric found at time " << time << std::endl;
-    	if (time >= this->max_time) {
-    		music_pos["lineIndex"] = qint16(this->lyricData.lines.size() - 1);
-    		music_pos["lyricIndex"] = qint16(this->lyricData.lines[this->lyricData.lines.size()-1].lyrics.size() - 1);
-    		music_pos["percent"] = 1;
-    		return music_pos;
-    	}
-    	return music_pos;
-	}
+    QJsonObject findLyricAtTime(int time) {
+        try {
+            if (lyricData.lines.empty()) {
+                std::cerr << "Error: Lyric data is empty." << std::endl;
+                music_pos["error"] = "Lyric data is empty";
+                return music_pos;
+            }
+
+            for (const auto& entry : this->timestampMap) {
+                const auto& range = entry.first; // 范围 {lineStartTime, lineEndTime, startTime, endTime}
+                const auto& indices = entry.second; // {lineIndex, lyricIndex}
+
+                if (time >= std::get<0>(range) && time <= (std::get<0>(range) + std::get<3>(range))) {
+                    int lineIndex = indices.first;
+                    int lyricIndex = indices.second;
+                    const K_Lyric& lyric = this->lyricData.lines[lineIndex].lyrics[lyricIndex];
+                    float percent = static_cast<float>(time - this->lyricData.lines[lineIndex].line_start_time - this->lyricData.lines[lineIndex].lyrics[lyricIndex].start_time) / static_cast<float>(this->lyricData.lines[lineIndex].lyrics[lyricIndex].duration);
+
+                    music_pos["lineIndex"] = qint16(lineIndex);
+                    music_pos["lyricIndex"] = qint16(lyricIndex);
+                    music_pos["percent"] = percent;
+                    return music_pos;
+                }
+            }
+
+            std::cerr << "No lyric found at time " << time << std::endl;
+            if (time >= this->max_time) {
+                music_pos["lineIndex"] = qint16(this->lyricData.lines.size() - 1);
+                music_pos["lyricIndex"] = qint16(this->lyricData.lines[this->lyricData.lines.size() - 1].lyrics.size() - 1);
+                music_pos["percent"] = 1;
+                return music_pos;
+            }
+
+            return music_pos;
+        } catch (const std::exception& e) {
+            std::cerr << "Error in findLyricAtTime function: " << e.what() << std::endl;
+            music_pos["error"] = QString::fromStdString(e.what());
+            return music_pos;
+        }
+    }
 
 public slots:
 	// 获取歌词

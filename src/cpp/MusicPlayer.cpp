@@ -28,31 +28,29 @@ MusicPlayer::~MusicPlayer() {
     audioOutput = nullptr;
 }
 
-void MusicPlayer::play(const QString &musicPath) {
-    // downloader.downloadFile(musicPath, "D:\\新建文件夹\\ccc\\Temp");
+bool MusicPlayer::play(const QString &musicPath) {
     player->stop(); // 停止当前播放的音乐
 
     this->music_path = musicPath.toStdString();
     this->player->setSource(QUrl(musicPath));
     this->audioOutput->setVolume(100);
+
+    // 检查媒体状态
+    QMediaPlayer::MediaStatus status = player->mediaStatus();
+    if (status != QMediaPlayer::LoadingMedia) {
+        // 无效的媒体文件
+        return false;
+    }
     this->player->play(); // 开始播放
-    // this->player->isPlaying();
+    return true;
+}
 
-    // this->music_path = musicPath.toStdString();
-    // if (musicPath.startsWith("http://") || musicPath.startsWith("https://")) {
-    //     // 如果是网络 URL，先下载到本地
-    //     std::thread t([this] {
-    //         downloader.downloadFile(QString::fromStdString(this->music_path), "D:\\新建文件夹\\ccc\\Temp");
-    //     });
-    //     t.detach();
-    //     // downloader.downloadFile(musicPath, "D:\\新建文件夹\\ccc\\Temp");
-    // } else {
-    //     // 如果是本地文件，直接播放
-    //     player->setSource(QUrl(musicPath));
-    //     audioOutput->setVolume(100);
-    //     player->play(); // 开始播放
-    // }
-
+bool MusicPlayer::repeat_play(const QString &musicPath) {
+    this->music_path = musicPath.toStdString();
+    this->player->setSource(QUrl(musicPath));
+    this->audioOutput->setVolume(100);
+    this->player->play(); // 开始播放
+    return true;
 }
 
 //加载过media的播放
@@ -342,11 +340,11 @@ QList<QJsonObject> MusicPlayer::save_playlist(qint64 playlist_id) {
     return PlaylistDetail;
 }
 
-QList<QJsonObject> MusicPlayer::Get_All_Music() {
+QJsonArray MusicPlayer::Get_All_Music() {
     return mysql.query_musicTable();
 }
 
-QList<QJsonObject> MusicPlayer::Get_Music_Type(QString type_name) {
+QJsonArray MusicPlayer::Get_Music_Type(QString type_name) {
     return mysql.query_musictype(type_name);
 }
 
@@ -384,6 +382,21 @@ UserFullInfo MusicPlayer::login_user(QString user_name, QString user_password) {
 
 }
 
+
+
+bool MusicPlayer::add_user_collections(qint64 userId, qint64 musicId) {
+    return mysql.addUserCollections(userId, musicId);
+}
+
+
+bool MusicPlayer::del_user_collections(qint64 userId, qint64 musicId) {
+    return mysql.delUserCollections(userId, musicId);
+}
+
+
+QList<QJsonObject> MusicPlayer::get_user_collections(qint64 userId,int page) {
+    return mysql.getUserCollections(userId,page);
+}
 
 
 //D:\KuGou\KugouMusic

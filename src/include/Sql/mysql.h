@@ -62,9 +62,9 @@ public:
  // -----------------------音乐驱动接口
    void queryartTable();
 
-   QList<QJsonObject> query_musicTable();
+   QJsonArray query_musicTable();
 
-   QList<QJsonObject> query_musictype(QString typeId);
+   QJsonArray query_musictype(QString typeId);
 
 
 // -------------------------歌单驱动接口
@@ -93,7 +93,7 @@ public:
 
    bool addUserCollections(qint64 userId, qint64 musicId);
    bool delUserCollections(qint64 userId, qint64 musicId);
-   QList<QJsonObject> getUserCollections(qint64 userId);
+   QList<QJsonObject> getUserCollections(qint64 userId,int page);
 
 
  bool verifyPassword(const QString& inputPassword, const QString& storedHashValue);

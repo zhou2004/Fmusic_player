@@ -7,11 +7,13 @@ import "../components"
 Item {
     id: playListContent
     property color font_color: "black"
-    property var headerData: [{name:"全部",type:"0"},
-        {name:"华语",type:"7"},
-        {name:"欧美",type:"96"},
-        {name:"日本",type:"8"},
-        {name:"韩国",type:"16"},]
+    property var headerData: [
+        // {name:"全部",type:"0"},
+        // {name:"华语",type:"7"},
+        // {name:"欧美",type:"96"},
+        // {name:"日本",type:"8"},
+        // {name:"韩国",type:"16"},
+    ]
     property double fontSize: 11
     property int headerCuerrent: 0
     property var playlistDatas: musicPlayer.Get_Playlist()  // 音乐列表

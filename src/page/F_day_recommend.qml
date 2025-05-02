@@ -1,84 +1,65 @@
 import QtQuick 2.15
+import QtQuick.Window 2.15
+import QtQuick.Controls 2.15
 import FluentUI 1.0
+import QtQuick.Layouts 1.15
+import Qt5Compat.GraphicalEffects
+import QtMultimedia
+import Qt.labs.platform 1.1
 import "../components"
-Item {
-    id: newMusicContent
-    property var musicData: musicPlayer.Get_All_Music()
-    property color font_color: "black"
-    property var headerData: [{name:"全部",type:"0"},
-        {name:"华语",type:"7"},
-        {name:"欧美",type:"96"},
-        {name:"日本",type:"8"},
-        {name:"韩国",type:"16"},]
-    property double fontSize: 11
-    property int headerCuerrent: 0
-    // property var music_list: []  // 音乐列表
+
+Rectangle {
+    id:day_recommend
     width: parent.width
     height: parent.height
+    color: mainWindow.rec_color
 
-    property color rec_color: "#FF99E6F9"   //浅蓝色（矩形）
-    property color tra_color: "#FF1DCCFF" //深蓝色（矩形）
-
-    function update_music_list() {
-        if(headerCuerrent === 0) {
-            newMusicContent.musicData = musicPlayer.Get_All_Music()
-            // 获取全部音乐
-        }else if(headerCuerrent === 1) {
-            newMusicContent.musicData = musicPlayer.Get_Music_Type("华语")
-            // 获取华语音乐
-
-        }else if(headerCuerrent === 2) {
-            newMusicContent.musicData = musicPlayer.Get_Music_Type("欧美")
-            // 获取欧美音乐
-
-        }else if(headerCuerrent === 3) {
-            newMusicContent.musicData = musicPlayer.Get_Music_Type("日语")
-            // 获取日本音乐
-        }else {
-            newMusicContent.musicData = musicPlayer.Get_Music_Type("韩语")
-            // 获取韩国音乐
-        }
-    }
 
     Row {
         id: header
-        spacing:10
         width: parent.width
-        height: 20
-        anchors.top: parent.top
-        anchors.topMargin: 20
-        anchors.left:content.left
-        Repeater {
-            model: ListModel{}
-            delegate: headerDelegate
-            Component.onCompleted: {
-                model.append(newMusicContent.headerData)
-                update_music_list()
-            }
-        }
-        Component {
-            id: headerDelegate
-            Text {
-                property bool isHoverd: false
-                font.bold: isHoverd || index === newMusicContent.headerCuerrent
-                font.pointSize: newMusicContent.fontSize
-                text: name
-                color: font_color
-                MouseArea {
-                    anchors.fill: parent
-                    hoverEnabled: true
-                    onClicked: {
-                        newMusicContent.headerCuerrent = index
-                        console.log(newMusicContent.headerCuerrent)
-                        update_music_list()
+        height: carousel_1.height
+
+        FluCarousel {
+            id: carousel_1
+            width: parent.width * 0.9
+            height: 300
+            anchors.top: parent.top
+            anchors.left: parent.left
+            anchors.topMargin: 20
+            anchors.leftMargin: 20
+
+
+
+            delegate: Component {
+                FluClip {
+                    id: fluClip
+                    radius: [8, 8, 8, 8]
+                    width: carousel_1.width
+                    height: carousel_1.height
+
+                    Image {
+                        asynchronous: true
+                        anchors.fill: parent
+                        source: model.url
+                        sourceSize: Qt.size(parent.width, parent.height)
+                        fillMode: Image.PreserveAspectCrop
                     }
-                    onEntered: {
-                        parent.isHoverd = true
-                    }
-                    onExited: {
-                        parent.isHoverd = false
-                    }
+
+
                 }
+            }
+
+            Component.onCompleted: {
+                carousel_1.model = [
+                    { url: "qrc:/Images/Splash_Screen_First_Closed_Beta.png" },
+                    { url: "qrc:/Images/tianjing.jpeg" },
+                    { url: "qrc:/Images/xianhai.jpeg" },
+                    { url: "qrc:/Images/go_star.jpeg" },
+                    { url: "qrc:/Images/yinhe.png" },
+                    { url: "qrc:/Images/yunshang.jpeg" },
+                    { url: "qrc:/Images/yunshang2.jpeg" }
+                ]
             }
         }
     }
@@ -86,17 +67,18 @@ Item {
     Rectangle {
         id: content
         anchors.top: header.bottom
-        anchors.topMargin: 20
-        width: parent.width * 0.9
-        height: parent.height
+        anchors.topMargin: 30
+        width: parent.width
+        height: parent.height - header.height
+        anchors.left:header.left
         radius: 5
         anchors.horizontalCenter: parent.horizontalCenter
-        color: rec_color
+        color: parent.color
 
         Flickable {
             id: flickable
             anchors.fill: parent
-            contentHeight: column.height + 60 // 动态调整内容高度
+            contentHeight: column.height + flickable.height/2  // 动态调整内容高度
             flickableDirection: Flickable.VerticalFlick
             boundsBehavior: Flickable.StopAtBounds
             clip: true
@@ -104,10 +86,10 @@ Item {
             Column {
                 id: column
                 width: parent.width
-                spacing: 10
+                // spacing: 10
 
                 Repeater {
-                    model: newMusicContent.musicData
+                    model: mainWindow.music_list
                     delegate: contentDelegate
                 }
             }
@@ -189,9 +171,27 @@ Item {
                         color: font_color
                     }
 
+                    Image {
+                        id: collectImage
+                        source: "qrc:/Images/myFavorite.svg"
+                        // anchors.left: album_name.right
+                        anchors.right: music_duration.left
+                        // anchors.leftMargin: 10
+                        anchors.rightMargin: 5
+                        anchors.verticalCenter: parent.verticalCenter
+                        asynchronous: true
+                        width: 25
+                        height: width
+                        // 使用 PreserveAspectFit 确保在原始比例下不会变形
+                        fillMode: Image.PreserveAspectFit
+                        clip: true
+                        // visible: false // 因为显示的是 OpacityMask 需要 false
+
+                    }
+
                     Text {
                         id: music_duration
-                        width: parent.width / 6
+                        width: parent.width / 12
                         anchors.right: parent.right
                         anchors.rightMargin: 10
                         anchors.verticalCenter: parent.verticalCenter
@@ -205,14 +205,31 @@ Item {
                 }
 
                 MouseArea {
+                    id: mainMouseArea
                     anchors.fill: parent
                     hoverEnabled: true
                     onClicked: {
-                        musicPlayer.play(modelData.play_url)
-                        albumartManager.updateAlbumArt()
-                        lyrics.parseLyric(modelData.lyric_url)
-                        // mainWindow.music_list = [modelData]
-                        // mainWindow.current_task_index = 0
+                        var collectX = collectImage.x
+                        var collectY = collectImage.y
+                        var collectWidth = collectImage.width
+                        var collectHeight = collectImage.height
+
+                        // 判断鼠标点击是否在 collectImage 的范围内
+                        if (!(mouse.x >= collectX && mouse.x <= collectX + collectWidth &&
+                            mouse.y >= collectY && mouse.y <= collectY + collectHeight)) {
+                            mainWindow.current_task_index = index
+                            musicPlayer.play(qjson.get_kugou_url(modelData.hash))
+                            musicPlayer.Set_Q_Current_Task(index)
+                            albumart = modelData.cover_url
+                            lyrics.parseLyric(qjson.get_kugou_lyric(modelData.hash))
+                        }else {
+
+                            if(musicPlayer.add_user_collections(mainWindow.user.userId, modelData.music_id)) {
+                                showSuccess(qsTr("收藏成功"))
+                            } else {
+                                showError(qsTr("收藏失败"))
+                            }
+                        }
                     }
                     onEntered: {
                         parent.isHoverd = true
@@ -224,6 +241,4 @@ Item {
             }
         }
     }
-
-
 }

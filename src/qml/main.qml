@@ -78,7 +78,7 @@ FluWindow {
     }
 
 
-    property int request_total: 0 //请求的音乐总数
+    property int request_total: 50 //请求的音乐总数
     property string defaltFolderUrl: ""     // 对话框目录路径
     property string music_folder: ""  //音乐路径
     property int play_styles: 0 //播放方式
@@ -99,8 +99,9 @@ FluWindow {
                 lyrics.parseLyric(music_list[currentNumber].lyric_url)
 
             } else {
-                // musicPlayer.setPosition(0)
-                musicPlayer.play(music_list[current_task_index].play_url)
+
+                musicPlayer.repeat_play(music_list[current_task_index].play_url)
+
             }
 
         }
@@ -109,10 +110,13 @@ FluWindow {
     property UserFullInfo user //用户基本信息
 
 
+    property var search_keyword: ""
 
     property int current_task_index : -1
 
-    property var music_list: ""   //音乐列表数据
+    property var music_list: []   //音乐列表数据
+
+    property var ai_music_list: "" //ai推荐音乐列表
 
     property var music_detail: ""   //音乐歌词详情/列表
 
@@ -124,6 +128,8 @@ FluWindow {
     property int pos: 10 // 示例值，可以动态修改
 
     property var krc_pos: ""   //歌词位置信息
+
+    property bool isSpectrumVisible: false
 
 
     property color rec_color: "#FF99E6F9"   //浅蓝色（矩形）
@@ -218,6 +224,32 @@ FluWindow {
         }
     }
 
+    Connections {
+        target: qjson
+        onRequestTotalChanged: {
+            request_total = total
+        }
+    }
+
+
+    Connections {
+        target: downloader
+        onDownloadProgress: {
+            progressBar.value = bytesRead / totalBytes * 100
+            // statusText.text = "下载进度: " + (bytesRead / totalBytes * 100).toFixed(2) + "%"
+        }
+
+        onDownloadFinished: {
+            progressBar.visible = false
+            showSuccess("下载完成,文件保存在: " + processFilePath(music_folder))
+        }
+
+        onDownloadFailed: {
+            progressBar.visible = false
+            showError("下载失败")
+        }
+    }
+
     // 动态背景图
     // AnimatedImage {
     //     id: bg1
@@ -279,22 +311,52 @@ FluWindow {
                         bottomPadding:5
                         anchors.centerIn: parent // 使 Column 在 Rectangle 中居中
                         spacing:5
-                        FluAutoSuggestBox{
-                            // color: rec_color
+                        // FluAutoSuggestBox{
+                        //     // color: rec_color
+                        //     width: parent.width
+                        //     anchors.horizontalCenter: parent.horizontalCenter // 水平居中对齐到 Column
+                        //     placeholderText: qsTr("音乐搜索...")
+                        // }
+
+                        TextField {
+                            id: searchBox
                             width: parent.width
                             anchors.horizontalCenter: parent.horizontalCenter // 水平居中对齐到 Column
-                            placeholderText: qsTr("音乐搜索...")
-                        }
+                            placeholderText: qsTr("搜索音乐...")
+                            Layout.fillWidth:  true
+                            font.pixelSize:  14
+                            color: "black"
+                            background: Rectangle {
+                                radius: 2
+                                border.color: "#EDEBE9"
+                                border.width:  1
+                            }
 
+                            Keys.onPressed: {
+                                if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
+                                    // 触发按下 Enter 键的事件
+                                    console.log(searchBox.text)
+                                    search_keyword = searchBox.text
+                                    music_list = qjson.kugou_search_music(searchBox.text)
+
+                                    rightpageLoader.source = "qrc:/page/F_search_detail.qml"
+                                    rightpageLoader.item.goToPage(1)
+                                    headerCuerrent = -1
+                                    // performSearch(searchBox.text) // 调用搜索函数
+                                    event.accepted = true // 阻止事件进一步传播
+                                }
+                            }
+                        }
 
                         // 使用 Repeater 来动态生成菜单项
                         Repeater {
                             id:repeat
                             model: ListModel {
-                                ListElement { name: "发现音乐"; icons: "qrc:/Images/music163.svg";qml: "qrc:/page/F_findmusic.qml" }
-                                ListElement { name: "Form"; icons: "qrc:/logo.ico" }
-                                ListElement {name: "My Music"; icons: "qrc:/Images/bookmark.svg"}
-                                ListElement {name: "Select File"; icons: "qrc:/Images/search.svg";qml: "qrc:/page/F_localmusic.qml"}
+                                ListElement { name: "发现音乐"; icons: "qrc:/Images/discoverMusic.svg";qml: "qrc:/page/F_findmusic.qml" }
+                                ListElement { name: "每日推荐"; icons: "qrc:/Images/day_recommend.png";qml: "qrc:/page/F_day_recommend.qml" }
+                                ListElement {name: "我的收藏"; icons: "qrc:/Images/bookmark.svg";qml: "qrc:/page/F_collect.qml"}
+                                ListElement {name: "本地音乐"; icons: "qrc:/Images/search.svg";qml: "qrc:/page/F_localmusic.qml"}
+                                ListElement {name: "AI推荐"; icons: "qrc:/Images/rebot.png";qml: "qrc:/page/F_ai_recommend.qml"}
                             }
                             delegate: music_menu
                         }
@@ -341,8 +403,20 @@ FluWindow {
                                     onClicked: {
                                         headerCuerrent = index
                                         rightpageLoader.source = qml
-                                        if(index === 3 ) {
+
+                                        if(index === 1) {
+                                            music_list = qjson.kugou_recommend()
+                                        }
+                                        else if(index === 2 ) {
+                                            music_list = musicPlayer.get_user_collections(mainWindow.user.userId,0)
+                                            // request_total = music_list.length
+                                        }
+                                        else if(index === 3 ) {
                                             fileDialog.open();
+                                        }
+                                        else if(index === 4) {
+                                            ai_music_list = ""
+                                            ai_music_list = qjson.kugou_ai_recommend(music_list[current_task_index].album_audio_id)
                                         }
 
                                         // 在这里处理点击事件
@@ -373,12 +447,9 @@ FluWindow {
                     height: parent.height
                     color: ri_color   //----------------------------------rightcontent_color
                     visible: true
-
                     Row {
                         width: parent.width
                         height: parent.height
-
-
                         // 定义一个 Loader 组件用于动态加载页面
                         Loader {
                             id: rightpageLoader
@@ -386,12 +457,7 @@ FluWindow {
                             active: true
                             source: "qrc:/page/F_findmusic.qml"  // 默认加载 Page1.qml
                         }
-
-
                     }
-
-
-
                 }
             }
 
@@ -528,6 +594,7 @@ FluWindow {
                 }
 
                 SrollText {
+                    id:sroll_text
                     width: 150
                     height: 25
                     anchors.top: parent.top
@@ -536,6 +603,54 @@ FluWindow {
                     anchors.topMargin: 7
                     text: music_info.title
                     colors: "#333333"
+                }
+
+                Image {
+                    id: download_music
+                    source: "qrc:/Images/download.svg"
+                    width: 24
+                    height: 24
+                    anchors.left: roundImage.right
+                    anchors.leftMargin: 10
+                    anchors.bottom:parent.bottom
+                    anchors.bottomMargin: 5
+                    MouseArea {
+                        anchors.fill: parent
+                        onClicked: {
+                            var url = musicPlayer.get_music_path()
+                            // if(!url) {
+                            //     url = music_list[current_task_index].play_url
+                            // }
+                            var suffix = extractSuffix(url)
+
+                            if(music_folder == "") {
+                                musicPlayer.createDirectory("./temp")
+                                music_folder = "file:///./temp"
+                            }
+                            // downloader.downloadFile(url,processFilePath(music_folder) + "/" + music_list[current_task_index].music_name + " - " + music_list[current_task_index].art_name + "." + suffix)
+                            downloader.downloadFile(url,processFilePath(music_folder) + "/" + music_info.title + " - " + music_info.artist + "." + suffix)
+                            progressBar.visible = true
+                        }
+                        onEntered: {}
+
+                        onExited: {}
+
+                    }
+
+                }
+
+                FluProgressBar {
+                    id: progressBar
+                    width: 200
+                    height: 10
+                    anchors.left:download_music.right
+                    anchors.leftMargin: 30
+                    anchors.verticalCenter: parent.verticalCenter
+                    indeterminate: false
+                    visible:false
+                    value: 0
+                    from: 0
+                    to: 100
                 }
 
                 FluIconButton {
@@ -547,11 +662,18 @@ FluWindow {
                     iconSize: 25
 
                     onClicked: {
-                        musicPlayer.Pre_play(current_task_index)
+                        // musicPlayer.Pre_play(current_task_index)
+                        if(!musicPlayer.play(music_list[current_task_index-1].play_url)) {
+                            musicPlayer.play(qjson.get_kugou_url(music_list[current_task_index-1].hash))
+                        }
                         //更新对应的音乐专辑封面
-                        albumartManager.updateAlbumArt()
+                        // albumartManager.updateAlbumArt()
+                        albumart = music_list[current_task_index-1].cover_url
                         if(music_list[current_task_index-1].lyric_url) {
                             lyrics.parseLyric(music_list[current_task_index-1].lyric_url)
+                        }
+                        if(music_list[current_task_index-1].hash) {
+                            lyrics.parseLyric(qjson.get_kugou_lyric(music_list[current_task_index-1].hash))
                         }
                         console.log(current_task_index)
                         if(current_task_index > 0) {
@@ -588,13 +710,20 @@ FluWindow {
                     iconSize: 25
 
                     onClicked: {
-                        musicPlayer.Next_play(current_task_index)
+                        // musicPlayer.Next_play(current_task_index)
+                        if(!musicPlayer.play(music_list[current_task_index+1].play_url)) {
+                            musicPlayer.play(qjson.get_kugou_url(music_list[current_task_index+1].hash))
+                        }
+
                         //更新对应的音乐专辑封面
-                        albumartManager.updateAlbumArt()
+                        // albumartManager.updateAlbumArt()
+                        albumart = music_list[current_task_index+1].cover_url
                         if(music_list[current_task_index+1].lyric_url) {
                             lyrics.parseLyric(music_list[current_task_index+1].lyric_url)
                         }
-                        // console.log(current_task_index)
+                        if(music_list[current_task_index+1].hash) {
+                            lyrics.parseLyric(qjson.get_kugou_lyric(music_list[current_task_index+1].hash))
+                        }
                         if(current_task_index < music_list.length - 1) {
                             current_task_index = current_task_index + 1
                         }
@@ -670,7 +799,6 @@ FluWindow {
 
                 }
 
-
                 F_play_queue {
                     id: play_queue
                     width: mainWindow.width * 0.3
@@ -685,35 +813,49 @@ FluWindow {
                     anchors.bottomMargin: 30
                 }
 
-
-                FluIconButton {
+                FluToggleSwitch {
                     id: spec
                     anchors.right:parent.right
                     anchors.verticalCenter: parent.verticalCenter
-                    iconSource:FluentIcons.Calculator
-                    iconSize: 25
-
-                    onClicked: {
-                        // musicPlayer.decoded()
-                        // albumartManager.test()
-
-                        FluRouter.navigate("/test",  {
-                            mode: FluRouter.Dialog,  // 正确模式枚举
-                            windowModality: Qt.ApplicationModal,  // 正确参数名
-                            parent: ApplicationWindow.window,
-                            onOpened: () => {  // 箭头函数语法
-                                ApplicationWindow.window.enabled  = false
-                            },
-                            onClosed: () => {
-                                ApplicationWindow.window.enabled  = true
-                            }
-                        })
-
-
-                        // FluRouter.navigate("/test")
-
+                    anchors.rightMargin: 10
+                    onCheckedChanged: {
+                        if (spec.checked) {
+                            isSpectrumVisible = true
+                        } else {
+                            isSpectrumVisible = false
+                        }
                     }
                 }
+
+
+                // FluIconButton {
+                //     id: spec
+                //     anchors.right:parent.right
+                //     anchors.verticalCenter: parent.verticalCenter
+                //     iconSource:FluentIcons.Calculator
+                //     iconSize: 25
+                //
+                //     onClicked: {
+                //         // musicPlayer.decoded()
+                //         // albumartManager.test()
+                //
+                //         FluRouter.navigate("/test",  {
+                //             mode: FluRouter.Dialog,  // 正确模式枚举
+                //             windowModality: Qt.ApplicationModal,  // 正确参数名
+                //             parent: ApplicationWindow.window,
+                //             onOpened: () => {  // 箭头函数语法
+                //                 ApplicationWindow.window.enabled  = false
+                //             },
+                //             onClosed: () => {
+                //                 ApplicationWindow.window.enabled  = true
+                //             }
+                //         })
+                //
+                //
+                //         // FluRouter.navigate("/test")
+                //
+                //     }
+                // }
 
             }
         }
@@ -734,6 +876,26 @@ FluWindow {
             // music_list = musicPlayer.get_all_music_path()
             // console.log("Files found:", music_list)
 
+        }
+    }
+
+
+    // 提取 URL 后缀的函数
+    function extractSuffix(url) {
+        var parts = url.split("."); // 按照 "." 分割字符串
+        if (parts.length > 1) {
+            return parts[parts.length - 1]; // 返回最后一个部分作为后缀
+        } else {
+            return ""; // 如果没有后缀，返回空字符串
+        }
+    }
+
+    // 处理文件路径的函数
+    function processFilePath(filePath) {
+        if (filePath.startsWith("file:///")) {
+            return filePath.replace("file:///", "")
+        } else {
+            return filePath // 如果没有前缀，直接返回原路径
         }
     }
 

@@ -23,6 +23,10 @@
         <file>page/F_FindMusicPlayList.qml</file>
         <file>page/F_PlayList_detail.qml</file>
         <file>page/F_play_queue.qml</file>
+        <file>page/F_search_detail.qml</file>
+        <file>page/F_collect.qml</file>
+        <file>page/F_day_recommend.qml</file>
+        <file>page/F_ai_recommend.qml</file>
 
 
         <file>global/GlobalModel.qml</file>
@@ -57,10 +61,19 @@
         <file>Images/volumeMute.svg</file>
 
         <file>Images/background.png</file>
+        <file>Images/rebot.png</file>
+        <file>Images/day_recommend.png</file>
+        <file>Images/title.png</file>
 
         <file>Images/头像.jpg</file>
 
         <file>Images/Splash_Screen_First_Closed_Beta.png</file>
+        <file>Images/go_star.jpeg</file>
+        <file>Images/tianjing.jpeg</file>
+        <file>Images/xianhai.jpeg</file>
+        <file>Images/yinhe.png</file>
+        <file>Images/yunshang.jpeg</file>
+        <file>Images/yunshang2.jpeg</file>
 
     </qresource>
 </RCC>

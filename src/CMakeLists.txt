@@ -77,12 +77,14 @@ if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
     qt_add_executable(${PROJECT_NAME}
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
-            ${MOC_SOURCES}
+        ${MOC_SOURCES}
+        resource.rc
     )
 else()
     add_executable(${PROJECT_NAME}
         ${PROJECT_SOURCES}
-            ${MOC_SOURCES}
+        ${MOC_SOURCES}
+        resource.rc
     )
 endif()
 
@@ -129,9 +131,26 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 
 
 
+##生成版本信息头文件
+set(HEADER_FILE_VERSION_PATH ${CMAKE_SOURCE_DIR}/src/Version.h)
+configure_file(
+        ${CMAKE_SOURCE_DIR}/.cmake/Version.h.in
+        ${HEADER_FILE_VERSION_PATH}
+)
 
-
-
+#如果是Windows平台，则生成rc文件，还有inno setup脚本文件
+set(EXAMPLE_VERSION_RC_PATH "")
+if (WIN32)
+    set(EXAMPLE_VERSION_RC_PATH ${CMAKE_CURRENT_BINARY_DIR}/version_${PROJECT_NAME}.rc)
+    configure_file(
+            ${CMAKE_SOURCE_DIR}/.cmake/version_exe.rc.in
+            ${EXAMPLE_VERSION_RC_PATH}
+    )
+    configure_file(
+            ${CMAKE_SOURCE_DIR}/.cmake/InstallerScript.iss.in
+            ${CMAKE_SOURCE_DIR}/package/InstallerScript.iss
+    )
+endif ()
 
 
 if(${QT_VERSION} VERSION_LESS 6.1.0)
@@ -155,33 +174,31 @@ if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(${PROJECT_NAME})
 endif()
 
+#添加部署脚本
 if (CMAKE_BUILD_TYPE MATCHES "Release")
     if (APPLE)
         find_program(QT_DEPLOY_QT NAMES macdeployqt)
         add_custom_target(Script-DeployRelease
-            COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_SOURCE_DIR}/bin/
-            COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ${CMAKE_SOURCE_DIR}/dist
-            COMMAND ${QT_DEPLOY_QT} ${CMAKE_SOURCE_DIR}/dist/${PROJECT_NAME}.app -qmldir=${CMAKE_CURRENT_LIST_DIR}
-            COMMENT "MacOs Deploying Qt Dependencies After Build........."
-            SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+                COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_SOURCE_DIR}/dist
+                COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ${CMAKE_SOURCE_DIR}/dist
+                COMMAND ${QT_DEPLOY_QT} ${CMAKE_SOURCE_DIR}/dist/${PROJECT_NAME}.app -qmldir=${CMAKE_CURRENT_LIST_DIR}
+                COMMENT "MacOs Deploying Qt Dependencies After Build........."
+                SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
-    endif()
-    if(WIN32)
+    endif ()
+    if (WIN32)
         find_program(QT_DEPLOY_QT NAMES windeployqt)
-        # 复制 DLL 文件
-#        execute_process(COMMAND ${CMAKE_COMMAND} -E copy "D:/Qt/6.8.1/mingw_64/bin/*.dll" ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
-        add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qml
-            COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins
-#            COMMAND ${QT_DEPLOY_QT} --qmldir=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qml --plugindir=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins --no-translations --compiler-runtime $<TARGET_FILE:${PROJECT_NAME}>
-            COMMAND ${QT_DEPLOY_QT} --qmldir=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/qml --plugindir=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/plugins ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${PROJECT_NAME}.exe
-
-            COMMENT "Windows Deploying Qt Dependencies After Build........."
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        add_custom_target(Script-DeployRelease
+                COMMAND ${CMAKE_COMMAND} -E remove_directory ${CMAKE_SOURCE_DIR}/dist
+                COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_RUNTIME_OUTPUT_DIRECTORY} ${CMAKE_SOURCE_DIR}/dist
+                COMMAND ${QT_DEPLOY_QT} --qmldir=${CMAKE_CURRENT_LIST_DIR} --plugindir ${CMAKE_SOURCE_DIR}/dist/plugins --no-translations --compiler-runtime ${CMAKE_SOURCE_DIR}/dist/${PROJECT_NAME}.exe
+                COMMENT "Windows Deploying Qt Dependencies After Build........."
+                SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists.txt
+                WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
-endif()
-endif()
+    endif ()
+endif ()
 
 #-DVCPKG_TARGET_TRIPLET=x64-mingw-dynamic
 #-DCMAKE_TOOLCHAIN_FILE=D:\CLion\vcpkg\scripts\buildsystems\vcpkg.cmake

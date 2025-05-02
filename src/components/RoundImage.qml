@@ -11,6 +11,8 @@ Item {
     property color colorOverlayColor: "#80000000" // 蓝色
     property bool isHovered: true
 
+    property var fillMode: Image.PreserveAspectFit
+
     width: image.width
     height: image.height
 
@@ -23,7 +25,7 @@ Item {
         width: parent.width
         height: parent.height
         // 使用 PreserveAspectFit 确保在原始比例下不会变形
-        fillMode: Image.PreserveAspectFit
+        fillMode: parent.fillMode
         clip: true
         visible: false // 因为显示的是 OpacityMask 需要 false
     }

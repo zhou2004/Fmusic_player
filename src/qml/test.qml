@@ -16,21 +16,29 @@ FluWindow {
         width: parent.width
         height: parent.height
         antialiasing: true
+        legend.visible: false // 隐藏图例
         animationOptions: ChartView.SeriesAnimations // 启用动画效果
 
         BarSeries {
             id: barSeries
             axisX: BarCategoryAxis {
                 categories: generateCategories(32)
+                visible: false // 隐藏x坐标
             }
-            axisY: ValueAxis { min: 0; max: 100 }
+            axisY: ValueAxis {
+                min: 0
+                max: 100
+                visible: false // 隐藏y坐标
+            }
 
             BarSet {
                 id: barSet
-                label: "Set 1"
+                label: "" // 设置为空字符串以隐藏标签
                 values: generateValues(32) // 初始值
+                color: "#FFFF3E84"
             }
         }
+
     }
 
     // JavaScript function to generate categories
@@ -48,7 +56,7 @@ FluWindow {
         // for (var i = 0; i < count; i++) {
         //     values.push(Math.random() * 100); // Generate random values between 0 and 100
         // }
-        return analyzer.spectrumList;
+        return analyzer.get_spectrumList();
     }
 
     // Timer to update the values periodically

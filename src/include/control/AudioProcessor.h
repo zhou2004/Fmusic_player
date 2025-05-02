@@ -18,7 +18,7 @@
 class AudioSpectrumAnalyzer : public QObject
 {
     Q_OBJECT
-    Q_PROPERTY(QList<float> spectrumList READ get_spectrumList NOTIFY spectrumListChanged)
+
 public:
     explicit AudioSpectrumAnalyzer(MusicPlayer* musicPlayer, QObject *parent = nullptr) : QObject(parent), musicPlayer(musicPlayer)
     {
@@ -116,7 +116,7 @@ private slots:
         //     std::cout << "Band" << i << ":" << spectrumBands[i];
         //     fflush(stdout);
         // }
-        printf("\n");
+        // printf("\n");
         // emit spectrumListChanged();
     }
 

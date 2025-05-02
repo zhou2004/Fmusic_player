@@ -143,7 +143,7 @@ Rectangle {
                 width: titleBar.iconSize
                 height: titleBar.iconSize
                 visible: status === Image.Ready ? true : false
-                source: "qrc:/Images/music163.svg"
+                source: "qrc:/Images/title.png"
                 anchors.verticalCenter: parent.verticalCenter
             }
             FluText {

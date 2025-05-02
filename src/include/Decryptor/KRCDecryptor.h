@@ -14,6 +14,10 @@
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QEventLoop>
+
+#include <openssl/bio.h>
+#include <openssl/evp.h>
+#include <openssl/buffer.h>
 /*
 1.跳过输入数据的前 4 个字节（文件头）。
 2.对剩余的数据进行 XOR 解码，使用 krc_keys 数组。
@@ -29,21 +33,110 @@ public:
         // _load(fileName);
     }
 
-    std::string decode(const std::vector<unsigned char>& data) {
-        // XOR 解码
-        std::vector<unsigned char> zd;
-        for (size_t i = 4; i < data.size(); ++i) {
-            zd.push_back(data[i] ^ krc_keys[(i - 4) % 16]);
+    static bool Base64Decode(const std::string& src, std::vector<unsigned char>& out) {
+        try {
+            if (src.empty()) {
+                // 如果输入为空，直接返回 false
+                return false;
+            }
+
+            size_t srcLen = src.size();
+            if (srcLen % 4 != 0) {
+                // Base64 编码的长度必须是 4 的倍数
+                return false;
+            }
+
+            size_t destLen = (srcLen / 4) * 3;
+            out.resize(destLen);
+
+            int ret = EVP_DecodeBlock((unsigned char*)out.data(), (const unsigned char*)src.c_str(), (int)src.size());
+            if (ret == -1) {
+                // Base64 解码失败
+                return false;
+            }
+
+            int i = 0;
+            while (srcLen > 0 && src.at(--srcLen) == '=') {
+                ret--;
+                if (++i > 2) {
+                    // 输入可能不是有效的 Base64 字符串
+                    return false;
+                }
+            }
+
+            out.resize(ret);
+            return true;
+        } catch (const std::exception& e) {
+            // 捕获并处理异常
+            std::cerr << "Error in Base64Decode function: " << e.what() << std::endl;
+            return false;
         }
+    }
 
-        // 解压缩
-        uLongf destLen = zd.size() * 10; // 输出缓冲区，大小为输入的两倍
-        std::vector<unsigned char> out(destLen);
-        int ret = uncompress(out.data(), &destLen, zd.data(), zd.size());
+    // Base64 解码函数
+    static std::string base64_decode(const std::string& encoded_string) {
+        BIO *bio, *b64;
+        BUF_MEM *bptr;
 
+        // 创建一个 Base64 解码的 BIO 链
+        b64 = BIO_new(BIO_f_base64());
+        bio = BIO_new_mem_buf(encoded_string.c_str(), -1);
+        bio = BIO_push(b64, bio);
 
-        // 去掉第一个字符
-        return std::string(out.begin() + 3, out.begin() + destLen);
+        // 设置 BIO 为解码模式
+        BIO_set_flags(bio, BIO_FLAGS_BASE64_NO_NL); // 忽略换行符
+
+        // 创建一个缓冲区来存储解码后的数据
+        BUF_MEM_grow(bptr, encoded_string.size());
+        BIO_get_mem_ptr(bio, &bptr);
+
+        // 解码数据
+        char* decoded_data = (char*)malloc(bptr->length);
+        int decoded_len = BIO_read(bio, decoded_data, bptr->length);
+
+        // 清理
+        BIO_free_all(bio);
+
+        // 返回解码后的字符串
+        return std::string(decoded_data, decoded_len);
+    }
+
+#include <iostream>
+#include <vector>
+#include <string>
+#include <stdexcept>
+#include <zlib.h> // 确保链接 zlib 库
+
+    std::string decode(const std::vector<unsigned char>& data) {
+        try {
+            // XOR 解码
+            std::vector<unsigned char> zd;
+            for (size_t i = 4; i < data.size(); ++i) {
+                zd.push_back(data[i] ^ krc_keys[(i - 4) % 16]);
+            }
+
+            // 解压缩
+            uLongf destLen = zd.size() * 10; // 输出缓冲区，大小为输入的两倍
+            std::vector<unsigned char> out(destLen);
+
+            int ret = uncompress(out.data(), &destLen, zd.data(), zd.size());
+            if (ret != Z_OK) {
+                throw std::runtime_error("Decompression failed");
+            }
+
+            // 去掉前三个字符
+            std::string result(out.begin() + 3, out.begin() + destLen);
+
+            // 清理临时数据
+            std::vector<unsigned char>().swap(out);
+            std::vector<unsigned char>().swap(zd);
+
+            return result;
+        } catch (const std::exception& e) {
+            // 捕获并处理异常
+            std::cerr << "Error in decode function: " << e.what() << std::endl;
+            return ""; // 返回空字符串或适当的错误值
+        }
     }
 
     bool _load(const std::string& fileName) {
@@ -82,6 +175,7 @@ public:
 
             // 读取文件内容
             if (!file.read(reinterpret_cast<char*>(_data.data()), fileSize)) {
+
                 std::cerr << "Could not read file: " << fileName << std::endl;
                 return false;
             }
