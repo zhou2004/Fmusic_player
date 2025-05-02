@@ -77,12 +77,9 @@ public:
         while (std::getline(stream, line)) {
             //将windows的GBK编码转换为Linux的UTF-8编码
             // line = Iconvert::convert_encoding(line, Win_CODE, Linux_CODE);
-
             if (line.empty()  || line[0] != '[') continue; // 跳过空行和非歌词行
-
             size_t pos = line.find(']');
             if (pos == std::string::npos) continue; // 跳过格式不正确的行
-
             // 解析时间戳
             std::string timeStr = line.substr(1,  pos - 1);
 
@@ -92,15 +89,12 @@ public:
                 this->lyrics.emplace_back(Lyric{float(0),  timeStr});
                 continue; // 非时间戳行，返回 0
             }
-
             float minutes = std::stof(timeStr.substr(0,  2));
             float seconds = std::stof(timeStr.substr(3,  2));
             float milliseconds = std::stof(timeStr.substr(6,  2));
             float timestamp = minutes * 60000 + seconds * 1000 + milliseconds * 10;
-
             // 提取歌词内容
             std::string content = line.substr(pos  + 1);
-
             // 去除所有换行符（包括 \r 和 \n）
             content.erase(std::remove_if(content.begin(),  content.end(),  [](char c) {
                 return (c == '\n' || c == '\r');
@@ -108,7 +102,6 @@ public:
             // 存入容器
             this->lyrics.emplace_back(Lyric{timestamp,  content});
         }
-
     }
 
 
@@ -124,6 +117,17 @@ public slots:
     void test() {
         printf("this is a test!\n");
     }
+
+    bool isFilePath(const QString& filename) {
+        QFileInfo fileInfo(filename);
+        return fileInfo.exists() && fileInfo.isFile();
+    }
+
+    bool isUrlPath(const QString& filename) {
+        QUrl url(filename);
+        return url.isValid() && url.scheme() != "";
+    }
+
 
 
 
@@ -150,34 +154,50 @@ public slots:
 
     // 解析歌词文件（支持本地路径和网络 URL）
     void parseLyric(QString filename) {
-        filename = "http://127.0.0.1:7878/kugou/lrc/688726659EE215D704DA4500B791C576.krc";
-        this->type = detectLyricType(std::filesystem::path(filename.toStdString()));
+        if (isFilePath(filename) || isUrlPath(filename)) {
+            // filename = "D:\\pycharm\\pythonProject\\Fmusic_player\\bin\\Debug\\decoded_output.krc";
+            this->type = detectLyricType(std::filesystem::path(filename.toStdString()));
 
-        if (this->type == Lrc) {
-            emit this->lyrictypeChanged(QString("Lrc"));
-            parseLyrics* task = new parseLyrics(this,filename.toStdString());
-            threadPool.start(task);
-        }else if (this->type == Krc) {
-            emit this->lyrictypeChanged(QString("Krc"));
-            // std::cout << "Krc" << std::endl;
-            bool flag = Kdecoder._load(filename.toStdString());
-            if (flag) {
-                std::string decodedData = Kdecoder.getDecoded();
-                K_LyricData lyricData = KlyricParser.parseLyrics(decodedData);
+            if (this->type == Lrc) {
+                emit this->lyrictypeChanged(QString("Lrc"));
+                parseLyrics* task = new parseLyrics(this,filename.toStdString());
+                threadPool.start(task);
+            }else if (this->type == Krc) {
+                emit this->lyrictypeChanged(QString("Krc"));
+                // std::cout << "Krc" << std::endl;
+                bool flag = Kdecoder._load(filename.toStdString());
+                if (flag) {
+                    std::string decodedData = Kdecoder.getDecoded();
+                    KlyricParser.parseLyrics(decodedData);
+                    emit this->lyricChanged();  // 通知 QML Lyrics数据已更新
+                }
+
+                // std::map<std::tuple<int, int, int, int>, std::pair<int, int>> timestampMap = KlyricParser.buildTimestampMap(lyricData);
+
+                // int playbackPosition = 215000;
+                //
+                // K_LyricParser::findLyricAtTime(lyricData, timestampMap, playbackPosition);
+                //
+                // KlyricParser.Q_getLyrics();
+
+            }else {
+
+            }
+        }
+        else {
+            this->type = Krc;
+            std::vector<unsigned char> out;
+            if (Kdecoder.Base64Decode(filename.toStdString(),out)) {
+                std::string decodedData = Kdecoder.decode(out);
+                KlyricParser.parseLyrics(decodedData);
+                emit this->lyricChanged();  // 通知 QML Lyrics数据已更新
+                std::vector<unsigned char>().swap(out);
+            }else {
+                KlyricParser.parseLyrics("[0,1]<0,1,0>暂无歌词，敬请期待...");
                 emit this->lyricChanged();  // 通知 QML Lyrics数据已更新
             }
-
-            // std::map<std::tuple<int, int, int, int>, std::pair<int, int>> timestampMap = KlyricParser.buildTimestampMap(lyricData);
-
-            // int playbackPosition = 215000;
-            //
-            // K_LyricParser::findLyricAtTime(lyricData, timestampMap, playbackPosition);
-            //
-            // KlyricParser.Q_getLyrics();
-
-        }else {
-
         }
+
 
     }
 

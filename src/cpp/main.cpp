@@ -8,6 +8,8 @@
 #include <QQmlContext>
 #include <MusicPlayer.h>
 
+#include <QProcess>
+
 #include "Iconvert.h"
 #include "Sql/mysql.h"
 
@@ -27,16 +29,26 @@ int main(int argc, char *argv[]) {
 #endif
 
 
+    //启动node.js-api子进程
+    auto* subProcess = new QProcess();
+    subProcess->start("app_win.exe");
+
+    //启动图形化界面主进程
     QApplication app(argc, argv);
 
-// #ifdef _WIN32
-//     // 分配控制台窗口
-//     AllocConsole();
-//     // 重定向标准输出到控制台
-//     freopen("CONOUT$", "w", stdout);
-//     freopen("CONOUT$", "w", stderr);
-// #endif
+    // 连接信号和槽，当主进程退出时，结束子进程
+    QObject::connect(&app, &QApplication::aboutToQuit, [subProcess]() {
+        qDebug() << "主进程即将退出，尝试结束子进程...";
+        subProcess->terminate();
+        if (!subProcess->waitForFinished(3000)) { // 等待 3 秒
+            qDebug() << "正常终止失败，强制结束子进程...";
+            subProcess->kill();
+            subProcess->waitForFinished(); // 确保子进程已结束
+        }
+        qDebug() << "子进程已结束。";
+    });
 
+    //进行翻译工作
     QTranslator translator;
     const QStringList uiLanguages = QLocale::system().uiLanguages();
     for (const QString &locale : uiLanguages) {
@@ -47,6 +59,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    //进行qml引擎注册
     QQmlApplicationEngine engine;
 
     const QUrl url(QStringLiteral("qrc:/App.qml"));
@@ -78,6 +91,10 @@ int main(int argc, char *argv[]) {
 
     BluetoothAudioMonitor bluetooh(&musicPlayer);
 
+    QJson qjson;
+
+    FileDownloader downloader;
+
 
 
 
@@ -95,18 +112,24 @@ int main(int argc, char *argv[]) {
     // 注册 analyzer
     engine.rootContext()->setContextProperty("analyzer", &analyzer);
 
+    //注册json类
+    engine.rootContext()->setContextProperty("qjson", &qjson);
+
+    //注册download类
+    engine.rootContext()->setContextProperty("downloader", &downloader);
+
 
 
     // Mysql mysql;
     //
     // if (mysql.init_db_connection()) {
-    //     mysql.delUserCollections(1,3);
+    //     mysql.addUserCollections(1,3);
     // }
 
-    QJson qjson;
+    // QJson qjson;
     // qjson.get_token();
-    qjson.kugou_search_music("唯一");
-
+    // qjson.kugou_search_music("唯一");
+    qjson.kugou_recommend();
 
     // 用户操作测试
     // Mysql userManager;
@@ -140,7 +163,6 @@ int main(int argc, char *argv[]) {
     // KlyricParser.findLyricAtTime(playbackPosition);
     //
     // KlyricParser.Q_getLyrics();
-
 
 
     return app.exec();

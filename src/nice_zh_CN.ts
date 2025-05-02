@@ -15,6 +15,58 @@
     </message>
 </context>
 <context>
+    <name>F_PlayList_detail</name>
+    <message>
+        <location filename="page/F_PlayList_detail.qml" line="247"/>
+        <source>收藏成功</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="page/F_PlayList_detail.qml" line="249"/>
+        <source>收藏失败</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>F_ai_recommend</name>
+    <message>
+        <location filename="page/F_ai_recommend.qml" line="180"/>
+        <source>收藏成功</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="page/F_ai_recommend.qml" line="182"/>
+        <source>收藏失败</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>F_collect</name>
+    <message>
+        <location filename="page/F_collect.qml" line="211"/>
+        <source>删除成功</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="page/F_collect.qml" line="214"/>
+        <source>删除失败</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>F_day_recommend</name>
+    <message>
+        <location filename="page/F_day_recommend.qml" line="228"/>
+        <source>收藏成功</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="page/F_day_recommend.qml" line="230"/>
+        <source>收藏失败</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>ItemsFooter</name>
     <message>
         <location filename="global/ItemsFooter.qml" line="16"/>
@@ -494,7 +546,7 @@
     </message>
     <message>
         <location filename="qml/layout.qml" line="11"/>
-        <location filename="qml/layout.qml" line="102"/>
+        <location filename="qml/layout.qml" line="111"/>
         <source>登录</source>
         <translation type="unfinished"></translation>
     </message>
@@ -514,42 +566,42 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/layout.qml" line="79"/>
+        <location filename="qml/layout.qml" line="88"/>
         <source>密码</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/layout.qml" line="86"/>
+        <location filename="qml/layout.qml" line="95"/>
         <source>请输入密码</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/layout.qml" line="121"/>
+        <location filename="qml/layout.qml" line="130"/>
         <source>登录成功</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/layout.qml" line="125"/>
+        <location filename="qml/layout.qml" line="134"/>
         <source>登录失败</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/layout.qml" line="135"/>
+        <location filename="qml/layout.qml" line="144"/>
         <source>注册</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/layout.qml" line="154"/>
+        <location filename="qml/layout.qml" line="163"/>
         <source>注册成功</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/layout.qml" line="158"/>
+        <location filename="qml/layout.qml" line="167"/>
         <source>注册失败</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/layout.qml" line="167"/>
+        <location filename="qml/layout.qml" line="176"/>
         <source>Fmusic_Login_Regist</source>
         <translation type="unfinished"></translation>
     </message>
@@ -580,13 +632,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/main.qml" line="184"/>
+        <location filename="qml/main.qml" line="190"/>
         <source>登录成功</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/main.qml" line="286"/>
-        <source>音乐搜索...</source>
+        <location filename="qml/main.qml" line="325"/>
+        <source>搜索音乐...</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

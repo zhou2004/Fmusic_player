@@ -67,6 +67,15 @@ FluWindow {
                         border.color:  usernameField.activeFocus  ? primaryColor : borderColor
                         border.width:  1
                     }
+
+                    Keys.onPressed: {
+                        if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
+                            // 触发按下 Enter 键的事件
+                            console.log(usernameField.text)
+                            // performSearch(searchBox.text) // 调用搜索函数
+                            event.accepted = true // 阻止事件进一步传播
+                        }
+                    }
                 }
             }
 

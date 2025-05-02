@@ -27,6 +27,7 @@ public:
         }
     }
 
+public slots:
     void downloadFile(const QUrl &url, const QString &outputFileName) {
         file.setFileName(outputFileName);
         if (!file.open(QIODevice::WriteOnly)) {
@@ -38,21 +39,29 @@ public:
         connect(reply, &QNetworkReply::downloadProgress, this, &FileDownloader::onDownloadProgress);
     }
 
-    private slots:
-        void onFinished(QNetworkReply *reply) {
+public slots:
+    void onFinished(QNetworkReply *reply) {
         if (reply->error() == QNetworkReply::NoError) {
             file.write(reply->readAll());
             qDebug() << "文件下载完成，保存到：" << file.fileName();
+            emit downloadFinished(file.fileName());
         } else {
             qDebug() << "下载失败：" << reply->errorString();
+            emit downloadFailed(reply->errorString());
         }
         reply->deleteLater();
-        QCoreApplication::quit(); // 退出应用程序
+        file.close();
     }
 
     void onDownloadProgress(qint64 bytesRead, qint64 totalBytes) {
         qDebug() << "下载进度：" << bytesRead << " / " << totalBytes;
+        emit downloadProgress(bytesRead, totalBytes);
     }
+
+signals:
+    void downloadProgress(qint64 bytesRead, qint64 totalBytes);
+    void downloadFinished(const QString &filePath);
+    void downloadFailed(const QString &error);
 
 private:
     QNetworkAccessManager *manager;

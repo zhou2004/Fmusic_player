@@ -6,6 +6,7 @@
 
 #include <iostream>
 #include <ostream>
+#include <QJsonArray>
 
 // ------------ 数据库配置定义 ------------
 const char* DB_HOST = "127.0.0.1";
@@ -61,10 +62,10 @@ void Mysql::queryartTable() {
 }
 
 
-QList<QJsonObject> Mysql::query_musicTable()
+QJsonArray Mysql::query_musicTable()
 {
     QSqlQuery query;
-    QList<QJsonObject> q_files;
+    QJsonArray q_files;
     QJsonObject musicInfo;
     if (query.exec("SELECT * FROM music"))
     {
@@ -90,10 +91,10 @@ QList<QJsonObject> Mysql::query_musicTable()
     return q_files;
 }
 
-QList<QJsonObject> Mysql::query_musictype(QString type_name)
+QJsonArray Mysql::query_musictype(QString type_name)
 {
     QSqlQuery query;
-    QList<QJsonObject> q_files;
+    QJsonArray q_files;
     QJsonObject musicInfo;
     if (!query.exec(QString("SELECT * ""FROM music ""WHERE type_name = '%1'").arg(type_name))) {
         std::cout << "查询失败：" << query.lastError().text().toStdString();
@@ -425,7 +426,7 @@ bool Mysql::checkUniqueField(const QString &fieldName, const QVariant &value, qi
 
 
 
-QList<QJsonObject> Mysql::getUserCollections(qint64 userId) {
+QList<QJsonObject> Mysql::getUserCollections(qint64 userId,int page) {
     QSqlQuery query(m_db);
     QList<QJsonObject> q_files;
     QJsonObject musicInfo;
@@ -433,29 +434,42 @@ QList<QJsonObject> Mysql::getUserCollections(qint64 userId) {
         "FROM music  m "
         "JOIN UserCollections uc ON m.music_id  = uc.music_id  "
         "WHERE uc.user_id  = '%1'"
-        "ORDER BY uc.collection_time  DESC"
-        ).arg(userId))) {
+        "ORDER BY uc.collection_time  DESC "
+        ).arg(userId).arg(page))) {
 
         std::cout << "查询失败：" << query.lastError().text().toStdString();
 
         return q_files;
-    } else {
-        while (query.next()) {
-            musicInfo["music_id"] = query.value("music_id").toString();
-            musicInfo["music_name"] = query.value("music_name").toString();
-            musicInfo["art_name"] = query.value("art_name").toString();
-            musicInfo["cover_url"] = query.value("cover_url").toString();
-            musicInfo["lyric_url"] = query.value("lyric_url").toString();
-            musicInfo["type_name"] = query.value("type_name").toString();
-            musicInfo["play_count"] = query.value("play_count").toInt();
-            musicInfo["collect_count"] = query.value("collect_count").toInt();
-            musicInfo["play_url"] = query.value("play_url").toString();
-            musicInfo["album"] = query.value("album").toString();
-            musicInfo["duration"] = query.value("duration").toInt();
-            q_files.append(musicInfo);
-        }
-        return q_files;
     }
+
+    while (query.next()) {
+
+        musicInfo["music_id"] = query.value("music_id").toString();
+        musicInfo["music_name"] = query.value("music_name").toString();
+        musicInfo["art_name"] = query.value("art_name").toString();
+        musicInfo["cover_url"] = query.value("cover_url").toString();
+        musicInfo["lyric_url"] = query.value("lyric_url").toString();
+        musicInfo["type_name"] = query.value("type_name").toString();
+        musicInfo["play_count"] = query.value("play_count").toInt();
+        musicInfo["collect_count"] = query.value("collect_count").toInt();
+        musicInfo["play_url"] = query.value("play_url").toString();
+        musicInfo["album"] = query.value("album").toString();
+        musicInfo["duration"] = query.value("duration").toInt();
+        q_files.append(musicInfo);
+    }
+
+    // 第三步：获取总行数
+    // if (!query.exec("SELECT FOUND_ROWS()")) {
+    //     std::cout << "获取总行数失败：" << query.lastError().text().toStdString() << std::endl;
+    //     return q_files;
+    // }
+    //
+    // if (query.next()) {
+    //     int totalRows = query.value(0).toInt();
+    //     std::cout << "总行数：" << totalRows << std::endl;
+    // }
+    return q_files;
+
 }
 
 bool Mysql::addUserCollections(qint64 userId, qint64 musicId) {

@@ -17,6 +17,7 @@
 #include <QNetworkRequest>
 #include <QNetworkCookie>
 
+#include "Decryptor/KRCDecryptor.h"
 
 class QJson  : public QObject {
     Q_OBJECT
@@ -33,6 +34,12 @@ public:
 
     QString cookieValue;
     QString userAgent;
+
+    int request_total = 0;
+
+    Q_INVOKABLE int get_music_total() {
+        return this->request_total;
+    }
     QJsonDocument get(QString url) {
         QNetworkAccessManager manager;
         // 创建请求对象
@@ -54,13 +61,13 @@ public:
         if (reply->error() == QNetworkReply::NoError) {
             // 读取响应数据
             QByteArray responseData = reply->readAll();
-            std::string content(responseData.constData(),  responseData.length());
-
-            std::cout << "内容: " << content << std::endl;
+            // std::string content(responseData.constData(),  responseData.length());
+            //
+            // std::cout << "内容: " << content << std::endl;
             // 解析 JSON 数据
             QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
             reply->deleteLater();
-            return QJsonDocument();
+            return jsonDoc;
 
         }else {
             reply->deleteLater();
@@ -84,10 +91,10 @@ public:
         if (reply->error() == QNetworkReply::NoError) {
             // 读取响应数据
             QByteArray responseData = reply->readAll();
-            std::string content(responseData.constData(),  responseData.length());
+            // std::string content(responseData.constData(),  responseData.length());
             // 将单引号替换为双引号
             responseData.replace('\'', '"').replace("&nbsp;", " ").replace("&quot;", "|");
-            std::cout << "内容: " << content << std::endl;
+            // std::cout << "内容: " << content << std::endl;
             // 解析 JSON 数据
             QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
 
@@ -100,7 +107,7 @@ public:
                 for (const QJsonValue& value : abslist) {
                     QJsonObject item = value.toObject();
                     // 处理每个 JSON 对象
-                    std::cout << "Item: " << item["MUSICRID"].toString().remove(0, 6).toStdString() << " " << "pic: " << item["MVPIC"].toString().toStdString() << item["DURATION"].toString().toInt() << " " << item["ALBUM"].toString().toStdString() <<std::endl;
+                    // std::cout << "Item: " << item["MUSICRID"].toString().remove(0, 6).toStdString() << " " << "pic: " << item["MVPIC"].toString().toStdString() << item["DURATION"].toString().toInt() << " " << item["ALBUM"].toString().toStdString() <<std::endl;
                 }
             } else {
                 qDebug() << "abslist field not found or not an array";
@@ -113,10 +120,11 @@ public:
     }
 
 
-    Q_INVOKABLE void kugou_search_music(const QString keyword) {
+    Q_INVOKABLE QList<QJsonObject> kugou_search_music(const QString keyword,int page=0) {
+        QList<QJsonObject> q_files;
         QNetworkAccessManager manager;
         QString seach_api = kugou_url + "/search?keywords=%0&page=%1&pagesize=%2";
-        QString url = seach_api.arg(keyword).arg(0).arg(30);
+        QString url = seach_api.arg(keyword).arg(page).arg(10);
         QNetworkReply* reply = manager.get(QNetworkRequest(QUrl(url)));
 
         QEventLoop loop;
@@ -133,32 +141,61 @@ public:
             QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
 
             QJsonObject jsonObj = jsonDoc.object();
-
+            if (jsonObj["data"].toObject()["total"].isNull()) {
+                reply->deleteLater();
+                emit requestTotalChanged(0);
+                return q_files;
+            }
+            this->request_total = jsonObj["data"].toObject()["total"].toInt();
+            std:: cout << "request_total: " << this->request_total << std::endl;
             QJsonArray lists = jsonObj["data"].toObject()["lists"].toArray();
 
             if (!lists.isEmpty()) {
+                QJsonObject musicInfo;
+                int size = 720;
                 // 遍历 "lists" 数组
                 for (const QJsonValue& value : lists) {
                     QJsonObject item = value.toObject();
-                    QString seach_api = kugou_url + "/song/url?hash=%0&quality=%1";
-                    QString url = seach_api.arg(item["SQ"].toObject()["Hash"].toString()).arg("high");
+                    // QString seach_api = kugou_url + "/song/url?hash=%0&quality=%1";
+                    // QString url = seach_api.arg(item["SQ"].toObject()["Hash"].toString()).arg("high");
+                    musicInfo["hash"] = item["SQ"].toObject()["Hash"].toString();
+                    musicInfo["music_name"] = item["OriSongName"].toString();
+                    musicInfo["art_name"] = item["SingerName"].toString();
+                    musicInfo["cover_url"] = item["Image"].toString().replace("{size}", "%0").arg(size);
+                    // musicInfo["lyric_url"] = get_kugou_lyric(item["SQ"].toObject()["Hash"].toString());
+                    // musicInfo["play_url"] = get_kugou_url(item["SQ"].toObject()["Hash"].toString());
+                    musicInfo["album"] = item["AlbumName"].toString();
+                    musicInfo["duration"] = item["Duration"].toInt();
+                    musicInfo["album_audio_id"] = item["MixSongID"].toInt();
+                    q_files.append(musicInfo);
                     // 处理每个 JSON 对象
-                    get(url);
+                    // get(url);
+                    // get_kugou_lyric(item["SQ"].toObject()["Hash"].toString());
                     // QString play_url = get_kugou_url(item["SQ"].toObject()["Hash"].toString());
-                    // std::cout << "Item: " << play_url.toStdString() << " " << item["Image"].toString().toStdString() << " " << "SingerName: " << item["SingerName"].toString().toStdString() << " " << item["Duration"].toInt() << " " << item["AlbumName"].toString().toStdString() << " "<< item["OriSongName"].toString().toStdString() <<std::endl;
+                    // std::cout << "Item: "<< "hash: " << item["SQ"].toObject()["Hash"].toString().toStdString() << musicInfo["play_url"].toString().toStdString() << " " << item["Image"].toString().toStdString() << " " << "SingerName: " << item["SingerName"].toString().toStdString() << " " << item["Duration"].toInt() << " " << item["AlbumName"].toString().toStdString() << " "<< item["OriSongName"].toString().toStdString() <<std::endl;
                 }
+                reply->deleteLater();
+                emit requestTotalChanged(request_total);
+                return q_files;
             } else {
-                qDebug() << "abslist field not found or not an array";
+                emit requestTotalChanged(0);
+                reply->deleteLater();
+                return q_files;
             }
 
         } else {
-
+            emit requestTotalChanged(0);
+            reply->deleteLater();
+            return q_files;
         }
-        reply->deleteLater();
     }
 
+    Q_INVOKABLE QList<QJsonObject> kugou_recommend();
 
-    QString get_kugou_url(QString Hash,QString quality="high") {
+    Q_INVOKABLE QList<QJsonObject> kugou_ai_recommend(qint16 album_audio_id);
+
+
+    Q_INVOKABLE QString get_kugou_url(QString Hash,QString quality="high") {
         QNetworkAccessManager manager;
         QString seach_api = kugou_url + "/song/url?hash=%0&quality=%1";
         QString url = seach_api.arg(Hash).arg(quality);
@@ -182,15 +219,16 @@ public:
         if (reply->error() == QNetworkReply::NoError) {
             // 读取响应数据
             QByteArray responseData = reply->readAll();
-            std::string content(responseData.constData(),  responseData.length());
-
-            std::cout << "内容: " << content << std::endl;
+            // std::string content(responseData.constData(),  responseData.length());
+            //
+            // std::cout << "内容: " << content << std::endl;
             // 解析 JSON 数据
             QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
 
             QJsonObject jsonObj = jsonDoc.object();
             reply->deleteLater();
-            if (jsonObj.contains("backupUrl")) return jsonObj["backupUrl"].toArray()[0].toString();
+            if (jsonObj.contains("backupUrl") && !jsonObj["backupUrl"].toArray()[0].isNull()) return jsonObj["backupUrl"].toArray()[0].toString();
+            if (jsonObj.contains("url") && !jsonObj["url"].toArray()[0].isNull()) return jsonObj["url"].toArray()[0].toString();
             return QString();
         } else {
             reply->deleteLater();
@@ -198,42 +236,26 @@ public:
         }
     }
 
-    QString get_kugou_lyric(QString Hash, QString type="krc") {
+    Q_INVOKABLE QString get_kugou_lyric(QString Hash, QString type="krc") {
         QNetworkAccessManager manager;
         QString seach_api = kugou_url + "/search/lyric?hash=%0";
         QString url = seach_api.arg(Hash);
 
-        // 创建请求对象
-        QNetworkRequest request;
-        request.setUrl(QUrl(url));
+        QJsonDocument jsonDoc = get(url);
+        QJsonObject jsonObj = jsonDoc.object();
 
-        // 设置Cookie请求头
-        request.setRawHeader("Cookie", cookieValue.toUtf8());
+        if (jsonObj.contains("candidates") && jsonObj["candidates"].isArray() && !jsonObj["candidates"][0].toObject()["id"].isNull()) {
+            QJsonArray candidates = jsonObj["candidates"].toArray();
+            QString id = candidates[0].toObject()["id"].toString();
+            QString accesskey = candidates[0].toObject()["accesskey"].toString();
+            seach_api = kugou_url + "/lyric?id=%0&accesskey=%1&fmt=krc";
+            // std::cout << "id: " << id.toStdString() << "accesskey: " << accesskey.toStdString() << std::endl;
+            url = seach_api.arg(id).arg(accesskey);
+            jsonDoc = get(url);
+            return jsonDoc.object()["content"].toString();
 
-        // 设置User-Agent请求头
-        request.setRawHeader("User-Agent", userAgent.toUtf8());
 
-        QNetworkReply* reply = manager.get(request);
-
-        QEventLoop loop;
-        QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-        loop.exec();
-
-        if (reply->error() == QNetworkReply::NoError) {
-            // 读取响应数据
-            QByteArray responseData = reply->readAll();
-            std::string content(responseData.constData(),  responseData.length());
-
-            std::cout << "内容: " << content << std::endl;
-            // 解析 JSON 数据
-            QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
-
-            QJsonObject jsonObj = jsonDoc.object();
-            reply->deleteLater();
-            if (jsonObj.contains("lyric")) return jsonObj["lyric"].toString();
-            return QString();
-        } else {
-            reply->deleteLater();
+        }else {
             return QString();
         }
 
@@ -268,6 +290,9 @@ public slots:
         }
         reply->deleteLater();
     }
+
+signals:
+    void requestTotalChanged(int total);
 
 private:
     QNetworkAccessManager *manager;

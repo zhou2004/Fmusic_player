@@ -5,6 +5,7 @@
 #include <QApplication>
 #include <QObject>
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QJsonDocument>
 //媒体播放器
 #include <QMediaPlayer>
@@ -75,7 +76,8 @@ public:
 
 
 
-    Q_INVOKABLE void play(const QString &musicPath);
+    Q_INVOKABLE bool play(const QString &musicPath);
+    Q_INVOKABLE bool repeat_play(const QString &musicPath);
     Q_INVOKABLE void loaded_play();
     Q_INVOKABLE int Pre_play(int64_t current_index);
     Q_INVOKABLE int Next_play(int current_index);
@@ -84,6 +86,13 @@ public:
     Q_INVOKABLE void setMedia(const QString &filePath);
     Q_INVOKABLE void setPosition(int64_t position);
     Q_INVOKABLE void setVolume(int64_t volume);
+    Q_INVOKABLE QString get_music_path() const {
+        return QString::fromStdString(this->music_path);
+    }
+
+    Q_INVOKABLE bool createDirectory(const QString &path) {
+        return QDir().mkpath(path);
+    }
 
 
 
@@ -156,9 +165,9 @@ public:
 
     QList<QJsonObject> save_playlist(qint64 playlist_id);
 
-    Q_INVOKABLE QList<QJsonObject> Get_All_Music();
+    Q_INVOKABLE QJsonArray Get_All_Music();
 
-    Q_INVOKABLE QList<QJsonObject> Get_Music_Type(QString type_name);
+    Q_INVOKABLE QJsonArray Get_Music_Type(QString type_name);
 
 
     // ---------------------------------------------mysql驱动调用接口Playlist
@@ -172,6 +181,14 @@ public:
     Q_INVOKABLE bool regist_user(QString user_name, QString user_password);
 
     Q_INVOKABLE UserFullInfo login_user(QString user_name, QString user_password);
+
+
+    // ---------------------------------------------mysql驱动调用接口UserCollections
+    Q_INVOKABLE bool add_user_collections(qint64 userId, qint64 musicId);
+
+    Q_INVOKABLE bool del_user_collections(qint64 userId, qint64 musicId);
+
+    Q_INVOKABLE QList<QJsonObject> get_user_collections(qint64 userId,int page);
 
 
 

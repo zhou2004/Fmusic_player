@@ -9,8 +9,9 @@ Flickable {
     anchors.centerIn:parent
     property var headerData: [{headerText:"歌单",qml:"qrc:/page/F_FindMusicPlayList.qml"},
         {headerText:"最新音乐",qml:"qrc:/page/F_FindNewMusic.qml"},
-        {headerText:"个性推荐",qml:""},
-        {headerText:"专属定制",qml:""}]
+        // {headerText:"个性推荐",qml:""},
+        // {headerText:"专属定制",qml:""}
+    ]
     property double fontSize: 11
 
     property var find_map: []

@@ -188,9 +188,27 @@ Rectangle {
                         color: font_color
                     }
 
+                    Image {
+                        id: collectImage
+                        source: "qrc:/Images/myFavorite.svg"
+                        // anchors.left: album_name.right
+                        anchors.right: music_duration.left
+                        // anchors.leftMargin: 10
+                        anchors.rightMargin: 5
+                        anchors.verticalCenter: parent.verticalCenter
+                        asynchronous: true
+                        width: 25
+                        height: width
+                        // 使用 PreserveAspectFit 确保在原始比例下不会变形
+                        fillMode: Image.PreserveAspectFit
+                        clip: true
+                        // visible: false // 因为显示的是 OpacityMask 需要 false
+
+                    }
+
                     Text {
                         id: music_duration
-                        width: parent.width / 6
+                        width: parent.width / 12
                         anchors.right: parent.right
                         anchors.rightMargin: 10
                         anchors.verticalCenter: parent.verticalCenter
@@ -204,15 +222,33 @@ Rectangle {
                 }
 
                 MouseArea {
+                    id: mainMouseArea
                     anchors.fill: parent
                     hoverEnabled: true
                     onClicked: {
-                        mainWindow.current_task_index = index
-                        musicPlayer.play(modelData.play_url)
-                        musicPlayer.Set_Q_Current_Task(index)
-                        console.log("indexxxxx: ",index)
-                        albumartManager.updateAlbumArt()
-                        lyrics.parseLyric(modelData.lyric_url)
+                        var collectX = collectImage.x
+                        var collectY = collectImage.y
+                        var collectWidth = collectImage.width
+                        var collectHeight = collectImage.height
+
+                        // 判断鼠标点击是否在 collectImage 的范围内
+                        if (!(mouse.x >= collectX && mouse.x <= collectX + collectWidth &&
+                            mouse.y >= collectY && mouse.y <= collectY + collectHeight)) {
+                            mainWindow.current_task_index = index
+                            musicPlayer.play(modelData.play_url)
+                            musicPlayer.Set_Q_Current_Task(index)
+                            albumartManager.updateAlbumArt()
+                            lyrics.parseLyric(modelData.lyric_url)
+                        }else {
+                            // console.log("UserId: ", mainWindow.user.userId)
+                            // console.log("music_id: ", modelData.music_id)
+                            // showSuccess(qsTr("收藏成功"))
+                            if(musicPlayer.add_user_collections(mainWindow.user.userId, modelData.music_id)) {
+                                showSuccess(qsTr("收藏成功"))
+                            } else {
+                                showError(qsTr("收藏失败"))
+                            }
+                        }
                     }
                     onEntered: {
                         parent.isHoverd = true
