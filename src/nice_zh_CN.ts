@@ -75,6 +75,7 @@
     </message>
     <message>
         <location filename="global/ItemsFooter.qml" line="24"/>
+        <location filename="Navigation/ItemsFooter.qml" line="17"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
@@ -83,11 +84,17 @@
         <source>FluentUI Pro</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="Navigation/ItemsFooter.qml" line="12"/>
+        <source>Login</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>ItemsOriginal</name>
     <message>
         <location filename="global/ItemsOriginal.qml" line="20"/>
+        <location filename="Navigation/ItemsOriginal.qml" line="9"/>
         <source>Home</source>
         <translation type="unfinished"></translation>
     </message>
@@ -486,6 +493,26 @@
         <source>Test Crash</source>
         <translation type="unfinished"></translation>
     </message>
+    <message>
+        <location filename="Navigation/ItemsOriginal.qml" line="20"/>
+        <source>Recommendation</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="Navigation/ItemsOriginal.qml" line="30"/>
+        <source>MyCollection</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="Navigation/ItemsOriginal.qml" line="40"/>
+        <source>Local</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="Navigation/ItemsOriginal.qml" line="50"/>
+        <source>AIRecom</source>
+        <translation type="unfinished"></translation>
+    </message>
 </context>
 <context>
     <name>TitleBar</name>
@@ -527,6 +554,22 @@
     <message>
         <location filename="page/TitleBar.qml" line="27"/>
         <source>Sticky on Top cancelled</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>favorite</name>
+    <message>
+        <location filename="Pages/favorite.qml" line="9"/>
+        <source>Favorite</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>home</name>
+    <message>
+        <location filename="Pages/home.qml" line="9"/>
+        <source>Home</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -607,6 +650,14 @@
     </message>
 </context>
 <context>
+    <name>local</name>
+    <message>
+        <location filename="Pages/local.qml" line="9"/>
+        <source>Local</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>main</name>
     <message>
         <source>nice</source>
@@ -627,18 +678,21 @@
         <translation type="obsolete">作者微信号: </translation>
     </message>
     <message>
-        <location filename="qml/main.qml" line="30"/>
-        <source>Fmusic</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="qml/main.qml" line="190"/>
+        <location filename="qml/main.qml" line="200"/>
         <source>登录成功</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="qml/main.qml" line="325"/>
-        <source>搜索音乐...</source>
+        <location filename="qml/main.qml" line="298"/>
+        <source>Search</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>recommendation</name>
+    <message>
+        <location filename="Pages/recommendation.qml" line="9"/>
+        <source>Recommendation</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

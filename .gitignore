@@ -5,9 +5,7 @@ vcpkg_installed/
 package/
 release/
 bin/
-CMakePresets.json
+build/
 CMakeUserPresets.json
-out/
-.vs/
 
 

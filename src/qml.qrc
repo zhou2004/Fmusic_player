@@ -7,6 +7,13 @@
         <file>qml/layout.qml</file>
         <file>qml/test.qml</file>
 
+        <file>Pages/favorite.qml</file>
+        <file>Pages/home.qml</file>
+        <file>Pages/local.qml</file>
+        <file>Pages/recommendation.qml</file>
+
+        <file>Navigation/ItemsFooter.qml</file>
+        <file>Navigation/ItemsOriginal.qml</file>
 
         <file>components/CodeExpander.qml</file>
         <file>components/RoundImage.qml</file>
