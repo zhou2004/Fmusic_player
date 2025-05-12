@@ -8,7 +8,7 @@ FluObject{
         id:nav_home
         title: qsTr("Home")
         icon: FluentIcons.Home
-        url: "qrc:/page/F_findmusic.qml"
+        url: "qrc:/navigationPage/home.qml"
         onTap: {
             navigationView.push(url)
         }
@@ -19,7 +19,7 @@ FluObject{
     id:nav_recommendation
     title:qsTr("Recommendation")
     icon: FluentIcons.Calendar
-    url: "qrc:/page/F_day_recommend.qml"
+    url: "qrc:/navigationPage/recommendation.qml"
     onTap: {
         navigationView.push(url)
     }
@@ -29,7 +29,7 @@ FluObject{
     id:nav_favorite
     title:qsTr("MyCollection")
     icon:FluentIcons.FavoriteStar
-    url: "qrc:/page/F_collect.qml"
+    url: "qrc:/navigationPage/favorite.qml"
     onTap: {
         navigationView.push(url)
     }
@@ -39,7 +39,7 @@ FluObject{
     id:nav_local
     title:qsTr("Local")
     icon:FluentIcons.Folder
-    url: "qrc:/page/F_localmusic.qml"
+    url: "qrc:/navigationPage/local.qml"
     onTap: {
         navigationView.push(url)
     }
@@ -49,7 +49,7 @@ FluObject{
         id:nav_ai_recom
         title:qsTr("AIRecom")
         icon:FluentIcons.Calories
-        url: "qrc:/page/F_ai_recommend.qml"
+        url: ""
         onTap: {
             navigationView.push(url)
         }
