@@ -31,8 +31,8 @@ find_package(taglib CONFIG REQUIRED)
 
 find_package(kissfft CONFIG REQUIRED)
 #寻找qt的依赖包
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Multimedia Bluetooth Network Gui Widgets Sql)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Multimedia Bluetooth Network Gui Widgets Sql)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Multimedia Bluetooth Network Gui Widgets Sql PrintSupport)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Multimedia Bluetooth Network Gui Widgets Sql PrintSupport)
 
 find_program(QT_LUPDATE NAMES lupdate)
 find_program(QT_LRELEASE NAMES lrelease)
@@ -103,6 +103,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Bluetooth
         Qt${QT_VERSION_MAJOR}::Sql
         Qt6::Widgets
+        Qt6::PrintSupport
         fluentuiplugin
 
 
@@ -200,10 +201,5 @@ if (CMAKE_BUILD_TYPE MATCHES "Release")
     endif ()
 endif ()
 
-#-DVCPKG_TARGET_TRIPLET=x64-mingw-dynamic
-#-DCMAKE_TOOLCHAIN_FILE=D:\CLion\vcpkg\scripts\buildsystems\vcpkg.cmake
-#-DVCPKG_INSTALLED_DIR=D:\pycharm\pythonProject\Fmusic_player\vcpkg_installed
-#-DVCPKG_MANIFEST_INSTALL=OFF
-#-DVCPKG_MANIFEST_MODE=OFF
 
 
