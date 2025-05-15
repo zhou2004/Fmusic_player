@@ -53,17 +53,17 @@ find_program(QT_LRELEASE NAMES lrelease)
 #        qml.qrc
 #)
 
-file(GLOB PROJECT_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/*.cpp
-        qml.qrc
-)
+# file(GLOB PROJECT_SOURCES
+#         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/*.cpp
+#         qml.qrc
+# )
 
-#设置信号与槽的控制类
-file(GLOB_RECURSE HEADERS
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/control/*.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/Decryptor/*.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/Sql/*.h
-)
+# #设置信号与槽的控制类
+# file(GLOB_RECURSE HEADERS
+#         ${CMAKE_CURRENT_SOURCE_DIR}/include/control/*.h
+#         ${CMAKE_CURRENT_SOURCE_DIR}/include/Decryptor/*.h
+#         ${CMAKE_CURRENT_SOURCE_DIR}/include/Sql/*.h
+# )
 
 
 #set(HEADERS
@@ -73,26 +73,19 @@ file(GLOB_RECURSE HEADERS
 
 qt6_wrap_cpp(MOC_SOURCES ${HEADERS})
 
-if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
-    qt_add_executable(${PROJECT_NAME}
+
+qt_add_executable(${PROJECT_NAME}
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         ${MOC_SOURCES}
         resource.rc
     )
-else()
-    add_executable(${PROJECT_NAME}
-        ${PROJECT_SOURCES}
-        ${MOC_SOURCES}
-        resource.rc
-    )
-endif()
 
 #add_dependencies(${PROJECT_NAME} Script-UpdateTranslations)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
         OpenSSL::SSL
-        OpenSSL::Crypto
+        # OpenSSL::Crypto
 
         #Qt库
         Qt6::Core
@@ -123,10 +116,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 
 )
 
-target_include_directories(${PROJECT_NAME} PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/control
-)
+# target_include_directories(${PROJECT_NAME} PRIVATE
+#         ${CMAKE_CURRENT_SOURCE_DIR}/include
+#         ${CMAKE_CURRENT_SOURCE_DIR}/include/control
+# )
 
 
 
@@ -154,9 +147,6 @@ if (WIN32)
 endif ()
 
 
-if(${QT_VERSION} VERSION_LESS 6.1.0)
-    set(BUNDLE_ID_OPTION MACOSX_BUNDLE_GUI_IDENTIFIER com.example.${PROJECT_NAME})
-endif()
 set_target_properties(${PROJECT_NAME} PROPERTIES
     ${BUNDLE_ID_OPTION}
     MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
@@ -170,10 +160,10 @@ install(TARGETS ${PROJECT_NAME}
     BUNDLE DESTINATION .
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-if(QT_VERSION_MAJOR EQUAL 6)
-    qt_import_qml_plugins(${PROJECT_NAME})
-    qt_finalize_executable(${PROJECT_NAME})
-endif()
+
+qt_import_qml_plugins(${PROJECT_NAME})
+qt_finalize_executable(${PROJECT_NAME})
+
 
 #添加部署脚本
 if (CMAKE_BUILD_TYPE MATCHES "Release")
