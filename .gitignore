@@ -1,4 +1,4 @@
-.idea
+.idea/
 cmake-build-debug/
 cmake-build-release/
 dist/
@@ -7,6 +7,3 @@ package/
 release/
 bin/
 build/
-CMakeUserPresets.json
-
-
