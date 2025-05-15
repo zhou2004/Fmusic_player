@@ -31,8 +31,8 @@
       "name": "mingw_win_64",
       "inherits": "Qt",
       "environment": {
-        "QT_ROOT": "F:/Program/Qt/6.8.1/mingw_64",
-        "VCPKG_ROOT": "F:/Program/Qt/Tools/vcpkg"
+        "QT_ROOT": "D:/Qt/6.8.1/mingw_64",
+        "VCPKG_ROOT": "D:/CLion/vcpkg"
       },
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "x64-mingw-dynamic",

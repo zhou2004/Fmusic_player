@@ -53,17 +53,17 @@ find_program(QT_LRELEASE NAMES lrelease)
 #        qml.qrc
 #)
 
-# file(GLOB PROJECT_SOURCES
-#         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/*.cpp
-#         qml.qrc
-# )
+ file(GLOB PROJECT_SOURCES
+         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/*.cpp
+         qml.qrc
+ )
 
-# #设置信号与槽的控制类
-# file(GLOB_RECURSE HEADERS
-#         ${CMAKE_CURRENT_SOURCE_DIR}/include/control/*.h
-#         ${CMAKE_CURRENT_SOURCE_DIR}/include/Decryptor/*.h
-#         ${CMAKE_CURRENT_SOURCE_DIR}/include/Sql/*.h
-# )
+ #设置信号与槽的控制类
+ file(GLOB_RECURSE HEADERS
+         ${CMAKE_CURRENT_SOURCE_DIR}/include/control/*.h
+         ${CMAKE_CURRENT_SOURCE_DIR}/include/Decryptor/*.h
+         ${CMAKE_CURRENT_SOURCE_DIR}/include/Sql/*.h
+ )
 
 
 #set(HEADERS
@@ -116,10 +116,10 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
 
 )
 
-# target_include_directories(${PROJECT_NAME} PRIVATE
-#         ${CMAKE_CURRENT_SOURCE_DIR}/include
-#         ${CMAKE_CURRENT_SOURCE_DIR}/include/control
-# )
+ target_include_directories(${PROJECT_NAME} PRIVATE
+         ${CMAKE_CURRENT_SOURCE_DIR}/include
+         ${CMAKE_CURRENT_SOURCE_DIR}/include/control
+ )
 
 
 

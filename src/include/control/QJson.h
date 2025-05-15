@@ -25,7 +25,7 @@ public:
     QJson() : manager(new QNetworkAccessManager(this)) {
         // 连接信号和槽
         // connect(manager, &QNetworkAccessManager::finished, this, &QJson::onFinished);
-        this->cookieValue = "Clion-328fd12f=ff2d3a54-a332-437f-9c19-d466eb8133f7; Clion-aa5a3901=40dc87a7-09ac-4f48-90f2-6d194e9f007a; zbx_session=eyJzZXNzaW9uaWQiOiJmY2Y0ODEwZjM3MGU3ZWIyZDYyOTUxMTg5NDA1YThjOSIsInNlcnZlckNoZWNrUmVzdWx0Ijp0cnVlLCJzZXJ2ZXJDaGVja1RpbWUiOjE3NDI0MzkwMzYsInNpZ24iOiI4Y2FlNGJmOTVhYjEzN2U1YzI1NzM4NmVmMDdlYmExNjI3MDc4ZjIyZjhiM2FmYjZiZjJkNDI0MzQ4YmZjNGVmIn0%3D; Idea-33ca3ab2=8faa4c4c-a4ff-45bf-ba49-38d505b847f5; KUGOU_API_PLATFORM=undefined; token=55e3003fdca031aa498d78dbb77aa942b7646808937d5f0ba54bac3445a6364f; userid=634877158; vip_type=6; vip_token=1605f1613cb551c1644e693872124e91; _tea_utm_cache_10000007=undefined"; // 替换为实际的Cookie值
+        this->cookieValue = "Clion-328fd12f=ff2d3a54-a332-437f-9c19-d466eb8133f7; Clion-aa5a3901=40dc87a7-09ac-4f48-90f2-6d194e9f007a; Idea-33ca3ab2=8faa4c4c-a4ff-45bf-ba49-38d505b847f5; KUGOU_API_PLATFORM=undefined; _tea_utm_cache_10000007=undefined; token=55e3003fdca031aa498d78dbb77aa94262aed977474b075bcbecb0322af6733d; userid=634877158; vip_type=6; vip_token=1605f1613cb551c1644e693872124e91"; // 替换为实际的Cookie值
         this->userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36 Edg/131.0.0.0"; // 替换为实际的user-agent值
 
     }
