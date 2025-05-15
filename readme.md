@@ -1,7 +1,12 @@
-## 此项目正在开发中!!!
-# 😶‍🌫️项目名称
+# FMusic：基于Qt的全平台音乐播放器
 
-基于qt的跨平台音乐播放器
+一款遵循FluentUI设计规范的跨平台音乐播放器，软件采用Qt Qml绘制界面，C++实现所有功能，理论上支持所有平台
+（Windows，MacOS，Linux，Android，IOS，Web）。
+
+> [!NOTE]
+> 目前正在开发中，很多功能还未完善。
+> 如果希望参与开发，请联系作者。
+
 
 # 💖项目背景
 
@@ -25,7 +30,7 @@
 克隆项目代码
 
 ```bash
-git clone git@gitee.com:zhou2004jj/fmusic_player.git
+git clone https://github.com/zhou2004/Fmusic_player.git
 ```
 
 进入项目目录
@@ -55,6 +60,52 @@ cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/path/to/ninja.exe -DCMAKE_C
 
 ```bash
 cmake --build ./cmake-build-debug --target all -j 10 #指定并行构建的线程数为10
+```
+
+如果构建环境为windows+mingw，也可以使用CMakeUserPresets.json来快速构建
+
+```json
+{
+  "version": 3,
+  "configurePresets": [
+    {
+      "name": "Qt-Debug",
+      "inherits": "Qt-Default",
+      "binaryDir": "${sourceDir}/build/debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_CXX_FLAGS": "-DQT_QML_DEBUG"
+      }
+    },
+    {
+      "name": "Qt-Release",
+      "inherits": "Qt-Default",
+      "binaryDir": "${sourceDir}/build/release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "hidden": true,
+      "name": "Qt-Default",
+      "inherits": "6.8.1_mingw_64"
+    },
+    {
+      "hidden": true,
+      "name": "6.8.1_mingw_64",
+      "inherits": "Qt",
+      "environment": {
+        "QT_DIR": "path to qt sdk",
+        "VCPKG_ROOT": "path to vcpkg"
+      },
+      "cacheVariables": {
+        "VCPKG_TARGET_TRIPLET": "x64-mingw-dynamic",
+        "VCPKG_HOST_TRIPLET":   "x64-mingw-dynamic"
+      },
+      "generator": "Ninja"
+    }
+  ]
+}
 ```
 
 # 🌟主要功能

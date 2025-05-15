@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(nice VERSION 0.1 LANGUAGES CXX)
+project(Fmusic VERSION 0.1 LANGUAGES CXX)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -31,21 +31,21 @@ find_package(taglib CONFIG REQUIRED)
 
 find_package(kissfft CONFIG REQUIRED)
 #寻找qt的依赖包
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Multimedia Bluetooth Network Gui Widgets Sql)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Multimedia Bluetooth Network Gui Widgets Sql)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Multimedia Bluetooth Network Gui Widgets Sql PrintSupport)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Multimedia Bluetooth Network Gui Widgets Sql PrintSupport)
 
 find_program(QT_LUPDATE NAMES lupdate)
 find_program(QT_LRELEASE NAMES lrelease)
-file(GLOB TS_FILE_PATHS ${CMAKE_CURRENT_LIST_DIR}/ *.ts)
-add_custom_target(Script-UpdateTranslations
-    COMMAND ${QT_LUPDATE} ${CMAKE_CURRENT_LIST_DIR} -ts ${PROJECT_NAME}_en_US.ts WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-    COMMAND ${QT_LUPDATE} ${CMAKE_CURRENT_LIST_DIR} -ts ${PROJECT_NAME}_zh_CN.ts WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-    COMMAND ${QT_LRELEASE} ${PROJECT_NAME}_en_US.ts WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-    COMMAND ${QT_LRELEASE} ${PROJECT_NAME}_zh_CN.ts WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${APPLICATION_DIR_PATH}/i18n
-    COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_NAME}_en_US.qm ${PROJECT_NAME}_zh_CN.qm ${APPLICATION_DIR_PATH}/i18n
-    SOURCES ${TS_FILE_PATHS}
-)
+# file(GLOB TS_FILE_PATHS ${CMAKE_CURRENT_LIST_DIR}/ *.ts)
+# add_custom_target(Script-UpdateTranslations
+#     COMMAND ${QT_LUPDATE} ${CMAKE_CURRENT_LIST_DIR} -ts ${PROJECT_NAME}_en_US.ts WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+#     COMMAND ${QT_LUPDATE} ${CMAKE_CURRENT_LIST_DIR} -ts ${PROJECT_NAME}_zh_CN.ts WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+#     COMMAND ${QT_LRELEASE} ${PROJECT_NAME}_en_US.ts WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+#     COMMAND ${QT_LRELEASE} ${PROJECT_NAME}_zh_CN.ts WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR}
+#     COMMAND ${CMAKE_COMMAND} -E make_directory ${APPLICATION_DIR_PATH}/i18n
+#     COMMAND ${CMAKE_COMMAND} -E copy ${PROJECT_NAME}_en_US.qm ${PROJECT_NAME}_zh_CN.qm ${APPLICATION_DIR_PATH}/i18n
+#     SOURCES ${TS_FILE_PATHS}
+# )
 
 #set(PROJECT_SOURCES
 #        cpp/*.cpp
@@ -88,7 +88,7 @@ else()
     )
 endif()
 
-add_dependencies(${PROJECT_NAME} Script-UpdateTranslations)
+#add_dependencies(${PROJECT_NAME} Script-UpdateTranslations)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
         OpenSSL::SSL
@@ -103,6 +103,7 @@ target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt${QT_VERSION_MAJOR}::Bluetooth
         Qt${QT_VERSION_MAJOR}::Sql
         Qt6::Widgets
+        Qt6::PrintSupport
         fluentuiplugin
 
 
@@ -200,10 +201,5 @@ if (CMAKE_BUILD_TYPE MATCHES "Release")
     endif ()
 endif ()
 
-#-DVCPKG_TARGET_TRIPLET=x64-mingw-dynamic
-#-DCMAKE_TOOLCHAIN_FILE=D:\CLion\vcpkg\scripts\buildsystems\vcpkg.cmake
-#-DVCPKG_INSTALLED_DIR=D:\pycharm\pythonProject\Fmusic_player\vcpkg_installed
-#-DVCPKG_MANIFEST_INSTALL=OFF
-#-DVCPKG_MANIFEST_MODE=OFF
 
 

@@ -16,14 +16,12 @@ FluLauncher {
         FluApp.useSystemAppBar = false
 
         // 设置窗口的图标
-        FluApp.windowIcon = "qrc:/logo.ico"
+        FluApp.windowIcon = "qrc:/assets/logo.ico"
 
 
         // 核心控件，路由注册：
         FluRouter.routes = {
-            "/":"qrc:/qml/main.qml",
-            "/layout":"qrc:/qml/layout.qml",
-            "/test":"qrc:/qml/test.qml",
+            "/":"qrc:/main/main.qml",
         }
 
         // 跳转路由到 / ，即加载 main.qml

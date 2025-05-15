@@ -1,3 +1,4 @@
+.idea
 cmake-build-debug/
 cmake-build-release/
 dist/
@@ -5,4 +6,7 @@ vcpkg_installed/
 package/
 release/
 bin/
+build/
+CMakeUserPresets.json
+
 

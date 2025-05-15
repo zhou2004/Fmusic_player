@@ -1,0 +1,382 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="BackendCodeEditorMiscSettings">
+    <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
+    <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
+    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="3" type="long" />
+    <option name="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue" value="CppCodeGeneration" type="string" />
+  </component>
+  <component name="CMakePresetLoader">{
+  &quot;useNewFormat&quot;: true
+}</component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated>
+      <config projectName="nice" targetName="nice_qmlimportscan" />
+      <config projectName="nice" targetName="fluentuiplugin_tooling" />
+      <config projectName="nice" targetName="Script-UpdateTranslations" />
+      <config projectName="nice" targetName="all_qmllint_json" />
+      <config projectName="nice" targetName="Fmusic_qmlimportscan" />
+      <config projectName="nice" targetName="Fmusic" />
+      <config projectName="nice" targetName="all_qmltyperegistrations" />
+      <config projectName="nice" targetName="module_fluentuiplugin_aotstats_target" />
+      <config projectName="nice" targetName="all_qmllint" />
+      <config projectName="nice" targetName="fluentuiplugin_qmllint_json" />
+      <config projectName="nice" targetName="fluentuiplugin_qmllint_module" />
+      <config projectName="nice" targetName="fluentuiplugin_qmltyperegistration" />
+      <config projectName="nice" targetName="nice" />
+      <config projectName="nice" targetName="fluentuiplugin_qmllint" />
+      <config projectName="nice" targetName="all_qmllint_module" />
+      <config projectName="nice" targetName="all_aotstats" />
+      <config projectName="nice" targetName="fluentuiplugin" />
+    </generated>
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DVCPKG_TARGET_TRIPLET=x64-mingw-dynamic -DCMAKE_TOOLCHAIN_FILE=D:\CLion\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_INSTALLED_DIR=D:\pycharm\pythonProject\Fmusic_player\vcpkg_installed -DVCPKG_MANIFEST_INSTALL=OFF -DVCPKG_MANIFEST_MODE=OFF" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="d26da56a-136f-4151-aca2-1a2a6b2d6044" name="Changes" comment="update readme">
+      <change afterPath="$PROJECT_DIR$/.github/workflows/sync_to_gitee.yml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/CMakePresets.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/assets/defaultAlbum.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/bottomBar.qml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/main.qml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/navigation/ItemsFooter.qml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/navigation/ItemsOriginal.qml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/navigationPage/favorite.qml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/navigationPage/home.qml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/navigationPage/local.qml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/navigationPage/recommendation.qml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.cmake/InstallerScript.iss.in" beforeDir="false" afterPath="$PROJECT_DIR$/.cmake/InstallerScript.iss.in" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.name" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/QtSettings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/dataSources.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/qmlSettings.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/FluentUI/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/FluentUI/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/readme.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/App.qml" beforeDir="false" afterPath="$PROJECT_DIR$/src/App.qml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/SrollText.qml" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/SrollText.qml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/global/GlobalModel.qml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/global/ItemsFooter.qml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/global/ItemsOriginal.qml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/global/qmldir" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/logo.ico" beforeDir="false" afterPath="$PROJECT_DIR$/src/assets/logo.ico" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nice_en_US.qm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nice_en_US.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nice_zh_CN.qm" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/nice_zh_CN.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/page/About.qml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/page/F_FindMusicPlayList.qml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/page/F_FindNewMusic.qml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/page/F_PlayList_detail.qml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/page/F_findmusic.qml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/page/F_localmusic.qml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/page/F_play_queue.qml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/page/Music_detail_krc.qml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/page/Music_detail_lrc.qml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/page/TitleBar.qml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/qml.qrc" beforeDir="false" afterPath="$PROJECT_DIR$/src/qml.qrc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/qml/layout.qml" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigationPage/userLogin.qml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/qml/main.qml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/qml/test.qml" beforeDir="false" afterPath="$PROJECT_DIR$/src/musicPage/dynamicSpectrum.qml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/vcpkg.json" beforeDir="false" afterPath="$PROJECT_DIR$/vcpkg.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$PROJECT_DIR$/src/qml/main.qml" root0="SKIP_INSPECTION" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2025" />
+    <option name="minorVersion" value="1" />
+    <option name="productBranch" value="Classic" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 4
+}</component>
+  <component name="ProjectId" id="2wg07ycZw9fZSI1IBSb4jOznNYI" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;CMake Application.Fmusic.executor&quot;: &quot;Debug&quot;,
+    &quot;CMake Application.Fmusic_qmlimportscan.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Application.nice.executor&quot;: &quot;Run&quot;,
+    &quot;CMake Debug.FMusic.executor&quot;: &quot;Debug&quot;,
+    &quot;CMake Debug.Project.executor&quot;: &quot;Debug&quot;,
+    &quot;CMake 应用程序.Fmusic.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.west.config.association.type.startup.service&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
+    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;正在合并 FeelLiao-FluentUIdev&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/FeelLiao/Cpp/Fmusic_player&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;CMakeSettings&quot;,
+    &quot;ts.external.directory.path&quot;: &quot;D:\\CLion\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\FeelLiao\Cpp\Fmusic_player\src\in18" />
+      <recent name="D:\FeelLiao\Cpp\Fmusic_player\src\assets" />
+      <recent name="D:\FeelLiao\Cpp\Fmusic_player\src\navigationPage" />
+      <recent name="D:\FeelLiao\Cpp\Fmusic_player\src\page" />
+      <recent name="D:\FeelLiao\Cpp\Fmusic_player\src\navigations" />
+    </key>
+  </component>
+  <component name="RunManager" selected="CMake 应用程序.Fmusic">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Fmusic" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="Fmusic" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="FMusic" RUN_TARGET_NAME="Fmusic">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Fmusic_qmlimportscan" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="Fmusic_qmlimportscan" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="all_aotstats" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="all_aotstats" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="all_qmllint" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="all_qmllint" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="all_qmllint_json" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="all_qmllint_json" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="all_qmllint_module" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="all_qmllint_module" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="all_qmltyperegistrations" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="all_qmltyperegistrations" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="fluentuiplugin" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="fluentuiplugin" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="fluentuiplugin_qmllint" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="fluentuiplugin_qmllint" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="fluentuiplugin_qmllint_json" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="fluentuiplugin_qmllint_json" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="fluentuiplugin_qmllint_module" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="fluentuiplugin_qmllint_module" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="fluentuiplugin_qmltyperegistration" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="fluentuiplugin_qmltyperegistration" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="fluentuiplugin_tooling" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="fluentuiplugin_tooling" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="module_fluentuiplugin_aotstats_target" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="module_fluentuiplugin_aotstats_target" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="CMake 应用程序.fluentuiplugin" />
+      <item itemvalue="CMake 应用程序.fluentuiplugin_tooling" />
+      <item itemvalue="CMake 应用程序.Fmusic" />
+      <item itemvalue="CMake 应用程序.all_qmllint" />
+      <item itemvalue="CMake 应用程序.all_qmllint_json" />
+      <item itemvalue="CMake 应用程序.all_qmllint_module" />
+      <item itemvalue="CMake 应用程序.all_aotstats" />
+      <item itemvalue="CMake 应用程序.all_qmltyperegistrations" />
+      <item itemvalue="CMake 应用程序.fluentuiplugin_qmllint" />
+      <item itemvalue="CMake 应用程序.fluentuiplugin_qmllint_json" />
+      <item itemvalue="CMake 应用程序.fluentuiplugin_qmllint_module" />
+      <item itemvalue="CMake 应用程序.fluentuiplugin_qmltyperegistration" />
+      <item itemvalue="CMake 应用程序.Fmusic_qmlimportscan" />
+      <item itemvalue="CMake 应用程序.module_fluentuiplugin_aotstats_target" />
+    </list>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="d26da56a-136f-4151-aca2-1a2a6b2d6044" name="Changes" comment="" />
+      <created>1746447746270</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1746447746270</updated>
+      <workItem from="1746447747293" duration="668000" />
+      <workItem from="1746448433019" duration="804000" />
+      <workItem from="1746449326678" duration="106000" />
+      <workItem from="1746449523730" duration="77000" />
+      <workItem from="1746449618656" duration="1680000" />
+      <workItem from="1746451325396" duration="1259000" />
+      <workItem from="1746456205223" duration="1190000" />
+      <workItem from="1746498811989" duration="3621000" />
+      <workItem from="1746503472029" duration="1043000" />
+      <workItem from="1746504539241" duration="283000" />
+      <workItem from="1746504864787" duration="438000" />
+      <workItem from="1746505315139" duration="11000" />
+      <workItem from="1746507003888" duration="2585000" />
+      <workItem from="1746512683899" duration="8775000" />
+      <workItem from="1746521539369" duration="26000" />
+      <workItem from="1746521574356" duration="749000" />
+      <workItem from="1746537852729" duration="5214000" />
+      <workItem from="1746705662008" duration="462000" />
+      <workItem from="1746786908987" duration="393000" />
+      <workItem from="1746787763967" duration="3436000" />
+      <workItem from="1746967215341" duration="1344000" />
+      <workItem from="1746968734407" duration="318000" />
+      <workItem from="1746969066743" duration="622000" />
+      <workItem from="1747040092148" duration="583000" />
+      <workItem from="1747055725575" duration="1383000" />
+      <workItem from="1747057667835" duration="2000" />
+      <workItem from="1747058469969" duration="8000" />
+      <workItem from="1747061357084" duration="34000" />
+      <workItem from="1747061787412" duration="4000" />
+      <workItem from="1747103172280" duration="5187000" />
+      <workItem from="1747123685736" duration="1817000" />
+      <workItem from="1747128631375" duration="2321000" />
+      <workItem from="1747130977466" duration="347000" />
+      <workItem from="1747135433693" duration="3055000" />
+      <workItem from="1747144152116" duration="475000" />
+      <workItem from="1747145153045" duration="17000" />
+      <workItem from="1747145180115" duration="14000" />
+      <workItem from="1747146057514" duration="914000" />
+      <workItem from="1747314173284" duration="821000" />
+    </task>
+    <task id="LOCAL-00001" summary="change look to fluentui, optimise project structure.">
+      <option name="closed" value="true" />
+      <created>1746521316093</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1746521316093</updated>
+    </task>
+    <task id="LOCAL-00002" summary="change look to fluentui, optimise project structure.">
+      <option name="closed" value="true" />
+      <created>1746521339587</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1746521339587</updated>
+    </task>
+    <task id="LOCAL-00003" summary="exclude .idea">
+      <option name="closed" value="true" />
+      <created>1746521650807</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1746521650807</updated>
+    </task>
+    <task id="LOCAL-00004" summary="update readme">
+      <option name="closed" value="true" />
+      <created>1746521965440</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1746521965440</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VCPKGProject">
+    <isAutomaticCheckingOnLaunch value="false" />
+    <isAutomaticFoundErrors value="true" />
+    <isAutomaticReloadCMake value="true" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="change look to fluentui, optimise project structure." />
+    <MESSAGE value="exclude .idea" />
+    <MESSAGE value="update readme" />
+    <option name="LAST_COMMIT_MESSAGE" value="update readme" />
+  </component>
+  <component name="XDebuggerManager">
+    <watches-manager>
+      <configuration name="CMakeListConfigurationType">
+        <watch expression="ANDROID" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>

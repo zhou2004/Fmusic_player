@@ -1,37 +1,27 @@
 <RCC>
     <qresource prefix="/">
-        <file>logo.ico</file>
         <file>App.qml</file>
 
-        <file>qml/main.qml</file>
-        <file>qml/layout.qml</file>
-        <file>qml/test.qml</file>
+        <file>assets/logo.ico</file>
+        <file>assets/defaultAlbum.jpg</file>
 
+        <file>main/main.qml</file>
+        <file>main/bottomBar.qml</file>
+
+        <file>navigationPage/favorite.qml</file>
+        <file>navigationPage/home.qml</file>
+        <file>navigationPage/local.qml</file>
+        <file>navigationPage/recommendation.qml</file>
+        <file>navigationPage/userLogin.qml</file>
+
+        <file>navigation/ItemsFooter.qml</file>
+        <file>navigation/ItemsOriginal.qml</file>
 
         <file>components/CodeExpander.qml</file>
         <file>components/RoundImage.qml</file>
         <file>components/MyComponent.qml</file>
         <file>components/SrollText.qml</file>
         <file>components/RandomSelector.qml</file>
-        <file>page/Music_detail_lrc.qml</file>
-        <file>page/Music_detail_krc.qml</file>
-        <file>page/TitleBar.qml</file>
-        <file>page/About.qml</file>
-        <file>page/F_localmusic.qml</file>
-        <file>page/F_findmusic.qml</file>
-        <file>page/F_FindNewMusic.qml</file>
-        <file>page/F_FindMusicPlayList.qml</file>
-        <file>page/F_PlayList_detail.qml</file>
-        <file>page/F_play_queue.qml</file>
-        <file>page/F_search_detail.qml</file>
-        <file>page/F_collect.qml</file>
-        <file>page/F_day_recommend.qml</file>
-        <file>page/F_ai_recommend.qml</file>
-
-
-        <file>global/GlobalModel.qml</file>
-        <file>global/ItemsFooter.qml</file>
-        <file>global/ItemsOriginal.qml</file>
 
         <file>Images/addPlayList.svg</file>
         <file>Images/AscendingOrder.svg</file>
@@ -59,14 +49,11 @@
         <file>Images/stop.svg</file>
         <file>Images/volume.svg</file>
         <file>Images/volumeMute.svg</file>
-
         <file>Images/background.png</file>
         <file>Images/rebot.png</file>
         <file>Images/day_recommend.png</file>
         <file>Images/title.png</file>
-
         <file>Images/头像.jpg</file>
-
         <file>Images/Splash_Screen_First_Closed_Beta.png</file>
         <file>Images/go_star.jpeg</file>
         <file>Images/tianjing.jpeg</file>
