@@ -33,7 +33,7 @@ FluWindow {
     //window blur effect
     //TODO: set on only on windows platform
     Component.onCompleted: {
-        FluTheme.blurBehindWindowEnabled = true
+        FluTheme.blurBehindWindowEnabled = false
     }
 
 
