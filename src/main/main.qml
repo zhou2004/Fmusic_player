@@ -5,7 +5,6 @@ import FluentUI 1.0
 import QtQuick.Layouts 1.15
 import QtMultimedia
 import Qt.labs.platform 1.1
-import CustomTypes 1.0
 import "../navigation"
 
 FluWindow {
