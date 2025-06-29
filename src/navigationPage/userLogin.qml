@@ -2,184 +2,140 @@ import QtQuick 2.15
 import FluentUI 1.0
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import CustomTypes 1.0
+
 FluWindow {
-    id: root
-    width: 500
-    height: 400
+    id: loginWindow
+    width: 300
+    height: 340
     visible: true
-    title: qsTr("登录")
+    title: qsTr("User Login")
     minimumWidth: width
     maximumWidth: width
     minimumHeight: height
     maximumHeight: height
-    modality: Qt.ApplicationModal  // 阻塞整个应用程序的所有窗口[^9^][^10^]
+    modality: Qt.ApplicationModal // 阻塞整个应用程序的所有窗口[^9^][^10^]
 
-    // Fluent UI 风格颜色定义
-    property color primaryColor: "#0078D4"
-    property color textColor: "#323130"
-    property color subtleColor: "#605E5C"
-    property color borderColor: "#EDEBE9"
-    property color errorColor: "#A4262C"
+    property string loginQRCodeLink: "https://example.com/login-qr-code" // 二维码登录的链接
 
+    ColumnLayout {
+        anchors.centerIn: parent
+        width: parent.width * 0.8
 
-    property UserFullInfo is_login
-    property bool is_regist: false
+        Item {
+            Layout.fillWidth: true
+            Layout.preferredHeight: 20 // 占位符，用于顶部标题的布局
+        }
 
-    Rectangle {
-        anchors.fill:  parent
-        color: "#FAF9F8"  // Fluent UI 背景色
+        // 顶部标题
+        FluText {
+            text: qsTr("Login")
+            id: loginTitle
+            font.pixelSize: 24
+            font.weight: Font.Medium
+            Layout.alignment: Qt.AlignLeft
+            Layout.bottomMargin: 5
+        }
 
-        ColumnLayout {
-            anchors.centerIn:  parent
-            width: parent.width  * 0.8
-            spacing: 20
+        FluPivot {
+            Layout.fillWidth: true
+            Layout.fillHeight: true
+            font.pixelSize: 14
+            id: loginPivot
 
-            // 标题
-            Text {
-                text: qsTr("欢迎登录")
-                font.pixelSize:  24
-                font.weight:  Font.Medium
-                color: textColor
-                Layout.alignment:  Qt.AlignHCenter
-                Layout.bottomMargin:  30
-            }
+            // 手机号登录界面
+            FluPivotItem {
+                id: phoneLoginItem
+                title: qsTr("Phone")
+                contentItem: Column {
+                    spacing: 10
+                    topPadding: 10
 
-            // 用户名输入框
-            ColumnLayout {
-                spacing: 5
-                Layout.fillWidth:  true
+                    // 手机号输入框
+                    Row {
+                        width: parent.width
+                        spacing: 5
 
-                Text {
-                    text: qsTr("用户名")
-                    font.pixelSize:  14
-                    color: textColor
-                }
+                        FluTextBox {
+                            id: phoneNumBox
+                            placeholderText: qsTr("Phone Number")
+                            width: parent.width - phoneVarButton.width - 5
+                        }
 
-                TextField {
-                    id: usernameField
-                    placeholderText: qsTr("请输入用户名")
-                    Layout.fillWidth:  true
-                    font.pixelSize:  14
-                    color: textColor
-                    background: Rectangle {
-                        radius: 2
-                        border.color:  usernameField.activeFocus  ? primaryColor : borderColor
-                        border.width:  1
+                        FluFilledButton {
+                            id: phoneVarButton
+                            text: qsTr("Send")
+                            height: phoneNumBox.height
+                            width: 60
+                        }
                     }
 
-                    Keys.onPressed: {
-                        if (event.key === Qt.Key_Enter || event.key === Qt.Key_Return) {
-                            // 触发按下 Enter 键的事件
-                            console.log(usernameField.text)
-                            // performSearch(searchBox.text) // 调用搜索函数
-                            event.accepted = true // 阻止事件进一步传播
+                    // 验证码输入框
+                    FluPasswordBox {
+                        id: passwordBox
+                        placeholderText: qsTr("varification Code")
+                        anchors.horizontalCenter: parent.horizontalCenter
+                        width: parent.width
+                    }
+
+                    // 登录协议提示
+                    FluText {
+                        text: qsTr("Logging in means you agree to the privacy policy")
+                        font.pixelSize: 10
+                    }
+
+                    RowLayout {
+                        Layout.alignment: Qt.AlignHCenter
+                        spacing: 20
+
+                        // 登录按钮
+                        FluFilledButton {
+                            id: loginButton
+                            text: qsTr("Login")
+                        }
+
+                        // 取消按钮
+                        FluButton {
+                            id: loginPageCancelButton
+                            text: qsTr("Cancel")
+                            onClicked: {
+                                loginWindow.close()
+                            }
                         }
                     }
                 }
             }
 
-            // 密码输入框
-            ColumnLayout {
-                spacing: 5
-                Layout.fillWidth:  true
+            // 二维码登录界面
+            FluPivotItem {
+                id: qrCodeLoginItem
+                title: qsTr("QRCode")
+                contentItem: Column {
+                    spacing: 10
+                    topPadding: 10
 
-                Text {
-                    text: qsTr("密码")
-                    font.pixelSize:  14
-                    color: textColor
-                }
-
-                TextField {
-                    id: passwordField
-                    placeholderText: qsTr("请输入密码")
-                    Layout.fillWidth:  true
-                    echoMode: TextInput.Password
-                    font.pixelSize:  14
-                    color: textColor
-                    background: Rectangle {
-                        radius: 2
-                        border.color:  passwordField.activeFocus  ? primaryColor : borderColor
-                        border.width:  1
-                    }
-                }
-            }
-
-            // 登录按钮
-            Button {
-                id: loginButton
-                text: qsTr("登录")
-                Layout.fillWidth:  true
-                Layout.topMargin:  20
-                contentItem: Text {
-                    text: loginButton.text
-                    font.pixelSize:  14
-                    color: "white"
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-                background: Rectangle {
-                    radius: 2
-                    color: primaryColor
-                }
-
-                onClicked: {
-                    // 这里添加登录逻辑
-                    is_login = musicPlayer.login_user(usernameField.text,passwordField.text)
-                    if(is_login.nickname) {
-                        showSuccess(qsTr("登录成功"))
-                        //----等待一秒
-                        Window.window.close()
-                    }else {
-                        showError(qsTr("登录失败"))
+                    FluQRCode {
+                        color: "black"
+                        id: loginQRCode
+                        text: loginQRCodeLink
+                        size: 140
+                        anchors.horizontalCenter: parent.horizontalCenter
                     }
 
-
-
-                }
-            }
-
-            Button {
-                id: registButton
-                text: qsTr("注册")
-                Layout.fillWidth:  true
-                Layout.topMargin:  20
-                contentItem: Text {
-                    text: registButton.text
-                    font.pixelSize:  14
-                    color: "white"
-                    horizontalAlignment: Text.AlignHCenter
-                    verticalAlignment: Text.AlignVCenter
-                }
-                background: Rectangle {
-                    radius: 2
-                    color: primaryColor
-                }
-
-                onClicked: {
-                    // 这里添加登录逻辑
-                    is_regist = musicPlayer.regist_user(usernameField.text,passwordField.text)
-                    if(is_regist) {
-                        showSuccess(qsTr("注册成功"))
-                        console.log(" 用户名:", usernameField.text)
-                        console.log(" 密码:", passwordField.text)
-                    }else{
-                        showError(qsTr("注册失败"))
+                    FluText {
+                        text: qsTr("Scan the QR code to login")
+                        font.pixelSize: 13
+                        anchors.left: loginQRCode.left
                     }
 
-
+                    FluButton {
+                        text: qsTr("Refresh")
+                        anchors.left: loginQRCode.left
+                        onClicked: {
+                            // 这里可以添加刷新二维码的逻辑
+                            console.log("QR Code refreshed")
+                        }
+                    }
                 }
-            }
-
-            // 底部提示文本
-            Text {
-                text: qsTr("Fmusic_Login_Regist")
-                anchors.bottom:parent.bottom
-                anchors.bottomMargin:10
-                font.pixelSize:  12
-                color: subtleColor
-                Layout.alignment:  Qt.AlignHCenter
-                Layout.topMargin:  30
             }
         }
     }

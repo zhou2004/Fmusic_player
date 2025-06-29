@@ -2,7 +2,8 @@
     <qresource prefix="/">
         <file>App.qml</file>
 
-        <file>assets/logo.ico</file>
+        <file>assets/icon_256.ico</file>
+        <file>assets/icon_512.ico</file>
         <file>assets/defaultAlbum.jpg</file>
 
         <file>main/main.qml</file>

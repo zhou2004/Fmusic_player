@@ -43,7 +43,7 @@ FluWindow {
         width: parent.width
         anchors.top: parent.top
         title: "FMusic"
-        logo: "qrc:/assets/logo.ico"
+        logo: "qrc:/assets/icon_256.ico"
         z:9
         pageMode: FluNavigationViewType.NoStack
 
@@ -84,4 +84,3 @@ FluWindow {
 
 
 }
-
