@@ -17,10 +17,23 @@ else()
     set(APPLICATION_DIR_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 endif()
 
+# 查找 zlib 库
+find_package(ZLIB REQUIRED)
+
+# 查找 OpenSSL
+find_package(OpenSSL REQUIRED)
+
+#寻找rapidjson库  json解析器
+find_package(rapidjson CONFIG REQUIRED)
+
+#寻找taglib依赖包
+find_package(taglib CONFIG REQUIRED)
+
+find_package(kissfft CONFIG REQUIRED)
 
 #寻找qt的依赖包
-find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Multimedia Bluetooth Network Gui Widgets Sql PrintSupport)
-find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Multimedia Bluetooth Network Gui Widgets Sql PrintSupport)
+find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Core Quick Multimedia Bluetooth Network Gui Widgets Sql)
+find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Quick Multimedia Bluetooth Network Gui Widgets Sql)
 
 find_program(QT_LUPDATE NAMES lupdate)
 find_program(QT_LRELEASE NAMES lrelease)
@@ -54,29 +67,45 @@ find_program(QT_LRELEASE NAMES lrelease)
          ${CMAKE_CURRENT_SOURCE_DIR}/include/Sql/*.h
  )
 
-
-
-file(GLOB PROJECT_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/main.cpp
-        qml.qrc
-)
-
+qt6_wrap_cpp(MOC_SOURCES ${HEADERS})
 
 qt_add_executable(${PROJECT_NAME}
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
+        ${MOC_SOURCES}
         resource.rc
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE
+        OpenSSL::SSL
+        OpenSSL::Crypto
+
         #Qt库
         Qt6::Core
         Qt${QT_VERSION_MAJOR}::Quick
         Qt6::Gui
         Qt6::Network
         Qt${QT_VERSION_MAJOR}::Multimedia
+        Qt${QT_VERSION_MAJOR}::Bluetooth
+        Qt${QT_VERSION_MAJOR}::Sql
         Qt6::Widgets
         fluentuiplugin
+
+
+        #taglib库
+        TagLib::tag
+        TagLib::tag_c
+        TagLib::TagLib
+
+
+        #rapidjson库
+        rapidjson
+
+        kissfft::kissfft-float
+        kissfft::kissfft-double
+
+        ${ZLIB_LIBRARIES}
+
 )
 
 

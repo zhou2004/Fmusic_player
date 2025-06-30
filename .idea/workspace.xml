@@ -7,9 +7,9 @@
     <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
     <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="3" type="long" />
     <option name="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue" value="CppCodeGeneration" type="string" />
-    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
   </component>
   <component name="CMakePresetLoader">{
   &quot;useNewFormat&quot;: true
@@ -47,10 +47,14 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d26da56a-136f-4151-aca2-1a2a6b2d6044" name="Changes" comment="feelt 进行的更改">
-      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
+    <list default="true" id="d26da56a-136f-4151-aca2-1a2a6b2d6044" name="Changes" comment="userlogin">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cpp/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/cpp/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/control/MusicPlayer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/control/MusicPlayer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/control/QJson.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/control/QJson.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigationPage/userLogin.qml" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigationPage/userLogin.qml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/qml.qrc" beforeDir="false" afterPath="$PROJECT_DIR$/src/qml.qrc" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -61,6 +65,13 @@
     <option name="formatViaClangd" value="false" />
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="CMakeBuildProfile:Debug" />
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="JavaScript File" />
+      </list>
+    </option>
+  </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
@@ -112,7 +123,7 @@
     "CMake Application.nice.executor": "Run",
     "CMake Debug.FMusic.executor": "Debug",
     "CMake Debug.Project.executor": "Debug",
-    "CMake 应用程序.Fmusic.executor": "Run",
+    "CMake 应用程序.Fmusic.executor": "Debug",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.RadMigrateCodeStyle": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -125,7 +136,7 @@
     "cidr.known.project.marker": "true",
     "git-widget-placeholder": "dev",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "D:/pycharm/pythonProject/Fmusic_player",
+    "last_opened_file_path": "D:/pycharm/pythonProject/test/Fmusic_player",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -134,6 +145,11 @@
     "settings.editor.selected.configurable": "language.qml",
     "ts.external.directory.path": "D:\\CLion\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
     "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql"
+    ]
   }
 }]]></component>
   <component name="RecentsManager">
@@ -146,17 +162,17 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake 应用程序.Fmusic">
-    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
-      <method v="2">
-        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="Fmusic" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="Fmusic" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="FMusic" RUN_TARGET_NAME="Fmusic">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
     </configuration>
     <configuration name="Fmusic_qmlimportscan" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="Fmusic_qmlimportscan" CONFIG_NAME="Debug">
+      <method v="2">
+        <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
       </method>
@@ -352,7 +368,15 @@
       <option name="project" value="LOCAL" />
       <updated>1747578754351</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="userlogin">
+      <option name="closed" value="true" />
+      <created>1751266537334</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1751266537334</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -381,7 +405,8 @@
     <MESSAGE value="Change mainwindow to FluentUI look except button bar.&#10;Optimise project structure." />
     <MESSAGE value="Change to CMakeLists.txt" />
     <MESSAGE value="feelt 进行的更改" />
-    <option name="LAST_COMMIT_MESSAGE" value="feelt 进行的更改" />
+    <MESSAGE value="userlogin" />
+    <option name="LAST_COMMIT_MESSAGE" value="userlogin" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

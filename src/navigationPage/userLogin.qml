@@ -2,7 +2,7 @@ import QtQuick 2.15
 import FluentUI 1.0
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-
+import "../js/myjs.js" as MyJS
 FluWindow {
     id: loginWindow
     width: 300
@@ -66,6 +66,27 @@ FluWindow {
                             text: qsTr("Send")
                             height: phoneNumBox.height
                             width: 60
+                            enabled: true // 初始状态为可点击
+
+                            onClicked: {
+                                qjson.send_kugou_checkcode(phoneNumBox.text);
+                                MyJS.myFunc1();
+                                MyJS.myFunc2();
+
+                                // 禁用按钮并启动计时器
+                                phoneVarButton.enabled = false;
+                                timer.start();
+                            }
+                        }
+
+                        Timer {
+                            id: timer
+                            interval: 60000 // 60秒
+                            repeat: false
+                            onTriggered: {
+                                // 60秒后恢复按钮状态
+                                phoneVarButton.enabled = true;
+                            }
                         }
                     }
 
@@ -91,6 +112,13 @@ FluWindow {
                         FluFilledButton {
                             id: loginButton
                             text: qsTr("Login")
+                            onClicked: {
+                                console.log(phoneNumBox.text, passwordBox.text);
+                                qjson.verify_checkcode(phoneNumBox.text,passwordBox.text);
+                                // MyJS.myFunc1();
+                                // MyJS.myFunc2();
+                            }
+
                         }
 
                         // 取消按钮

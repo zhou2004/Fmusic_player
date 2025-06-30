@@ -63,5 +63,7 @@
         <file>Images/yunshang.jpeg</file>
         <file>Images/yunshang2.jpeg</file>
 
+        <file>js/myjs.js</file>
+
     </qresource>
 </RCC>

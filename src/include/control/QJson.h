@@ -18,6 +18,7 @@
 #include <QNetworkCookie>
 
 #include "Decryptor/KRCDecryptor.h"
+#define TOKEN_PATH "./token.json"
 
 class QJson  : public QObject {
     Q_OBJECT
@@ -72,6 +73,103 @@ public:
         }else {
             reply->deleteLater();
             return QJsonDocument();
+        }
+    }
+
+
+    Q_INVOKABLE void verify_checkcode(const QString mobile_phone, const QString checkcode) {
+        QNetworkAccessManager manager;
+        QString seach_api = kugou_url + "/login/cellphone?mobile=%0&code=%1";
+        QString url = seach_api.arg(mobile_phone).arg(checkcode);
+        QNetworkReply* reply = manager.get(QNetworkRequest(QUrl(url)));
+
+        QEventLoop loop;
+        QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();
+
+        if (reply->error() == QNetworkReply::NoError) {
+            // 读取响应数据
+            QByteArray responseData = reply->readAll();
+            writeDataToFile(responseData);
+        }
+        else {
+            qDebug() << "Error sending check code:" << reply->errorString();
+        }
+    }
+
+
+
+
+    void writeDataToFile(const QString &data) {
+        // 将 QString 转换为标准字符串
+        std::string stdFilePath = TOKEN_PATH;
+        std::string stdData = data.toStdString();
+
+        // 打开文件以写入
+        std::ofstream outFile(stdFilePath, std::ios::out | std::ios::trunc);
+        if (!outFile.is_open()) {
+            qDebug() << "无法打开文件以写入：" << TOKEN_PATH;
+            return;
+        }
+
+        // 写入数据
+        outFile << stdData;
+
+        // 关闭文件
+        outFile.close();
+
+        qDebug() << "数据已成功写入文件：" << TOKEN_PATH;
+    }
+
+
+    void extractToken() {
+        // 打开文件
+        QFile file(TOKEN_PATH);
+        if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            qDebug() << "无法打开文件：" << TOKEN_PATH;
+            return;
+        }
+
+        // 读取文件内容
+        QByteArray fileContent = file.readAll();
+        file.close();
+
+        // 解析 JSON 数据
+        QJsonParseError parseError;
+        QJsonDocument jsonDoc = QJsonDocument::fromJson(fileContent, &parseError);
+
+        if (parseError.error != QJsonParseError::NoError) {
+            qDebug() << "JSON 解析错误：" << parseError.errorString();
+            return;
+        }
+
+        // 获取根对象
+        QJsonObject jsonObject = jsonDoc.object();
+
+        // 提取 token 字段
+        QString token = jsonObject.value("data").toObject().value("token").toString();
+
+        // 输出 token
+        std::cout << "Token: " << token.toStdString() << std::endl;
+        // qDebug() << "Token:" << token;
+    }
+
+    Q_INVOKABLE void send_kugou_checkcode(const QString mobile_phone) {
+        QNetworkAccessManager manager;
+        QString seach_api = kugou_url + "/captcha/sent?mobile=%0";
+        QString url = seach_api.arg(mobile_phone);
+        QNetworkReply* reply = manager.get(QNetworkRequest(QUrl(url)));
+
+        QEventLoop loop;
+        QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();
+
+        if (reply->error() == QNetworkReply::NoError) {
+            // 读取响应数据
+            QByteArray responseData = reply->readAll();
+        }
+        else {
+            qDebug() << "Error sending check code:" << reply->errorString();
         }
     }
 

@@ -193,10 +193,10 @@ public:
 
 
 
-    void test() {
+    Q_INVOKABLE void test() {
         qDebug() << "Decoding started.";
-        KGMA decoder;
-        decoder.KGMADecrypt("D:/KuGou/KugouMusic/KugouMusic/Dripice_Escape.kgm","D:/KuGou/KugouMusic/KugouMusic/");
+        // KGMA decoder;
+        // decoder.KGMADecrypt("D:/KuGou/KugouMusic/KugouMusic/Dripice_Escape.kgm","D:/KuGou/KugouMusic/KugouMusic/");
     }
 
     Q_INVOKABLE void decoded() {
