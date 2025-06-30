@@ -5,7 +5,6 @@ import FluentUI 1.0
 import QtQuick.Layouts 1.15
 import QtMultimedia
 import Qt.labs.platform 1.1
-import CustomTypes 1.0
 import "../navigation"
 
 FluWindow {
@@ -33,7 +32,7 @@ FluWindow {
     //window blur effect
     //TODO: set on only on windows platform
     Component.onCompleted: {
-        FluTheme.blurBehindWindowEnabled = true
+        FluTheme.blurBehindWindowEnabled = false
     }
 
 
@@ -44,7 +43,7 @@ FluWindow {
         width: parent.width
         anchors.top: parent.top
         title: "FMusic"
-        logo: "qrc:/assets/logo.ico"
+        logo: "qrc:/assets/icon_256.ico"
         z:9
         pageMode: FluNavigationViewType.NoStack
 
@@ -85,4 +84,3 @@ FluWindow {
 
 
 }
-

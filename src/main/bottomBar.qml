@@ -2,7 +2,7 @@ import QtQuick 2.15
 import FluentUI 1.0
 import "../components"
 
-FluRectangle {
+Rectangle {
     property int bottomBarHeight
     property int bottomBarWidth
     property int infoTextSize: 15
@@ -10,6 +10,13 @@ FluRectangle {
     id: bottomBar
     width: bottomBarWidth
     height: bottomBarHeight
+    border.color: FluTheme.dividerColor
+    color: {
+        if(Window.active){
+            return FluTheme.frameActiveColor
+        }
+        return FluTheme.frameColor
+    }
     z:10
 
     // now playing

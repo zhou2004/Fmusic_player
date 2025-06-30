@@ -2,18 +2,18 @@
   "version": 3,
   "configurePresets": [
     {
-      "name": "mingw-win-Debug",
-      "inherits": "mingw_win_64",
-      "binaryDir": "${sourceDir}/build/mingw-win-Debug",
+      "name": "mingw_64-Debug",
+      "inherits": "mingw_64",
+      "binaryDir": "${sourceDir}/build/mingw_64-Debug",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Debug",
         "CMAKE_CXX_FLAGS": "-DQT_QML_DEBUG"
       }
     },
     {
-      "name": "mingw-win-Release",
-      "inherits": "mingw_win_64",
-      "binaryDir": "${sourceDir}/build/mingw-win-Release",
+      "name": "mingw_64-Release",
+      "inherits": "mingw_64",
+      "binaryDir": "${sourceDir}/build/mingw_64-Release",
       "cacheVariables": {
         "CMAKE_BUILD_TYPE": "Release"
       }
@@ -28,11 +28,16 @@
     },
     {
       "hidden": true,
-      "name": "mingw_win_64",
+      "name": "mingw_64",
       "inherits": "Qt",
       "environment": {
+<<<<<<< HEAD
         "QT_ROOT": "D:/Qt/6.8.1/mingw_64",
         "VCPKG_ROOT": "D:/CLion/vcpkg"
+=======
+        "QT_ROOT": "F:/Program/Qt/6.8.3/mingw_64",
+        "VCPKG_ROOT": "F:/Program/Visual Studio/vcpkg"
+>>>>>>> 383e005c615dd0769b500fdc84fb9a6b2c140dcf
       },
       "cacheVariables": {
         "VCPKG_TARGET_TRIPLET": "x64-mingw-dynamic",
@@ -47,7 +52,7 @@
       "inherits": "Qt",
       "environment": {
         "QT_ROOT": "F:/Program/Qt/6.8.1/android_arm64_v8a",
-        "VCPKG_ROOT": "F:/Program/Qt/Tools/vcpkg",
+        "VCPKG_ROOT": "F:/Program/Visual Studio/vcpkg",
         "ANDROID_NDK_ROOT": "F:/Program/Qt/AndroidSDK/ndk/26.1.10909125",
         "ANDROID_NDK_HOME": "F:/Program/Qt/AndroidSDK/ndk/26.1.10909125",
         "ANDROID_SDK_ROOT": "F:/Program/Qt/AndroidSDK"
