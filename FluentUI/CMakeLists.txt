@@ -42,6 +42,8 @@ if (NOT FLUENTUI_QML_PLUGIN_DIRECTORY)
     set(FLUENTUI_QML_PLUGIN_DIRECTORY ${QT_SDK_DIR}/qml/FluentUI)
 endif ()
 
+qt_policy(SET QTP0004 OLD)
+
 #国际化
 find_program(QT_LUPDATE NAMES lupdate)
 find_program(QT_LRELEASE NAMES lrelease)

@@ -2,7 +2,8 @@
     <qresource prefix="/">
         <file>App.qml</file>
 
-        <file>assets/logo.ico</file>
+        <file>assets/icon_256.ico</file>
+        <file>assets/icon_512.ico</file>
         <file>assets/defaultAlbum.jpg</file>
 
         <file>main/main.qml</file>
@@ -53,7 +54,7 @@
         <file>Images/rebot.png</file>
         <file>Images/day_recommend.png</file>
         <file>Images/title.png</file>
-        <file>Images/头像.jpg</file>
+        <file>Images/touxiang.jpg</file>
         <file>Images/Splash_Screen_First_Closed_Beta.png</file>
         <file>Images/go_star.jpeg</file>
         <file>Images/tianjing.jpeg</file>

@@ -9,8 +9,12 @@ FluObject{
     id:footer_items
 
     FluPaneItem{
-        title:qsTr("Login")
-        icon: FluentIcons.Contact
+      title:qsTr("Login")
+      icon: FluentIcons.Contact
+      url: "qrc:/navigationPage/userLogin.qml"
+      onTap: {
+        navigationView.push(url)
+      }
     }
 
     FluPaneItem{

@@ -9,6 +9,7 @@
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
     <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="3" type="long" />
     <option name="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue" value="CppCodeGeneration" type="string" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
   </component>
   <component name="CMakePresetLoader">{
   &quot;useNewFormat&quot;: true
@@ -43,16 +44,13 @@
   <component name="CMakeSettings">
     <configurations>
       <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" GENERATION_OPTIONS="-DVCPKG_TARGET_TRIPLET=x64-mingw-dynamic -DCMAKE_TOOLCHAIN_FILE=D:\CLion\vcpkg\scripts\buildsystems\vcpkg.cmake -DVCPKG_INSTALLED_DIR=D:\pycharm\pythonProject\Fmusic_player\vcpkg_installed -DVCPKG_MANIFEST_INSTALL=OFF -DVCPKG_MANIFEST_MODE=OFF" />
-      <configuration PROFILE_NAME="mingw-win-Debug" ENABLED="false" FROM_PRESET="true" GENERATION_DIR="$PROJECT_DIR$/build/mingw-win-Debug" />
-      <configuration PROFILE_NAME="mingw-win-Release" ENABLED="false" FROM_PRESET="true" GENERATION_DIR="$PROJECT_DIR$/build/mingw-win-Release" />
-      <configuration PROFILE_NAME="android-arm64-Release" ENABLED="false" FROM_PRESET="true" GENERATION_DIR="$PROJECT_DIR$/build/android-arm64-Release" />
     </configurations>
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d26da56a-136f-4151-aca2-1a2a6b2d6044" name="Changes" comment="feelt 进行的更改">
+      <change beforePath="$PROJECT_DIR$/.idea/.name" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/include/control/QJson.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/control/QJson.h" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,7 +77,7 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;git@github.com:zhou2004/Fmusic_player.git&quot;,
+    &quot;url&quot;: &quot;https://github.com/zhou2004/Fmusic_player.git&quot;,
     &quot;accountId&quot;: &quot;ebd6037a-07bf-4549-bbeb-784c053007f4&quot;
   }
 }</component>
@@ -106,38 +104,38 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
-    &quot;CMake Application.Fmusic.executor&quot;: &quot;Debug&quot;,
-    &quot;CMake Application.Fmusic_qmlimportscan.executor&quot;: &quot;Run&quot;,
-    &quot;CMake Application.nice.executor&quot;: &quot;Run&quot;,
-    &quot;CMake Debug.FMusic.executor&quot;: &quot;Debug&quot;,
-    &quot;CMake Debug.Project.executor&quot;: &quot;Debug&quot;,
-    &quot;CMake 应用程序.Fmusic.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.RadMigrateCodeStyle&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.west.config.association.type.startup.service&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/pycharm/pythonProject/test/Fmusic_player&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;CMakeSettings&quot;,
-    &quot;ts.external.directory.path&quot;: &quot;D:\\CLion\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
+    "CMake Application.Fmusic.executor": "Debug",
+    "CMake Application.Fmusic_qmlimportscan.executor": "Run",
+    "CMake Application.nice.executor": "Run",
+    "CMake Debug.FMusic.executor": "Debug",
+    "CMake Debug.Project.executor": "Debug",
+    "CMake 应用程序.Fmusic.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.RadMigrateCodeStyle": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "RunOnceActivity.west.config.association.type.startup.service": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "dev",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "D:/pycharm/pythonProject/Fmusic_player",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "language.qml",
+    "ts.external.directory.path": "D:\\CLion\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\FeelLiao\Cpp\Fmusic_player\src\in18" />
@@ -148,6 +146,11 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake 应用程序.Fmusic">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Fmusic" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="Fmusic" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="FMusic" RUN_TARGET_NAME="Fmusic">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -219,19 +222,19 @@
       </method>
     </configuration>
     <list>
-      <item itemvalue="CMake 应用程序.fluentuiplugin" />
-      <item itemvalue="CMake 应用程序.fluentuiplugin_tooling" />
       <item itemvalue="CMake 应用程序.Fmusic" />
+      <item itemvalue="CMake 应用程序.Fmusic_qmlimportscan" />
+      <item itemvalue="CMake 应用程序.all_aotstats" />
       <item itemvalue="CMake 应用程序.all_qmllint" />
       <item itemvalue="CMake 应用程序.all_qmllint_json" />
       <item itemvalue="CMake 应用程序.all_qmllint_module" />
-      <item itemvalue="CMake 应用程序.all_aotstats" />
       <item itemvalue="CMake 应用程序.all_qmltyperegistrations" />
+      <item itemvalue="CMake 应用程序.fluentuiplugin" />
       <item itemvalue="CMake 应用程序.fluentuiplugin_qmllint" />
       <item itemvalue="CMake 应用程序.fluentuiplugin_qmllint_json" />
       <item itemvalue="CMake 应用程序.fluentuiplugin_qmllint_module" />
       <item itemvalue="CMake 应用程序.fluentuiplugin_qmltyperegistration" />
-      <item itemvalue="CMake 应用程序.Fmusic_qmlimportscan" />
+      <item itemvalue="CMake 应用程序.fluentuiplugin_tooling" />
       <item itemvalue="CMake 应用程序.module_fluentuiplugin_aotstats_target" />
     </list>
   </component>
@@ -290,6 +293,8 @@
       <workItem from="1750836830497" duration="3800000" />
       <workItem from="1751176018524" duration="4355000" />
       <workItem from="1751243842901" duration="2164000" />
+      <workItem from="1751254173112" duration="21000" />
+      <workItem from="1751254213475" duration="56000" />
     </task>
     <task id="LOCAL-00001" summary="change look to fluentui, optimise project structure.">
       <option name="closed" value="true" />
