@@ -18,9 +18,8 @@
         <file>navigation/ItemsFooter.qml</file>
         <file>navigation/ItemsOriginal.qml</file>
 
-        <file>components/CodeExpander.qml</file>
         <file>components/RoundImage.qml</file>
-        <file>components/MyComponent.qml</file>
+        <file>components/MusicInfo.qml</file>
         <file>components/SrollText.qml</file>
         <file>components/RandomSelector.qml</file>
 

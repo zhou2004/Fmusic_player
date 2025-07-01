@@ -60,12 +60,13 @@ Rectangle {
                 SrollText {
                     id: songName
                     width: parent.width
+                    colors: FluTheme.fontPrimaryColor
                     size: infoTextSize
                     height: 20
                     text: "songName"
                 }
 
-                Text {
+                FluText {
                     id: albumName
                     width: parent.width
                     font.pointSize: infoTextSize
@@ -141,7 +142,7 @@ Rectangle {
                     to: 100
                 }
 
-                Text {
+                FluText {
                     id: musicDuration
                     text: "100"
                     anchors.verticalCenter: parent.verticalCenter
