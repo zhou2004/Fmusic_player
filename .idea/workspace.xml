@@ -49,12 +49,7 @@
   <component name="ChangeListManager">
     <list default="true" id="d26da56a-136f-4151-aca2-1a2a6b2d6044" name="Changes" comment="userlogin">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/CMakeLists.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cpp/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/cpp/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/include/control/MusicPlayer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/control/MusicPlayer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/include/control/QJson.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/control/QJson.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/navigationPage/userLogin.qml" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigationPage/userLogin.qml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/qml.qrc" beforeDir="false" afterPath="$PROJECT_DIR$/src/qml.qrc" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -123,7 +118,7 @@
     "CMake Application.nice.executor": "Run",
     "CMake Debug.FMusic.executor": "Debug",
     "CMake Debug.Project.executor": "Debug",
-    "CMake 应用程序.Fmusic.executor": "Debug",
+    "CMake 应用程序.Fmusic.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.RadMigrateCodeStyle": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
@@ -376,7 +371,15 @@
       <option name="project" value="LOCAL" />
       <updated>1751266537334</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="userlogin">
+      <option name="closed" value="true" />
+      <created>1751297863594</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1751297863594</updated>
+    </task>
+    <option name="localTasksCounter" value="10" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -405,6 +408,7 @@
     <MESSAGE value="Change mainwindow to FluentUI look except button bar.&#10;Optimise project structure." />
     <MESSAGE value="Change to CMakeLists.txt" />
     <MESSAGE value="feelt 进行的更改" />
+    <MESSAGE value="Merge remote-tracking branch 'refs/remotes/origin/dev' into front-dev" />
     <MESSAGE value="userlogin" />
     <option name="LAST_COMMIT_MESSAGE" value="userlogin" />
   </component>

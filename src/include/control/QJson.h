@@ -4,6 +4,7 @@
 
 #ifndef QJSON_H
 #define QJSON_H
+#include <bemapiset.h>
 #include <iostream>
 #include <QCoreApplication>
 #include <QNetworkAccessManager>
@@ -90,7 +91,14 @@ public:
         if (reply->error() == QNetworkReply::NoError) {
             // 读取响应数据
             QByteArray responseData = reply->readAll();
-            writeDataToFile(responseData);
+
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
+
+            QJsonObject jsonObj = jsonDoc.object();
+
+            if (jsonObj["status"] == 1) {
+                writeDataToFile(responseData);
+            }
         }
         else {
             qDebug() << "Error sending check code:" << reply->errorString();
@@ -154,7 +162,7 @@ public:
         // qDebug() << "Token:" << token;
     }
 
-    Q_INVOKABLE void send_kugou_checkcode(const QString mobile_phone) {
+    Q_INVOKABLE BOOL send_kugou_checkcode(const QString mobile_phone) {
         QNetworkAccessManager manager;
         QString seach_api = kugou_url + "/captcha/sent?mobile=%0";
         QString url = seach_api.arg(mobile_phone);
@@ -167,10 +175,75 @@ public:
         if (reply->error() == QNetworkReply::NoError) {
             // 读取响应数据
             QByteArray responseData = reply->readAll();
+
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
+
+            QJsonObject jsonObj = jsonDoc.object();
+
+            if (jsonObj["status"] == 1) {
+                return true;
+            }
+            return false;
+        }
+        else {
+            return false;
+        }
+    }
+
+    Q_INVOKABLE QJsonObject get_qrcode() {
+        QNetworkAccessManager manager;
+        QString url = kugou_url + "/login/qr/key";
+        QNetworkReply* reply = manager.get(QNetworkRequest(QUrl(url)));
+
+        QEventLoop loop;
+        QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();
+
+        if (reply->error() == QNetworkReply::NoError) {
+            // 读取响应数据
+            QByteArray responseData = reply->readAll();
+
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
+
+            QJsonObject jsonObj = jsonDoc.object();
+
+            if (jsonObj["status"] == 1) {
+                return jsonObj["data"].toObject();
+            }
+            return {};
+        }
+        else {
+            return {};
+        }
+    }
+
+    Q_INVOKABLE QJsonObject qr_login(const QString qrcode) {
+        QNetworkAccessManager manager;
+        QString seach_api = kugou_url + "/login/qr/check?key=%0";
+        QString url = seach_api.arg(qrcode);
+        QNetworkReply* reply = manager.get(QNetworkRequest(QUrl(url)));
+
+        QEventLoop loop;
+        QObject::connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
+        loop.exec();
+
+        if (reply->error() == QNetworkReply::NoError) {
+            // 读取响应数据
+            QByteArray responseData = reply->readAll();
+
+            QJsonDocument jsonDoc = QJsonDocument::fromJson(responseData);
+
+            QJsonObject jsonObj = jsonDoc.object();
+
+            if (jsonObj["status"] == 1) {
+                writeDataToFile(responseData);
+                return jsonObj["data"].toObject();
+            }
         }
         else {
             qDebug() << "Error sending check code:" << reply->errorString();
         }
+
     }
 
 
