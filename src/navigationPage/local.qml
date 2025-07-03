@@ -4,86 +4,100 @@ import QtQuick.Controls 2.15
 import FluentUI 1.0
 import "../components"
 
-FluScrollablePage {
-    title: qsTr("Local")
-    contentWidth: parent.width
-    id: localPage
+ColumnLayout {
+    id: localPageContent
+    spacing: 10
+    width: parent.width * 0.8
 
-    ColumnLayout {
-        id: localPageContent
+    FluText {
+        id: localTitle
+        text: qsTr("Local Music")
+        font.pixelSize: 24
+        Layout.fillWidth: true
+    }
+
+    RowLayout {
+        id: localControlButton
         spacing: 10
-        width: parent.width * 0.8
 
-        RowLayout {
-            id: localControlButton
-            spacing: 10
-
-            FluButton {
-                id: localOpenButton
-                text: qsTr("Open")
-                onClicked: {
-
-                }
-            }
-            FluButton {
-                id: localPlayAllButton
-                text: qsTr("PlayAll")
-                onClicked: {
-
-                }
+        FluButton {
+            id: localOpenButton
+            text: qsTr("Open")
+            onClicked: {
+                //TODO: 打开本地音乐文件夹
             }
         }
-
-        FluPivot {
-            id: localPivot
-            Layout.fillWidth: true
-            Layout.fillHeight: true
-
-            FluPivotItem {
-                title: qsTr("Music")
-                contentItem: ListView {
-                    id: musicListView
-                    topMargin: 20
-
-                    //在这里传入音乐数据，使用C++传入数据时请参考ListView的文档
-                    model: ListModel {
-                        ListElement {
-                            index: 0
-                            cover: "qrc:/assets/defaultAlbum.jpg"
-                            title: "A.I.N.Y. 爱你 (G.E.M.重生版)"
-                            artist: "G.E.M.邓紫棋"
-                            album: "I AM GLORIA"
-                        }
-                        ListElement {
-                            index: 1
-                            cover: "qrc:/assets/defaultAlbum.jpg"
-                            title: "杜鹃"
-                            artist: "Realzat / 加木"
-                            album: "杜鹃"
-                        }
-                    }
-                    delegate: MusicInfo {
-                        mIndex: index
-                        mCover: cover
-                        mTitle: title
-                        mArtist: artist
-                        mAlbum: album
-                    }
-                }
-            }
-            FluPivotItem {
-                title: qsTr("Album")
-                contentItem: FluText {
-                    text: qsTr("Unread emails go here.")
-                }
-            }
-            FluPivotItem {
-                title: qsTr("Singer")
-                contentItem: FluText {
-                    text: qsTr("Flagged emails go here.")
-                }
+        FluButton {
+            id: localPlayAllButton
+            text: qsTr("PlayAll")
+            onClicked: {
+                //TODO: 播放本地全部音乐
             }
         }
     }
 
+    FluPivot {
+        id: localPivot
+        Layout.fillWidth: true
+        Layout.fillHeight: true
+
+        FluPivotItem {
+            title: qsTr("Music")
+            contentItem: FluScrollablePage {
+                id: localMusicPage
+                contentWidth: parent.width
+
+                Column {
+                    id: localMusicContent
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    
+                    Item { width:parent.width ;height: 10 } // 占位符，用于顶部间距
+
+                    Loader {
+                        id: demoData
+                        source: "DemoData.qml"
+                        asynchronous: true
+                    }
+
+                    Repeater {
+                        // TODO:在这里传入音乐数据，使用C++传入数据时请参考ListView的文档
+                        model: demoData.item ? demoData.item.demoMusicData : null
+                        delegate: MusicInfo {
+                            mIndex: index
+                            mCover: cover
+                            mTitle: title
+                            mArtist: artist
+                            mAlbum: album
+                        }
+                    }
+
+
+                }
+
+            }
+        }
+
+
+        FluPivotItem {
+            title: qsTr("Album")
+            contentItem: FluScrollablePage {
+                contentWidth: parent.width
+
+                Rectangle {
+                    width: parent.width
+                    height: parent.height
+                    color: "red"
+
+                }
+        }
+    }
+        FluPivotItem {
+            title: qsTr("Singer")
+            contentItem: FluText {
+                text: qsTr("Flagged emails go here.")
+            }
+        }
+    }
 }
