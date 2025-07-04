@@ -14,6 +14,7 @@
         <file>navigationPage/local.qml</file>
         <file>navigationPage/recommendation.qml</file>
         <file>navigationPage/userLogin.qml</file>
+        <file>navigationPage/DemoData.qml</file>
 
         <file>navigation/ItemsFooter.qml</file>
         <file>navigation/ItemsOriginal.qml</file>

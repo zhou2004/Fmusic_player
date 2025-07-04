@@ -1,4 +1,4 @@
-import QtQuick 2.15
+import QtQuick
 import FluentUI 1.0
 
 Rectangle {
@@ -9,13 +9,32 @@ Rectangle {
     property string mAlbum: ""
 
     id: musicInfoRectangle
-    width: parent ? parent.width : 600
+    width: parent ? parent.width : 700
     height: 64
-    color: "transparent" // 设置为透明，背景颜色由鼠标悬停时改变
+    color: "transparent"
 
-    // 鼠标悬停时改变背景颜色
+    Rectangle {
+        anchors.fill: parent
+        id: musicInfoHoverRectangle
+        color: "transparent" // 或需要的颜色
+        opacity: 0.9
+        z: 50 // 保证在最上层
 
-    // 19337196548
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            onEntered: {
+                musicInfoHoverRectangle.color = FluTheme.itemHoverColor
+            }
+            onExited: {
+                musicInfoHoverRectangle.color = "transparent"
+            }
+            onClicked: {
+                // 这里可以添加点击事件的处理逻辑
+                console.log("Clicked on music info at index:", mIndex);
+            }
+        }
+    }
 
     // 左侧：序号、封面、标题
     Row {
@@ -106,5 +125,61 @@ Rectangle {
         anchors.right: parent.right
         anchors.rightMargin: 20
         iconSource: FluentIcons.More
+        z:60
+
+        FluMenu{
+            id:musicInfoMoreButtonMenu
+
+            FluMenuItem {
+                text:"Play"
+                iconSource: FluentIcons.Play
+                onClicked: {
+                    showInfo("Play")
+                }
+            }
+            FluMenuItem {
+                text:"Add to Playlist"
+                iconSource: FluentIcons.MusicInfo
+                onClicked: {
+                    showInfo("Add to Playlist")
+                }
+            }
+
+            FluMenuItem {
+                text:"Favorite"
+                iconSource: FluentIcons.NewFolder
+                onClicked: {
+                    showInfo("Favorite")
+                }
+            }
+
+            FluMenuItem {
+                text:"Delete"
+                iconSource: FluentIcons.Delete
+                onClicked: {
+                    showInfo("Delete")
+                }
+            }
+        }
+
+        onClicked: {
+            if (musicInfoMoreButtonMenu.count !== 0) {
+                var pos = musicInfoMoreButton.mapToItem(null, 0, 0)
+                var containerHeight = musicInfoMoreButtonMenu.count * 36
+                var windowHeight = Window.window.height
+
+                if (windowHeight > pos.y + musicInfoMoreButton.height + containerHeight) {
+                    musicInfoMoreButtonMenu.y = musicInfoMoreButton.height
+                } else if (pos.y > containerHeight) {
+                    musicInfoMoreButtonMenu.y = -containerHeight
+                } else {
+                    musicInfoMoreButtonMenu.y = windowHeight - (pos.y + containerHeight)
+                }
+
+                musicInfoMoreButtonMenu.open()
+            }
+        }
+
     }
+
 }
