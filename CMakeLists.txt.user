@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 17.0.0, 2025-07-05T11:01:25. -->
+<!-- Written by QtCreator 17.0.0, 2025-07-05T17:49:14. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -107,21 +107,21 @@
      <value type="QString">QT_ROOT=F:/Program/Qt/6.8.3/mingw_64</value>
      <value type="QString">VCPKG_ROOT=F:/Program/Visual Studio/vcpkg</value>
     </valuelist>
-    <value type="QString" key="CMake.Initial.Parameters">-DCMAKE_TOOLCHAIN_FILE:STRING=F:/Program/Visual Studio/vcpkg/scripts/buildsystems/vcpkg.cmake
--DQT_QMAKE_EXECUTABLE:FILEPATH=%{Qt:qmakeExecutable}
+    <value type="QString" key="CMake.Initial.Parameters">-DCMAKE_PREFIX_PATH:PATH=%{Qt:QT_INSTALL_PREFIX}
+-DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic
 -DVCPKG_TARGET_TRIPLET:STRING=x64-mingw-dynamic
--DCMAKE_C_COMPILER:FILEPATH=%{Compiler:Executable:C}
+-DQT_QMAKE_EXECUTABLE:FILEPATH=%{Qt:qmakeExecutable}
 -DCMAKE_GENERATOR:STRING=Ninja
+-DCMAKE_CXX_FLAGS_INIT:STRING=%{Qt:QML_DEBUG_FLAG} -DQT_QML_DEBUG
 -DCMAKE_BUILD_TYPE:STRING=Debug
--DCMAKE_PREFIX_PATH:PATH=%{Qt:QT_INSTALL_PREFIX}
 -DQt6_DIR:STRING=F:/Program/Qt/6.8.3/mingw_64/lib/cmake/Qt6
 -DCMAKE_CXX_COMPILER:FILEPATH=%{Compiler:Executable:Cxx}
--DQT_MAINTENANCE_TOOL:FILEPATH=F:/Program/Qt/MaintenanceTool.exe
--DQT_DIR:STRING=F:/Program/Qt/6.8.3/mingw_64/lib/cmake
--DCMAKE_CXX_FLAGS_INIT:STRING=%{Qt:QML_DEBUG_FLAG} -DQT_QML_DEBUG
 -DCMAKE_COLOR_DIAGNOSTICS:BOOL=ON
+-DCMAKE_TOOLCHAIN_FILE:STRING=F:/Program/Visual Studio/vcpkg/scripts/buildsystems/vcpkg.cmake
+-DQT_MAINTENANCE_TOOL:FILEPATH=F:/Program/Qt/MaintenanceTool.exe
 -DCMAKE_PROJECT_INCLUDE_BEFORE:FILEPATH=%{BuildConfig:BuildDirectory:NativeFilePath}/.qtc/package-manager/auto-setup.cmake
--DVCPKG_HOST_TRIPLET:STRING=x64-mingw-dynamic</value>
+-DCMAKE_C_COMPILER:FILEPATH=%{Compiler:Executable:C}
+-DQT_DIR:STRING=F:/Program/Qt/6.8.3/mingw_64/lib/cmake</value>
     <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">D:\FeelLiao\Cpp\Fmusic_player\build\mingw_64-Debug</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
@@ -230,7 +230,7 @@
      <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
      <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
      <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
-     <value type="QString" key="RunConfiguration.WorkingDirectory.default">C:/ProgramData/QtCreator/Links/d9968466208c8ee20206ea1dd473d751/bin/Debug</value>
+     <value type="QString" key="RunConfiguration.WorkingDirectory.default">D:/FeelLiao/Cpp/Fmusic_player/bin/Debug</value>
     </valuemap>
     <value type="qlonglong" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
    </valuemap>
@@ -299,7 +299,7 @@
     <value type="bool" key="RunConfiguration.UseCppDebuggerAuto">true</value>
     <value type="bool" key="RunConfiguration.UseLibrarySearchPath">true</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">C:/ProgramData/QtCreator/Links/d9968466208c8ee20206ea1dd473d751/bin/Debug</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">D:/FeelLiao/Cpp/Fmusic_player/bin/Debug</value>
    </valuemap>
    <value type="qlonglong" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

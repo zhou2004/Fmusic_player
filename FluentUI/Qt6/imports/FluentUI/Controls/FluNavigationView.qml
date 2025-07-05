@@ -1063,6 +1063,7 @@ Item {
             width: layout_list.width
             height: childrenRect.height
             anchors.bottom: parent.bottom
+            anchors.bottomMargin: 20
             interactive: false
             boundsBehavior: ListView.StopAtBounds
             currentIndex: -1

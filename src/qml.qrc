@@ -11,7 +11,7 @@
         <file>assets/feelzhou.jpg</file>
 
         <file>main/main.qml</file>
-        <file>main/bottomBar.qml</file>
+        <file>main/BottomBar.qml</file>
 
         <file>navigationPage/favorite.qml</file>
         <file>navigationPage/home.qml</file>
