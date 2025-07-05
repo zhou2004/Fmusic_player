@@ -7,6 +7,7 @@ FluFrame {
     property int bottomBarWidth
     property string songName: "杜鹃"
     property string singerName: "Realzat / 加木"
+    property url albumCover: "qrc:/assets/defaultAlbum.jpg"
     property string musicDuration: "04:34"
     property string musicPlayTime: "00:00"
     property int infoTextSize: 13
@@ -34,7 +35,7 @@ FluFrame {
             radius: 15
             smooth: false
             anchors.verticalCenter: parent.verticalCenter
-            source: "qrc:/assets/defaultAlbum.jpg"
+            source: albumCover
 
             MouseArea {
                 anchors.fill: parent
