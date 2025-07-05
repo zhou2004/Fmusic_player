@@ -20,5 +20,9 @@ FluObject{
     FluPaneItem{
         title:qsTr("Settings")
         icon:FluentIcons.Settings
+        url: "qrc:/navigationPage/settings.qml"
+        onTap: {
+            navigationView.push(url)
+        }
     }
 }

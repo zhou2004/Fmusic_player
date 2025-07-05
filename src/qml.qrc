@@ -4,7 +4,11 @@
 
         <file>assets/icon_256.ico</file>
         <file>assets/icon_512.ico</file>
+        <file>assets/icon_300dpi.png</file>
         <file>assets/defaultAlbum.jpg</file>
+        <file>assets/icon.svg</file>
+        <file>assets/feelliao.jpg</file>
+        <file>assets/feelzhou.jpg</file>
 
         <file>main/main.qml</file>
         <file>main/bottomBar.qml</file>
@@ -15,6 +19,7 @@
         <file>navigationPage/recommendation.qml</file>
         <file>navigationPage/userLogin.qml</file>
         <file>navigationPage/DemoData.qml</file>
+        <file>navigationPage/settings.qml</file>
 
         <file>navigation/ItemsFooter.qml</file>
         <file>navigation/ItemsOriginal.qml</file>

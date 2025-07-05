@@ -3,23 +3,22 @@ import Qt5Compat.GraphicalEffects
 import FluentUI 1.0
 
 Item {
-    property string source: ""  // 图片资源路径
+    property alias source: image.source  // 图片资源路径
     property var masksource: FluentIcons.ChevronUp // 遮罩资源路径
     property int radius: 0  // 圆角大小
     property var onButtonClick: null  // 按钮点击事件
     property bool showColorOverlay: false  // 控制 ColorOverlay 是否显示
     property color colorOverlayColor: "#80000000" // 蓝色
     property bool isHovered: true
+    property alias smooth: image.smooth // 是否平滑处理图片
+    property alias sourceSize: image.sourceSize
+
 
     property var fillMode: Image.PreserveAspectFit
-
-    width: image.width
-    height: image.height
 
     // 缩略图本体
     Image {
         id: image
-        source: parent.source
         asynchronous: true
         anchors.centerIn: parent
         width: parent.width
