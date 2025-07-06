@@ -29,5 +29,8 @@
         <file>components/SrollText.qml</file>
         <file>components/RandomSelector.qml</file>
 
+        <file>settingsPage/AboutPage.qml</file>
+        <file>settingsPage/DisplayPage.qml</file>
+
     </qresource>
 </RCC>

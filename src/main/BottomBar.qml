@@ -21,7 +21,7 @@ FluFrame {
     Row {
         id: playInfo
         height: parent.height
-        width: parent.width * 0.3
+        width: parent.width * 0.26
         anchors.left: parent.left
         anchors.leftMargin: 10
 
@@ -51,13 +51,15 @@ FluFrame {
         }
 
         Item {
-            height: parent.height; width: 15
+            height: parent.height; width: 10
         } // spacer
 
         // song information
         Column {
+            id: songInfoColumn
             spacing: 10
             anchors.verticalCenter: parent.verticalCenter
+            width: parent.width - albumPicture.width - 10
 
             // song name
             SrollText {
@@ -68,11 +70,12 @@ FluFrame {
                 textWidth: parent.width
             }
 
-            FluText {
+            SrollText {
                 id: singerNameText
-                font.pointSize: infoTextSize
+                size: infoTextSize
                 color: FluTheme.dark ? FluColors.Grey50 : FluColors.Grey130
                 text: singerName
+                textWidth: parent.width
             }
         }
     }
@@ -84,6 +87,7 @@ FluFrame {
         width: parent.width * 0.4
         anchors.horizontalCenter: parent.horizontalCenter
 
+        // 播放控制
         Item {
             width: parent.width
             anchors.horizontalCenter: parent.horizontalCenter
@@ -158,6 +162,7 @@ FluFrame {
             }
         }
 
+        // 播放进度条
         Item {
             anchors.bottom: parent.bottom
             anchors.bottomMargin: 30
@@ -168,7 +173,7 @@ FluFrame {
             // 音乐播放进度条
             FluSlider {
                 id: slider
-                width: parent.width - 30
+                width: parent.width - 80
                 height: 10
                 orientation: Qt.Horizontal
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -200,6 +205,7 @@ FluFrame {
 
     // right buttons
     Row {
+        id: playMoreControl
         spacing: 12
         anchors.verticalCenter: parent.verticalCenter
         anchors.right: parent.right

@@ -39,6 +39,9 @@ T.ComboBox {
         iconSize: 15
         opacity: enabled ? 1 : 0.3
     }
+    onActivated: {
+        commit(editText)
+    }
     contentItem: T.TextField {
         id: text_field
         property bool disabled: !control.editable

@@ -12,7 +12,7 @@ FluWindow {
     id: mainWindow
     width: 1010
     height: 710
-    minimumWidth: 800
+    minimumWidth: 700
     minimumHeight: 400
     launchMode: FluWindowType.SingleTask
     fitsAppBarWindows: true
