@@ -16,6 +16,7 @@ ColumnLayout {
         id: localTitle
         text: qsTr("Local Music")
         font.pixelSize: 24
+        font.bold: true
         Layout.fillWidth: true
         Layout.leftMargin: leftMarginSet
     }

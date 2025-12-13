@@ -1,5 +1,6 @@
 import QtQuick
 import FluentUI 1.0
+import "./"
 
 Rectangle {
     property int mIndex: 0
@@ -29,6 +30,8 @@ Rectangle {
             onExited: {
                 musicInfoHoverRectangle.color = "transparent"
             }
+
+            // TODO: 点击后立即播放，添加到播放列表等功能
             onClicked: {
                 // 这里可以添加点击事件的处理逻辑
                 console.log("Clicked on music info at index:", mIndex);
@@ -52,11 +55,15 @@ Rectangle {
             verticalAlignment: Text.AlignVCenter
             anchors.verticalCenter: parent.verticalCenter
         }
-        FluImage {
+        RoundImage {
             source: mCover
             id: musicInfoCover
-            width: 48
-            height: 48
+            width: parent.height * 0.8
+            height: parent.height * 0.8
+            sourceSize.width: parent.height * 0.8
+            sourceSize.height: parent.height * 0.8
+            radius: 10
+            smooth: false
             anchors.verticalCenter: parent.verticalCenter
         }
         FluText {

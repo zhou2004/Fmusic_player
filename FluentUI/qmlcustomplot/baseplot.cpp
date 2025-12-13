@@ -122,7 +122,17 @@ void BasePlot::onChartViewSizeChanged()
 
 void BasePlot::routeMouseEvents(QMouseEvent *event)
 {
-    QMouseEvent* newEvent = new QMouseEvent(event->type(), event->localPos(), event->button(), event->buttons(), event->modifiers());
+    // 使用推荐的 position() 替换 localPos()，并补全构造函数参数
+    QMouseEvent* newEvent = new QMouseEvent(
+        event->type(),
+        event->position(),
+        event->scenePosition(),
+        event->globalPosition(),
+        event->button(),
+        event->buttons(),
+        event->modifiers(),
+        event->source()
+    );
     QCoreApplication::postEvent(m_customPlot, newEvent);
 }
 
@@ -135,4 +145,4 @@ void BasePlot::routeWheelEvents(QWheelEvent *event)
     QCoreApplication::postEvent(m_customPlot, newEvent);
 }
 
-} // namespace QmlQCustomPlot   
+} // namespace QmlQCustomPlot

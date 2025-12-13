@@ -5,6 +5,7 @@ import FluentUI
 
 Item {
     property string  headerText: ""
+    property int headerIconSource
     property bool expand: false
     property int contentHeight : 300
     default property alias content: container.data
@@ -24,8 +25,11 @@ Item {
     Rectangle{
         id:layout_header
         width: parent.width
-        height: 45
-        radius: 4
+        height: 70
+        topLeftRadius: 4
+        topRightRadius: 4
+        bottomLeftRadius: 4
+        bottomRightRadius: 4
         border.color: FluTheme.dividerColor
         color: {
             if(Window.active){
@@ -41,12 +45,21 @@ Item {
                 d.toggle()
             }
         }
+        FluIcon {
+            id:headerIcon
+            iconSource: headerIconSource
+            anchors{
+                verticalCenter: parent.verticalCenter
+                left: parent.left
+                leftMargin: 20
+            }
+        }
         FluText{
             text: headerText
             anchors{
                 verticalCenter: parent.verticalCenter
-                left: parent.left
-                leftMargin: 15
+                left: headerIcon.right
+                leftMargin: 20
             }
         }
         FluIconButton{
@@ -111,6 +124,11 @@ Item {
                         target: container
                         anchors.topMargin:0
                     }
+                    PropertyChanges {
+                        target: layout_header
+                        bottomLeftRadius: 0
+                        bottomRightRadius: 0
+                    }
                 },
                 State{
                     name:"collapsed"
@@ -118,6 +136,11 @@ Item {
                     PropertyChanges {
                         target: container
                         anchors.topMargin:-contentHeight
+                    }
+                    PropertyChanges {
+                        target: layout_header
+                        bottomLeftRadius: 4
+                        bottomRightRadius: 4
                     }
                 }
             ]

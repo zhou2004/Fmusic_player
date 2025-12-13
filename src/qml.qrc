@@ -4,10 +4,14 @@
 
         <file>assets/icon_256.ico</file>
         <file>assets/icon_512.ico</file>
+        <file>assets/icon_300dpi.png</file>
         <file>assets/defaultAlbum.jpg</file>
+        <file>assets/icon.svg</file>
+        <file>assets/feelliao.jpg</file>
+        <file>assets/feelzhou.jpg</file>
 
         <file>main/main.qml</file>
-        <file>main/bottomBar.qml</file>
+        <file>main/BottomBar.qml</file>
 
         <file>navigationPage/favorite.qml</file>
         <file>navigationPage/home.qml</file>
@@ -15,6 +19,7 @@
         <file>navigationPage/recommendation.qml</file>
         <file>navigationPage/userLogin.qml</file>
         <file>navigationPage/DemoData.qml</file>
+        <file>navigationPage/settings.qml</file>
 
         <file>navigation/ItemsFooter.qml</file>
         <file>navigation/ItemsOriginal.qml</file>
@@ -24,44 +29,8 @@
         <file>components/SrollText.qml</file>
         <file>components/RandomSelector.qml</file>
 
-        <file>Images/addPlayList.svg</file>
-        <file>Images/AscendingOrder.svg</file>
-        <file>Images/bookmark.svg</file>
-        <file>Images/DescendingOrder.svg</file>
-        <file>Images/discoverMusic.svg</file>
-        <file>Images/download.svg</file>
-        <file>Images/dropDown.svg</file>
-        <file>Images/favoriteMode.svg</file>
-        <file>Images/loopPlay.svg</file>
-        <file>Images/maxWindow.svg</file>
-        <file>Images/music163.svg</file>
-        <file>Images/myAttention.svg</file>
-        <file>Images/myFavorite.svg</file>
-        <file>Images/order.svg</file>
-        <file>Images/player.svg</file>
-        <file>Images/playList.svg</file>
-        <file>Images/preFM.svg</file>
-        <file>Images/prePlayer.svg</file>
-        <file>Images/randomPlay.svg</file>
-        <file>Images/recentlyPlayed.svg</file>
-        <file>Images/repeatSinglePlay.svg</file>
-        <file>Images/search.svg</file>
-        <file>Images/sequentialPlay.svg</file>
-        <file>Images/stop.svg</file>
-        <file>Images/volume.svg</file>
-        <file>Images/volumeMute.svg</file>
-        <file>Images/background.png</file>
-        <file>Images/rebot.png</file>
-        <file>Images/day_recommend.png</file>
-        <file>Images/title.png</file>
-        <file>Images/touxiang.jpg</file>
-        <file>Images/Splash_Screen_First_Closed_Beta.png</file>
-        <file>Images/go_star.jpeg</file>
-        <file>Images/tianjing.jpeg</file>
-        <file>Images/xianhai.jpeg</file>
-        <file>Images/yinhe.png</file>
-        <file>Images/yunshang.jpeg</file>
-        <file>Images/yunshang2.jpeg</file>
+        <file>settingsPage/AboutPage.qml</file>
+        <file>settingsPage/DisplayPage.qml</file>
 
         <file>js/myjs.js</file>
 

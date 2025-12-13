@@ -1,23 +1,24 @@
-import QtQuick 2.15
-import QtQuick.Window 2.15
-import QtQuick.Controls 2.15
+import QtQuick
+import QtQuick.Window
+import QtQuick.Controls
 import FluentUI 1.0
-import QtQuick.Layouts 1.15
+import QtQuick.Layouts
 import QtMultimedia
-import Qt.labs.platform 1.1
+import Qt.labs.platform
 import "../navigation"
+import "./"
 
 FluWindow {
     id: mainWindow
     width: 1010
     height: 710
-    minimumWidth: 600
+    minimumWidth: 700
     minimumHeight: 400
     launchMode: FluWindowType.SingleTask
     fitsAppBarWindows: true
     opacity: 1 // 设置窗口整体透明度（可选）
 
-    property int bottomHeight: 120
+    property int bottomHeight: 100
 
 
     // appbar
@@ -69,18 +70,11 @@ FluWindow {
             mainWindow.setHitTestVisible(nav_view.imageLogo)
         }
     }
-    Loader {
-        id: bottomBarLoader
+    // bottom bar
+    BottomBar {
+        id: bottomBar
+        bottomBarHeight: bottomHeight
+        bottomBarWidth: parent.width
         anchors.bottom: parent.bottom
-        width: parent.width
-        height: bottomHeight
-        source: "bottomBar.qml"
-
-        onLoaded: {
-            bottomBarLoader.FluRectangle.bottomBarHeight = bottomHeight
-            bottomBarLoader.FluRectangle.bottomBarWidth = parent.width
-        }
     }
-
-
 }
