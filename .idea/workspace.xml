@@ -47,41 +47,16 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d26da56a-136f-4151-aca2-1a2a6b2d6044" name="Changes" comment="userlogin">
-      <change afterPath="$PROJECT_DIR$/src/cpp/ApiClient.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/cpp/DatabaseManager.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/cpp/LocalTrackTable.cpp" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/include/control/ApiClient.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/include/control/Http.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/include/control/interface.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/include/db/DatabaseManager.h" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/include/db/LocalTrackTable.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
+    <list default="true" id="d26da56a-136f-4151-aca2-1a2a6b2d6044" name="Changes" comment="进行重大重构&#10;1.完成对Http模块的基础编写&#10;2.完成音乐播放类的核心函数&#10;3.集成SQLite数据库用于本地音乐&#10;4.定义API接口函数">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/MusicInfo.qml" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/MusicInfo.qml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cpp/BluetoothAudioMonitor.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cpp/FAlbumArtManager.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cpp/Http.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/cpp/Http.cpp" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/cpp/MusicPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/cpp/MusicPlayer.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cpp/QJson.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/cpp/Http.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cpp/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/cpp/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cpp/main.cpp.bak" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cpp/mysql.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/cpp/touser.cpp" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/include/Decryptor/Common.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/Decryptor/Common.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/include/Decryptor/KRCDecryptor.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/Decryptor/KRCDecryptor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/include/Sql/mysql.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/include/Sql/touser.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/include/control/AudioProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/control/AudioProcessor.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/include/control/BluetoothAudioMonitor.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/include/control/FAlbumArtManager.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/include/control/Lyrics.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/control/Lyrics.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/control/FileManager.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/control/FileManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/control/Http.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/control/Http.h" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/include/control/MusicPlayer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/control/MusicPlayer.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/include/control/MyController.h" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/include/control/QFiledownload.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/control/FileManager.h" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/include/control/QJson.h" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/BottomBar.qml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/BottomBar.qml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/navigationPage/local.qml" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigationPage/local.qml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -369,7 +344,7 @@
       <workItem from="1766060389877" duration="11361000" />
       <workItem from="1766122854214" duration="3669000" />
       <workItem from="1766128580362" duration="10227000" />
-      <workItem from="1766141336562" duration="11017000" />
+      <workItem from="1766141336562" duration="24253000" />
     </task>
     <task id="LOCAL-00001" summary="change look to fluentui, optimise project structure.">
       <option name="closed" value="true" />
@@ -443,7 +418,23 @@
       <option name="project" value="LOCAL" />
       <updated>1751297863594</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="进行重大重构&#10;1.完成对Http模块的基础编写&#10;2.完成音乐播放类的核心函数&#10;3.集成SQLite数据库用于本地音乐&#10;4.定义API接口函数">
+      <option name="closed" value="true" />
+      <created>1766155010739</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1766155010740</updated>
+    </task>
+    <task id="LOCAL-00011" summary="进行重大重构&#10;1.完成对Http模块的基础编写&#10;2.完成音乐播放类的核心函数&#10;3.集成SQLite数据库用于本地音乐&#10;4.定义API接口函数">
+      <option name="closed" value="true" />
+      <created>1766155066211</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1766155066211</updated>
+    </task>
+    <option name="localTasksCounter" value="12" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -474,7 +465,9 @@
     <MESSAGE value="feelt 进行的更改" />
     <MESSAGE value="Merge remote-tracking branch 'refs/remotes/origin/dev' into front-dev" />
     <MESSAGE value="userlogin" />
-    <option name="LAST_COMMIT_MESSAGE" value="userlogin" />
+    <MESSAGE value="Merge remote-tracking branch 'origin/front-dev' into dev" />
+    <MESSAGE value="进行重大重构&#10;1.完成对Http模块的基础编写&#10;2.完成音乐播放类的核心函数&#10;3.集成SQLite数据库用于本地音乐&#10;4.定义API接口函数" />
+    <option name="LAST_COMMIT_MESSAGE" value="进行重大重构&#10;1.完成对Http模块的基础编写&#10;2.完成音乐播放类的核心函数&#10;3.集成SQLite数据库用于本地音乐&#10;4.定义API接口函数" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

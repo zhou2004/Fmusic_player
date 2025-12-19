@@ -146,6 +146,7 @@ Rectangle {
                 text:"Play"
                 iconSource: FluentIcons.Play
                 onClicked: {
+                    musicPlayer.setTrackList(localPageContent.musicModel)
                     musicPlayer.playIndex(mIndex)
                     showInfo("Play")
                 }

@@ -173,7 +173,7 @@ public:
                      const ErrorCallback &onError = nullptr);
 
 signals:
-    // @TODO: 全局请求/响应信号，可以在这里添加,目前先不实现,留作扩展
+    // TODO: 全局请求/响应信号，可以在这里添加,目前先不实现,留作扩展
     //================== 拦截器接口-类似 axios 拦截器：请求前、响应后 ==================
     // 请求拦截器
     void beforeRequest(QNetworkRequest &request, QString &method, QJsonObject &body);
@@ -183,7 +183,7 @@ signals:
     void httpError(const QNetworkReply *reply, int statusCode, const QString &message);
 
 private slots:
-    // @TODO: 核心槽函数，处理请求完成事件，需要处理响应数据和错误，需要完成异步回调和拦截器调用，需要全局同步
+    // TODO: 核心槽函数，处理请求完成事件，需要处理响应数据和错误，需要完成异步回调和拦截器调用，需要全局同步
     // 核心槽函数，使用QT的Network模块的信号槽机制处理请求完成事件，这个是Http异步处理的关键
     void onFinished(QNetworkReply *reply);
 
