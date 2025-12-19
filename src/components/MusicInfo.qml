@@ -9,6 +9,11 @@ Rectangle {
     property string mArtist: ""
     property string mAlbum: ""
 
+    // 监听 C++ 信号，实现响应式更新
+    Connections {
+        target: musicPlayer
+    }
+
     id: musicInfoRectangle
     width: parent ? parent.width : 700
     height: 64
@@ -141,6 +146,7 @@ Rectangle {
                 text:"Play"
                 iconSource: FluentIcons.Play
                 onClicked: {
+                    musicPlayer.playIndex(mIndex)
                     showInfo("Play")
                 }
             }

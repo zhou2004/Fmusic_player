@@ -159,7 +159,7 @@ public:
             reply->deleteLater();
             return true;
         }else {
-            std::ifstream file(std::filesystem::path(fileName), std::ios::binary);
+            std::ifstream file(fileName, std::ios::binary);
             if (!file) {
                 std::cerr << "Could not open file: " << fileName << std::endl;
                 return false;

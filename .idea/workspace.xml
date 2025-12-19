@@ -7,8 +7,9 @@
     <option name="/Default/RiderDebugger/RiderRestoreDecompile/RestoreDecompileSetting/@EntryValue" value="false" type="bool" />
     <option name="/Default/Housekeeping/GlobalSettingsUpgraded/IsUpgraded/@EntryValue" value="true" type="bool" />
     <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexedValue" value="true" type="bool" />
-    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="3" type="long" />
+    <option name="/Default/Environment/Hierarchy/GeneratedFilesCacheKey/Timestamp/@EntryValue" value="4" type="long" />
     <option name="/Default/Housekeeping/OptionsDialog/SelectedPageId/@EntryValue" value="CppCodeGeneration" type="string" />
+    <option name="/Default/Housekeeping/FeatureSuggestion/FeatureSuggestionManager/DisabledSuggesters/=SwitchToGoToActionSuggester/@EntryIndexRemoved" />
   </component>
   <component name="CMakePresetLoader">{
   &quot;useNewFormat&quot;: true
@@ -47,7 +48,40 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d26da56a-136f-4151-aca2-1a2a6b2d6044" name="Changes" comment="userlogin">
+      <change afterPath="$PROJECT_DIR$/src/cpp/ApiClient.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cpp/DatabaseManager.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/cpp/LocalTrackTable.cpp" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/include/control/ApiClient.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/include/control/Http.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/include/control/interface.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/include/db/DatabaseManager.h" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/include/db/LocalTrackTable.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/editor.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/editor.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/CMakeLists.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/MusicInfo.qml" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/MusicInfo.qml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cpp/BluetoothAudioMonitor.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cpp/FAlbumArtManager.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cpp/MusicPlayer.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/cpp/MusicPlayer.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cpp/QJson.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/cpp/Http.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cpp/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/src/cpp/main.cpp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cpp/main.cpp.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cpp/mysql.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/cpp/touser.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/Decryptor/Common.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/Decryptor/Common.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/Decryptor/KRCDecryptor.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/Decryptor/KRCDecryptor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/Sql/mysql.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/Sql/touser.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/control/AudioProcessor.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/control/AudioProcessor.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/control/BluetoothAudioMonitor.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/control/FAlbumArtManager.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/control/Lyrics.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/control/Lyrics.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/control/MusicPlayer.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/control/MusicPlayer.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/control/MyController.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/control/QFiledownload.h" beforeDir="false" afterPath="$PROJECT_DIR$/src/include/control/FileManager.h" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/include/control/QJson.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/BottomBar.qml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/BottomBar.qml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/navigationPage/local.qml" beforeDir="false" afterPath="$PROJECT_DIR$/src/navigationPage/local.qml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -86,8 +120,18 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$PROJECT_DIR$/src/cpp/mysql.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/cpp/ApiClient.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/cpp/Http.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/cpp/LocalTrackTable.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/cpp/Lyrics.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/cpp/MusicPlayer.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/cpp/main.cpp" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/include/Decryptor/Common.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/include/Iconvert.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/include/control/ApiClient.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/include/control/FileManager.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/include/control/Lyrics.h" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/src/include/control/MusicPlayer.h" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/src/navigationPage/local.qml" root0="SKIP_INSPECTION" />
   </component>
   <component name="ProblemsViewState">
@@ -129,13 +173,13 @@
     &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;dev&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/pycharm/pythonProject/test/Fmusic_player&quot;,
+    &quot;last_opened_file_path&quot;: &quot;D:/CLion/vcpkg&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;language.qml&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;CPPToolchains&quot;,
     &quot;ts.external.directory.path&quot;: &quot;D:\\CLion\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
@@ -155,6 +199,11 @@
     </key>
   </component>
   <component name="RunManager" selected="CMake 应用程序.Fmusic">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
     <configuration name="Fmusic" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="FMusic" TARGET_NAME="Fmusic" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="FMusic" RUN_TARGET_NAME="Fmusic">
       <method v="2">
         <option name="com.jetbrains.cidr.execution.CidrBuildBeforeRunTaskProvider$BuildBeforeRunTask" enabled="true" />
@@ -299,7 +348,28 @@
       <workItem from="1751243842901" duration="2164000" />
       <workItem from="1751254173112" duration="21000" />
       <workItem from="1751254213475" duration="56000" />
-      <workItem from="1751611071174" duration="3000" />
+      <workItem from="1751611071174" duration="1005000" />
+      <workItem from="1751688314485" duration="610000" />
+      <workItem from="1751794363831" duration="21000" />
+      <workItem from="1756129106312" duration="353000" />
+      <workItem from="1756346116502" duration="749000" />
+      <workItem from="1759600153778" duration="1710000" />
+      <workItem from="1760260453934" duration="3347000" />
+      <workItem from="1761751531000" duration="9941000" />
+      <workItem from="1762237637715" duration="2130000" />
+      <workItem from="1762242862385" duration="1628000" />
+      <workItem from="1762244991575" duration="2000" />
+      <workItem from="1765639750028" duration="2432000" />
+      <workItem from="1765642816209" duration="4710000" />
+      <workItem from="1765695651879" duration="2000" />
+      <workItem from="1765696150146" duration="35690000" />
+      <workItem from="1765884815703" duration="13443000" />
+      <workItem from="1765973590139" duration="15685000" />
+      <workItem from="1766020913726" duration="28000" />
+      <workItem from="1766060389877" duration="11361000" />
+      <workItem from="1766122854214" duration="3669000" />
+      <workItem from="1766128580362" duration="10227000" />
+      <workItem from="1766141336562" duration="11017000" />
     </task>
     <task id="LOCAL-00001" summary="change look to fluentui, optimise project structure.">
       <option name="closed" value="true" />

@@ -11,11 +11,59 @@ FluFrame {
     property string musicDuration: "04:34"
     property string musicPlayTime: "00:00"
     property int infoTextSize: 13
-    property bool isPlaying: false // 用于控制播放状态
+    property bool isPlaying: false // 控制播放状态，由 C++ MusicPlayer 驱动
 
     id: bottomBar
     width: bottomBarWidth
     height: bottomBarHeight
+
+    Component.onCompleted: {
+        // 初始时从 C++ 取一次当前曲目
+        const info = musicPlayer.currentTrackInfo()
+        songName = info.title || songName
+        singerName = info.artist || singerName
+        albumCover = info.cover || albumCover
+    }
+
+    Connections {
+        target: musicPlayer
+        onPlayingChanged: function(playing) {
+            isPlaying = playing
+        }
+        onCurrentTrackInfoChanged: function(info) {
+            if (!info)
+                return
+            songName = info.title || songName
+            singerName = info.artist || singerName
+            albumCover = info.cover || albumCover
+
+
+            // 更新时长显示（如果有），使用 info.durationMs 或 duration 估算
+            var durMs = 0
+            if (info.durationMs !== undefined) {
+                durMs = info.durationMs
+            } else if (info.duration !== undefined) {
+                durMs = info.duration * 1000
+            }
+            if (durMs > 0) {
+                var totalSec = Math.floor(durMs / 1000)
+                var m = Math.floor(totalSec / 60)
+                var s = totalSec % 60
+                musicDuration = (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s)
+                slider.from = 0
+                slider.to = 10000
+            }
+        }
+        onPositionChanged: function(pos) {
+            // pos 为毫秒，将其映射到 slider 范围
+            slider.value = pos
+
+            var curSec = Math.floor(pos / 1000)
+            var m = Math.floor(curSec / 60)
+            var s = curSec % 60
+            musicPlayTime = (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s)
+        }
+    }
 
     // now playing
     Row {
@@ -103,6 +151,10 @@ FluFrame {
                 anchors.topMargin: parent.topMargin + 3
                 anchors.right: musicPlay_buttion.left
                 anchors.rightMargin: parent.betweenMargin
+
+                onClicked: {
+                    musicPlayer.previous()
+                }
             }
 
             // TODO:播放/暂停按钮
@@ -115,8 +167,11 @@ FluFrame {
                 anchors.horizontalCenter: parent.horizontalCenter
 
                 onClicked: {
-                    isPlaying = !isPlaying // 切换播放状态
-                    console.log("Music is now " + (isPlaying ? "playing" : "paused"))
+                    if (isPlaying) {
+                        musicPlayer.pause()
+                    } else {
+                        musicPlayer.play()
+                    }
                 }
             }
 
@@ -129,6 +184,10 @@ FluFrame {
                 anchors.topMargin: parent.topMargin + 3
                 anchors.left: musicPlay_buttion.right
                 anchors.leftMargin: parent.betweenMargin
+
+                onClicked: {
+                    musicPlayer.next()
+                }
             }
 
             // TODO: 随机播放按钮
@@ -142,7 +201,8 @@ FluFrame {
                 anchors.rightMargin: parent.betweenMargin
 
                 onClicked: {
-                    console.log("Random button clicked")
+                    // 切换随机播放模式
+                    musicPlayer.playMode = 3
                 }
             }
 
@@ -181,7 +241,12 @@ FluFrame {
 
                 property bool isDragging: false
                 from: 0
-                to: 100
+                to: 100000
+
+                onMoved: {
+                    // 拖动时根据 slider.value 跳转进度（毫秒）
+                    musicPlayer.seek(value)
+                }
             }
 
             // TODO: 绑定音乐播放时间
@@ -253,4 +318,3 @@ FluFrame {
         }
     }
 }
-

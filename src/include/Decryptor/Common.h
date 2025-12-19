@@ -4,6 +4,7 @@
 #include <regex>
 #include <string>
 #include <vector>
+#include <QString>
 #include <fstream>
 
 // 判断是否存在某元素

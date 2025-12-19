@@ -1,402 +1,468 @@
-// MusicPlayer.cpp
+/**
+ * @file MusicPlayer.cpp
+ *
+ * @brief 音乐播放器核心实现,包含播放控制、播放列表管理和本地音乐扫描功能。
+ *
+ * 该类使用 Qt Multimedia 模块实现音频播放，支持播放控制接口、音乐列表管理和信号等处理。
+ * 实现了本地音乐文件扫描功能，并将扫描结果存储到 SQLite 数据库中，专门用于本地音乐播放。
+ * 实现了播放模式（顺序、循环、单曲循环、随机）和音量控制等功能。
+ * 实现了与 QML 的交互接口，方便在 QML 界面中使用播放器功能。
+ * 实现了当前播放曲目信息的访问接口，供界面显示使用。
+ * 实现了播放进度和状态变化的信号通知，供界面实时更新使用。
+ * 实现了播放列表的增删改查接口，支持动态管理播放列表。
+ *
+ * @author zhou2004
+ * @date 2025-12-18
+ */
+
 #include "MusicPlayer.h"
+#include <QVariant>
+#include <QUrl>
+#include <QFileDialog>
+#include <QDirIterator>
+#include <QFileInfo>
+#include <QDebug>
 
-MusicPlayer::MusicPlayer(QObject *parent) : QObject(parent) {
-    // 初始化 QMediaPlayer 和 QAudioOutput
-    player = new QMediaPlayer(this);
-    audioOutput = new QAudioOutput(this);
-    player->setAudioOutput(audioOutput);
-    device = audioOutput->device();
+MusicPlayer::MusicPlayer(QObject *parent)
+    : QObject(parent)
+{
+    // 初始化默认 AudioState，里面存储当前播放队列，当前歌曲索引，声音等信息
+    m_state.currentSongIndex = 0;
+    m_state.volume = 50;       // 0~100
+    m_state.quality = "exhigh";
 
-    // 获取设备支持的音频格式信息
-    // QAudioFormat format = device.preferredFormat();
-    // format.sampleRate();
-    connect(player, &QMediaPlayer::mediaStatusChanged, this, &MusicPlayer::onMediaStatusChanged);
-    connect(player, &QMediaPlayer::metaDataChanged, this, &MusicPlayer::onMetaDataChanged);
-    // 连接信号
-    connect(player, &QMediaPlayer::positionChanged, this, &MusicPlayer::onPositionChanged);
+    // 初始化底层播放器
+    m_audioOutput = new QAudioOutput(this);
+    m_player = new QMediaPlayer(this);
+    m_player->setAudioOutput(m_audioOutput);
 
-    connect(player, &QMediaPlayer::playingChanged, this, &MusicPlayer::onPlayingChanged);
+    // 默认音量
+    m_audioOutput->setVolume(m_state.volume / 100.0f);
 
+    // 连接内部信号到外部 signal，供 QML 绑定
+    connect(m_player, &QMediaPlayer::positionChanged,
+            this, &MusicPlayer::handlePositionChanged);
+    connect(m_player, &QMediaPlayer::playbackStateChanged,
+            this, &MusicPlayer::handlePlaybackStateChanged);
+    connect(m_player, &QMediaPlayer::mediaStatusChanged, this, &MusicPlayer::mediaStatusChanged);
 }
 
-MusicPlayer::~MusicPlayer() {
-    delete player;
-    player = nullptr;
+MusicPlayer::~MusicPlayer() = default;
 
-    delete audioOutput;
-    audioOutput = nullptr;
-}
+// ======================= 播放控制接口 =======================
 
-bool MusicPlayer::play(const QString &musicPath) {
-    player->stop(); // 停止当前播放的音乐
+void MusicPlayer::play()
+{
+    // 如果当前列表为空，直接返回
+    if (m_state.trackList.isEmpty())
+        return;
 
-    this->music_path = musicPath.toStdString();
-    this->player->setSource(QUrl(musicPath));
-    this->audioOutput->setVolume(100);
-
-    // 检查媒体状态
-    QMediaPlayer::MediaStatus status = player->mediaStatus();
-    if (status != QMediaPlayer::LoadingMedia) {
-        // 无效的媒体文件
-        return false;
-    }
-    this->player->play(); // 开始播放
-    return true;
-}
-
-bool MusicPlayer::repeat_play(const QString &musicPath) {
-    this->music_path = musicPath.toStdString();
-    this->player->setSource(QUrl(musicPath));
-    this->audioOutput->setVolume(100);
-    this->player->play(); // 开始播放
-    return true;
-}
-
-//加载过media的播放
-void MusicPlayer::loaded_play() {
-    //直接播放
-    this->player->play(); // 开始播放
-}
-
-void MusicPlayer::pause() {
-    this->player->pause();
-}
-
-void MusicPlayer::stop() {
-    this->player->play();
-    this->player->stop();
-}
-
-int MusicPlayer::Pre_play(int64_t current_index) {
-    if (current_index <= 0) {
-        return 1;
+    // 如果当前索引越界，则重置到 0
+    if (m_state.currentSongIndex < 0
+        || m_state.currentSongIndex >= m_state.trackList.size()) {
+        m_state.currentSongIndex = 0;
+        emit currentSongIndexChanged(m_state.currentSongIndex);
     }
 
-    player->stop(); // 停止当前播放的音乐
-
-    this->music_path = this->musicFiles[int(current_index)-1].filePath.c_str();
-    this->player->setSource(QUrl(QString::fromStdString(this->music_path)));
-    this->audioOutput->setVolume(100);
-    this->player->play(); // 开始播放
-    this->currentTaskIndex = int(current_index) -1;
-
-    return 0;
+    // 加载并播放当前曲目
+    if (!m_player->hasAudio()) loadCurrentTrack();
+    m_player->play();
 }
 
-int MusicPlayer::Next_play(int current_index) {
-    if (current_index >= this->musicFiles.size() - 1) {
-        return 1;
+void MusicPlayer::playIndex(int index)
+{
+    if (index < 0 || index >= m_state.trackList.size())
+        return;
+
+    setCurrentSongIndex(index);
+    loadCurrentTrack();
+    m_player->play();
+}
+
+void MusicPlayer::playUrl(const QString &url)
+{
+    if (url.isEmpty())
+        return;
+
+    m_player->setSource(QUrl(url));
+    m_audioOutput->setVolume(m_state.volume / 100.0f);
+    m_player->play();
+}
+
+void MusicPlayer::pause()
+{
+    m_player->pause();
+}
+
+void MusicPlayer::stop()
+{
+    m_player->stop();
+}
+
+void MusicPlayer::previous()
+{
+    if (m_state.trackList.isEmpty())
+        return;
+
+    // 只计算一次上一曲索引，并通过 playIndex 触发播放
+    int newIndex = m_state.currentSongIndex - 1;
+    if (newIndex < 0) {
+        // 列表循环：跳到最后一首
+        newIndex = m_state.trackList.size() - 1;
     }
-    player->stop(); // 停止当前播放的音乐
-    this->music_path = this->musicFiles[int(current_index)+1].filePath.c_str();
-    this->player->setSource(QUrl(QString::fromStdString(this->music_path)));
-    this->audioOutput->setVolume(100);
-    this->player->play(); // 开始播放
-    this->currentTaskIndex = int(current_index) + 1;
-
-    return 0;
+    playIndex(newIndex);
 }
 
+void MusicPlayer::next()
+{
+    if (m_state.trackList.isEmpty())
+        return;
 
-void MusicPlayer::setMedia(const QString &filePath) {
-    this->player->setSource(QUrl(filePath));
+    // 只计算一次下一曲索引，并通过 playIndex 触发播放
+    int newIndex = (m_state.currentSongIndex + 1) % m_state.trackList.size();
+    playIndex(newIndex);
 }
 
-void MusicPlayer::setPosition(int64_t position) {
-    this->desiredPosition = position; // 存储目标位置
+void MusicPlayer::seek(qint64 positionMs)
+{
+    if (!m_player)
+        return;
+    m_player->setPosition(positionMs);
+}
 
-    // 直接尝试定位（可能因缓冲不足失败）
-    player->setPosition(position);
+// ======================= 播放列表 / 当前页歌曲管理 =======================
 
-    // 连接信号以处理缓冲完成后的重试
-    connect(player, &QMediaPlayer::bufferProgressChanged,
-            this, [this](float progress) {
-        if (progress >= 0.8 && this->desiredPosition != -1) {
-            player->setPosition(this->desiredPosition);
-            this->desiredPosition = -1; // 重置标记
+void MusicPlayer::setTrackList(const QVariantList &tracks)
+{
+    // 清空现有列表
+    m_state.trackList.clear();
+
+    // 重新添加新列表
+    for (const QVariant &v : tracks) {
+        const QVariantMap map = v.toMap();
+        TrackModel t;
+        t.id        = map.value("id").toString();
+        t.title     = map.value("title").toString();
+        t.artist    = map.value("artist").toString();
+        t.album     = map.value("album").toString();
+        t.cover     = map.value("cover").toString();
+        t.url       = map.value("url").toString();
+        t.duration  = map.value("duration").toInt();
+        t.likeStatus = map.value("likeStatus").toInt();
+        t.lyrics    = map.value("lyrics").toString();
+        m_state.trackList.append(t);
+    }
+
+    // 重置索引策略，如果新列表非空则从 0 开始，否则设为 -1
+    if (!m_state.trackList.isEmpty()) {
+        m_state.currentSongIndex = 0;
+        emit currentSongIndexChanged(0);
+    } else {
+        m_state.currentSongIndex = -1;
+        emit currentSongIndexChanged(-1);
+    }
+}
+
+//@TODO: 目前是通过遍历检查重复添加，效率较低，后续可以改为通过哈希表检查
+void MusicPlayer::addTracks(const QVariantList &tracks)
+{
+    // 检查重复添加，避免重复 id
+    for (const QVariant &v : tracks) {
+        const QVariantMap map = v.toMap();
+        const QString id = map.value("id").toString();
+
+        // 检查是否已存在相同 id
+        bool exists = false;
+        for (const TrackModel &t : std::as_const(m_state.trackList)) {
+            if (t.id == id) {
+                exists = true;
+                break;
+            }
         }
-    });
-}
 
-void MusicPlayer::setVolume(int64_t volume) {
-    this->audioOutput->setVolume(volume);
-}
+        // 关键：跳过已存在的曲目，避免重复添加
+        if (exists)
+            continue;
 
-void MusicPlayer::search_files(const char *path) {
-
-}
-
-// 弹出文件夹选择对话框并保存路径到INI文件
-void MusicPlayer::select_folder_and_save_to_ini() {
-
-}
-
-// 从qml中获取music_folder路径传回c++中
-std::string MusicPlayer::get_Directory(const QString& music_folder) {
-    // 直接将 QString 转换为 std::string
-    std::string folder = music_folder.toStdString();
-
-    // 保存路径到类的成员变量（如果需要）
-    this->music_folder = folder;
-
-    // 使用 printf 输出 std::string
-    printf("C++文件路径: %s\n", this->music_folder.c_str());
-
-    // 刷新标准输出缓冲区
-    fflush(stdout);
-
-    QStringList filters;
-    filters << "*.mp3" << "*.flac" << "*.ogg";
-    // std::thread t([this, filters] {
-    //     this->searchFiles(this->music_folder, filters);
-    // });
-    // t.detach();
-    this->searchFiles(this->music_folder,filters);
-
-    return folder;
-}
-
-
-void MusicPlayer::searchFiles(const std::string &directoryPath, const QStringList &nameFilters) {
-    // 清空 musicFiles 并释放内存
-    std::vector<MusicFile>().swap(this->musicFiles);
-    this->current_page = 0;
-    std::cout << "Searching directory: " << directoryPath << std::endl;
-    std::cout << "Filters: ";
-    for (const auto& filter : nameFilters) {
-        std::cout << filter.toStdString() << " ";
+        // 添加新曲目
+        TrackModel t;
+        t.id        = id;
+        t.title     = map.value("title").toString();
+        t.artist    = map.value("artist").toString();
+        t.album     = map.value("album").toString();
+        t.cover     = map.value("cover").toString();
+        t.url       = map.value("url").toString();
+        t.duration  = map.value("duration").toInt();
+        t.likeStatus = map.value("likeStatus").toInt();
+        t.lyrics    = map.value("lyrics").toString();
+        m_state.trackList.append(t);
     }
-    std::cout << std::endl;
 
-    // 将 URI 格式的路径转换为标准的文件系统路径
-    QUrl url(QString::fromStdString(directoryPath));
-    QString localPath = url.toLocalFile();  // 转换为本地文件路径
-    std::cout << "Converted local path: " << localPath.toStdString() << std::endl;
+    // 如果之前是空列表，则从 0 开始
+    if (m_state.currentSongIndex < 0 && !m_state.trackList.isEmpty()) {
+        m_state.currentSongIndex = 0;
+        emit currentSongIndexChanged(0);
+    }
+}
+
+//@TODO: 目前是通过遍历查找并删除，效率较低，后续可以改为通过索引删除
+void MusicPlayer::deleteTrack(const QString &id)
+{
+    // 查找并删除指定 id 的曲目，不是通过索引，删除效率较低
+    for (int i = 0; i < m_state.trackList.size(); ++i) {
+        if (m_state.trackList[i].id == id) {
+            m_state.trackList.removeAt(i);
+
+            // 调整 currentSongIndex
+            if (m_state.currentSongIndex >= m_state.trackList.size()) {
+                m_state.currentSongIndex = m_state.trackList.size() - 1;
+            }
+            emit currentSongIndexChanged(m_state.currentSongIndex);
+            break;
+        }
+    }
+}
+
+void MusicPlayer::setCurrentPageSongs(const QVariantList &songs)
+{
+    // 清空现有列表
+    m_currentPageSongs.clear();
+    // 重新添加新列表
+    for (const QVariant &v : songs) {
+        const QVariantMap map = v.toMap();
+        TrackModel t;
+        t.id        = map.value("id").toString();
+        t.title     = map.value("title").toString();
+        t.artist    = map.value("artist").toString();
+        t.album     = map.value("album").toString();
+        t.cover     = map.value("cover").toString();
+        t.url       = map.value("url").toString();
+        t.duration  = map.value("duration").toInt();
+        t.likeStatus = map.value("likeStatus").toInt();
+        t.lyrics    = map.value("lyrics").toString();
+        m_currentPageSongs.append(t);
+    }
+}
+
+QJsonArray MusicPlayer::currentPageSongsJson() const
+{
+    QJsonArray arr;
+    for (const TrackModel &t : m_currentPageSongs) {
+        arr.append(trackToJson(t));
+    }
+    return arr;
+}
+
+// ======================= 状态访问接口 =======================
+
+void MusicPlayer::setCurrentSongIndex(int index)
+{
+    if (m_state.currentSongIndex == index)
+        return;
+
+    m_state.currentSongIndex = index;
+    emit currentSongIndexChanged(index);
+}
+
+void MusicPlayer::setVolume(int volume)
+{
+    if (volume < 0)
+        volume = 0;
+    if (volume > 100)
+        volume = 100;
+
+    if (m_state.volume == volume)
+        return;
+
+    m_state.volume = volume;
+    emit volumeChanged(volume);
+
+    if (m_audioOutput)
+        m_audioOutput->setVolume(static_cast<float>(volume) / 100.0f);
+}
+
+QJsonObject MusicPlayer::currentTrackInfo() const
+{
+    if (m_state.currentSongIndex < 0
+        || m_state.currentSongIndex >= m_state.trackList.size()) {
+        return QJsonObject();
+    }
+    return trackToJson(m_state.trackList[m_state.currentSongIndex]);
+}
+
+
+void MusicPlayer::setPlayMode(int mode)
+{
+    if (m_playMode == mode)
+        return;
+    m_playMode = mode;
+    emit playModeChanged(mode);
+}
+
+// ======================= 本地音乐目录扫描 =======================
+
+void MusicPlayer::openLocalMusicFolder()
+{
+    const QString startPath = QStandardPaths::writableLocation(QStandardPaths::MusicLocation);
+    QString dirPath = QFileDialog::getExistingDirectory(nullptr,
+                                                        tr("Select Music Folder"),
+                                                        startPath);
+    if (dirPath.isEmpty())
+        return;
+
+    scanLocalDirectory(dirPath);
+}
+
+void MusicPlayer::scanLocalDirectory(const QString &path)
+{
+    m_localTracks.clear();
+
+    // 支持 file:/// 开头的 URL
+    QString localPath = path;
+    if (localPath.startsWith("file:")) {
+        QUrl url(localPath);
+        localPath = url.toLocalFile();
+    }
 
     QDir dir(localPath);
     if (!dir.exists()) {
-        std::cerr << "Directory does not exist: " << localPath.toStdString() << std::endl;
+        qWarning() << "MusicPlayer::scanLocalDirectory directory not exist:" << localPath;
+        emit localTracksChanged();
         return;
     }
 
-    QStringList filesFound;
-    QDirIterator it(dir.path(), nameFilters, QDir::NoFilter, QDirIterator::Subdirectories);
+    QDirIterator it(localPath,
+                    QStringList() << "*.mp3" << "*.flac" << "*.wav" << "*.m4a" << "*.ogg" << "*.aac",
+                    QDir::Files,
+                    QDirIterator::Subdirectories);
 
+    // 使用 TrackModel 收集扫描结果，然后批量写入 SQLite
+    QVector<TrackModel> scannedTracks;
 
     while (it.hasNext()) {
-        QString filePath = it.next();
-        filesFound.append(filePath);
+        const QString filePath = it.next();
+        QFileInfo info(filePath);
+        // @TODO: 这里可以使用 QMediaMetaData 读取元数据，获取标题、艺术家、专辑、封面等信息，这里先简化处理
+        TrackModel t;
+        t.id        = filePath;
+        t.title     = info.completeBaseName();
+        t.artist    = QStringLiteral("Local Artist");
+        t.album     = QStringLiteral("Local Album");
+        t.cover     = QStringLiteral("qrc:/assets/defaultAlbum.jpg");
+        t.url       = QUrl::fromLocalFile(filePath).toString();
+        t.duration  = 0;
+        // 此处留了两个基础字段，方便后续扩展，可以在本地音乐中实现喜欢功能和歌词显示，例如可以导出歌词文件(这些功能都需要基于SQLite实现)
+        t.likeStatus = 0;
+        t.lyrics    = QString();
+
+        scannedTracks.append(t);
+
     }
 
-    // 将找到的所有符合的文件存入std::vector<MusicFile>中
-    for (const QString &file : filesFound) {
-        this->musicFiles.emplace_back(MusicFile{file.toStdString()});
-    }
-    // 打印所有找到的文件
-    for (const auto& file : this->musicFiles) {
-        std::cout << "Music File: " << file.filePath << std::endl;
-    }
-    emit this->musicfolderChanged();  // 通知 QML 数据已更新
-}
-
-
-
-QList<QJsonObject> MusicPlayer::Get_Q_refresh_all_music() {
-    return this->q_files;
-}
-
-QList<QJsonObject> MusicPlayer::get_all_music_path() {
-    QList<QJsonObject> q_files;
-    std::vector<std::vector<std::string>> fileGroups;
-    // 将文件路径分组
-    size_t numFiles = 10;
-    size_t numThreads = 10;
-    size_t groupSize = (numFiles + numThreads - 1) / numThreads; // 每个线程处理的文件数量
-    std::vector<QList<QJsonObject>> threadResults(numThreads); // 为每个线程分配一个结果列表
-
-
-    for (size_t i = 0; i < numThreads; ++i) {
-        std::vector<std::string> group;
-        size_t start = i * groupSize + this->current_page * numFiles;
-        size_t end = std::min(start + groupSize,this->musicFiles.size());
-        for (size_t j = start; j < end; ++j) {
-            group.push_back(musicFiles[j].filePath);
+    // 将扫描结果写入 SQLite（通过 LocalTrackTable 封装，不在 MusicPlayer 里直接写 SQL）
+    if (!m_localTrackTable.ensureTable()) {
+        qWarning() << "MusicPlayer: ensure local_tracks table failed";
+    } else {
+        if (!m_localTrackTable.clearAll()) {
+            qWarning() << "MusicPlayer: clear local_tracks failed";
         }
-        fileGroups.push_back(group);
-        std::vector<std::string>().swap(group); // 释放局部变量
+        if (!m_localTrackTable.insertOrReplaceBatch(scannedTracks)) {
+            qWarning() << "MusicPlayer: insert scanned tracks to sqlite failed";
+        }
     }
 
-    // 创建线程
-    std::vector<std::thread> threads;
-    for (size_t i = 0; i < numThreads; ++i) {
-        threads.emplace_back([this, &fileGroups, &threadResults, i]() {
-            QMediaPlayer localPlayer;
-            QAudioOutput localAudioOutput;
-            localPlayer.setAudioOutput(&localAudioOutput);
+    emit localTracksChanged();
+    qDebug() << "MusicPlayer scanned local tracks count:" << m_localTracks.size();
+}
 
-            QList<QJsonObject> q_file; // 每个线程的局部结果列表
-            for (const auto& filePath : fileGroups[i]) {
-                localPlayer.setSource(QUrl::fromLocalFile(filePath.c_str()));
-                localPlayer.play();
-                localPlayer.pause();
+int MusicPlayer::localTracksCount() const
+{
+    // 直接从 SQLite 的 local_tracks 表统计总数
+    return m_localTrackTable.count();
+}
 
-                // 等待元数据加载完成
-                QEventLoop loop;
-                connect(&localPlayer, &QMediaPlayer::mediaStatusChanged, &loop, [&loop](QMediaPlayer::MediaStatus status) {
-                    if (status == QMediaPlayer::LoadedMedia) {
-                        loop.quit();
-                    }
-                });
-                loop.exec();
+QVariantList MusicPlayer::localTracksPage(int offset, int limit) const
+{
+    // 安全检查留给表类或这里简单防御
+    if (offset < 0 || limit <= 0)
+        return QVariantList();
 
-                if (localPlayer.mediaStatus() != QMediaPlayer::LoadedMedia) {
-                    QJsonObject musicInfo;
-                    QImage albumArt = localPlayer.metaData().value(QMediaMetaData::ThumbnailImage).value<QImage>();
-                    QByteArray byteArray;
-                    QBuffer buffer(&byteArray);
-                    albumArt.save(&buffer, "PNG");
-                    QString newBase64Data = byteArray.toBase64();
-                    musicInfo["albumimage"] = newBase64Data;
-                    musicInfo["title"] = localPlayer.metaData().value(QMediaMetaData::Title).toString();
-                    musicInfo["Author"] = localPlayer.metaData().value(QMediaMetaData::ContributingArtist).toString();
-                    musicInfo["album"] = localPlayer.metaData().value(QMediaMetaData::AlbumTitle).toString();
-                    musicInfo["duration"] = localPlayer.metaData().value(QMediaMetaData::Duration).toInt();
-                    musicInfo["filepath"] = QString::fromStdString(filePath);
-                    q_file.append(musicInfo);
+    // 直接从 SQLite 的 local_tracks 表分页查询
+    return m_localTrackTable.page(offset, limit);
+}
 
-                    std::cout << "Music File: " << musicInfo["filepath"].toString().toStdString()
-                              << " title: " << musicInfo["title"].toString().toStdString() << std::endl;
-                }
+// ======================= 内部回调 & 辅助函数实现 =======================
+
+void MusicPlayer::handlePositionChanged(qint64 position)
+{
+    // 将底层 QMediaPlayer 的 positionChanged 直接转发给 QML
+    emit positionChanged(position);
+}
+
+void MusicPlayer::handlePlaybackStateChanged(QMediaPlayer::PlaybackState state)
+{
+    const bool playing = (state == QMediaPlayer::PlayingState);
+    emit playingChanged(playing);
+
+    // 只在自然停止（播放结束）时根据播放模式切歌，避免和手动点击 next/previous 冲突
+    if (state == QMediaPlayer::StoppedState && m_player && m_player->position() > 0) {
+        if (m_playMode == 2) {
+            // 单曲循环
+            playIndex(m_state.currentSongIndex);
+        } else if (m_playMode == 1 || m_playMode == 0) {
+            // 列表循环或顺序播放：自动下一首
+            next();
+        } else if (m_playMode == 3) {
+            // 随机播放
+            if (!m_state.trackList.isEmpty()) {
+                int newIndex = QRandomGenerator::global()->bounded(m_state.trackList.size());
+                playIndex(newIndex);
             }
-            threadResults[i] = q_file; // 将局部结果存储到对应的位置
-
-            // 释放资源
-            localPlayer.stop();
-            localPlayer.setSource(QUrl());
-            localPlayer.deleteLater();
-            localAudioOutput.deleteLater();
-
-
-
-        });
+        }
     }
-
-    // 等待所有线程完成
-    for (auto& thread : threads) {
-        thread.join();
-    }
-
-    // 按顺序合并结果
-    for (size_t i = 0; i < numThreads; ++i) {
-        q_files.append(threadResults[i]);
-    }
-
-    std::vector<std::thread>().swap(threads); // 释放线程变量
-    std::vector<QList<QJsonObject>>().swap(threadResults); // 释放局部变量
-    std::vector<std::vector<std::string>>().swap(fileGroups); // 释放局部变量)
-    return q_files;
 }
 
-QJsonObject MusicPlayer::getMusicInfo() const {
-    QJsonObject musicInfo;
-    musicInfo["title"] = this->getTitle();
-    musicInfo["artist"] = this->getArtist();
-    musicInfo["album"] = this->getAlbum();
-    musicInfo["albumimage"] = this->getThumbnailImage();
-    musicInfo["duration"] = QString::number(this->getDuration());
-    musicInfo["Author"] = this->getAuthor();
-    // std::cout << "curent_task:" << this->currentTaskIndex << std::endl;
-    return musicInfo;
-}
-
-void MusicPlayer::Set_Q_Current_Task(int index) {
-    currentTaskIndex = index;
-    std::cout << "curent_task:" << currentTaskIndex << std::endl;
-    fflush(stdout);
-}
-
-
-//qml中获取播放进度
-qint64 MusicPlayer::Get_Q_Position() const {
-    return this->player->position();
-}
-
-
-
-//mysql驱动调用部分
-
-QList<QJsonObject> MusicPlayer::save_playlist(qint64 playlist_id) {
-    QList<QJsonObject> PlaylistDetail = mysql.query_PlaylistDetail(playlist_id);
-    //清空之前保存的歌曲
-    std::vector<MusicFile>().swap(this->musicFiles);
-    for (auto &temp :PlaylistDetail ) {
-        this->musicFiles.emplace_back(MusicFile{temp["play_url"].toString().toStdString(),temp["lyric_url"].toString().toStdString()});
+void MusicPlayer::loadCurrentTrack()
+{
+    if (m_state.currentSongIndex < 0 || m_state.currentSongIndex >= m_state.trackList.size()) {
+        return;
     }
-    // 打印所有找到的文件
-    // for (const auto& file : this->musicFiles) {
-    //     std::cout << "Music File: " << file.filePath << std::endl;
+
+    const TrackModel &t = m_state.trackList[m_state.currentSongIndex];
+
+    // 这里假设 url 字段已经是完整的可播放 URL（本地或网络）
+    m_player->setSource(QUrl(t.url));
+
+    // 播放前同步设置音量
+    m_audioOutput->setVolume(static_cast<float>(m_state.volume) / 100.0f);
+
+    // 通知当前曲目信息变化（附带一个 durationMs 字段，给进度条总时长使用）
+    QJsonObject info = trackToJson(t);
+    // info["duration"] = m_player->metaData().value(QMediaMetaData::Duration).toInt();
+    // qDebug () << "Title:" << m_player->metaData().value(QMediaMetaData::AlbumTitle).toString();
+    // qDebug () << "duration ms:"<< info["duration"].toInt();
+    // 如果 trackModel 中没有真实时长，这里可以先用 duration 字段的秒数估算
+    // if (!info.contains("durationMs")) {
+    //     int sec = m_player->metaData().value(QMediaMetaData::Duration).toInt();
+    //     // int sec = info.value("duration").toInt();
+    //     info["durationMs"] = static_cast<qint64>(sec) * 1000;
     // }
-    return PlaylistDetail;
+    emit currentTrackInfoChanged(info);
 }
 
-QJsonArray MusicPlayer::Get_All_Music() {
-    return mysql.query_musicTable();
+// @TODO: 该函数可以提取到 Utils 里复用
+// 辅助函数：将 TrackModel 转为 QJsonObject，后续可以写到Utils里复用
+QJsonObject MusicPlayer::trackToJson(const TrackModel &t)
+{
+    QJsonObject obj;
+    obj["id"]        = t.id;
+    obj["title"]     = t.title;
+    obj["artist"]    = t.artist;
+    obj["album"]     = t.album;
+    obj["cover"]     = t.cover;
+    obj["url"]       = t.url;
+    obj["duration"]  = t.duration;
+    obj["likeStatus"] = t.likeStatus;
+    obj["lyrics"]    = t.lyrics;
+    return obj;
 }
-
-QJsonArray MusicPlayer::Get_Music_Type(QString type_name) {
-    return mysql.query_musictype(type_name);
-}
-
-QList<QJsonObject> MusicPlayer::Get_Playlist() {
-    return mysql.query_Playlist();
-}
-
-QList<QJsonObject> MusicPlayer::Get_PlaylistDetail(qint64 playlist_id) {
-    return this->save_playlist(playlist_id);
-}
-
-
-bool MusicPlayer::regist_user(QString user_name, QString user_password) {
-    UserCreateInfo newUser;
-    newUser.nickname = user_name;
-    newUser.password = user_password;
-    qint64 userId = mysql.createUser(newUser);
-    if (userId == -1) {
-        qCritical() << "创建用户失败";
-        return false;
-    }
-    return true;
-
-}
-
-UserFullInfo MusicPlayer::login_user(QString user_name, QString user_password) {
-    UserFullInfo user = mysql.getUserByname(user_name);
-    if (mysql.verifyPassword(user_password,user.password)) {
-        this->user = user;
-        emit userChanged(this->user);
-        return user;
-    }else {
-        return UserFullInfo();
-    }
-
-}
-
-
-
-bool MusicPlayer::add_user_collections(qint64 userId, qint64 musicId) {
-    return mysql.addUserCollections(userId, musicId);
-}
-
-
-bool MusicPlayer::del_user_collections(qint64 userId, qint64 musicId) {
-    return mysql.delUserCollections(userId, musicId);
-}
-
-
-QList<QJsonObject> MusicPlayer::get_user_collections(qint64 userId,int page) {
-    return mysql.getUserCollections(userId,page);
-}
-
-
-//D:\KuGou\KugouMusic

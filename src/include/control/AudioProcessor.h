@@ -1,6 +1,16 @@
-//
-// Created by 周俊杰 on 2025/3/26.
-//
+/**
+* @file AudioProcessor.h
+ *
+ * @brief 该类为音频处理类，所有音频后期处理都在此类完成。
+ *
+ * 该类现在实现了音频频谱分析功能，使用 kissfft 库进行快速傅里叶变换（FFT）。
+ * 其他功能如音效均衡器、音频可视化等也可以在此类中实现，方便集中管理音频处理逻辑(未实现)。
+ * 此类与 MusicPlayer 类协作，获取当前播放的音频数据进行处理。
+ * @TODO待开发中！
+ *
+ * @author zhou2004
+ * @date 2025-12-14
+ */
 
 #ifndef AUDIOPROCESSOR_H
 #define AUDIOPROCESSOR_H
@@ -15,22 +25,20 @@
 
 #include "MusicPlayer.h"
 
-class AudioSpectrumAnalyzer : public QObject
+class AudioProcessor : public QObject
 {
     Q_OBJECT
 
 public:
-    explicit AudioSpectrumAnalyzer(MusicPlayer* musicPlayer, QObject *parent = nullptr) : QObject(parent), musicPlayer(musicPlayer)
+    explicit AudioProcessor(MusicPlayer* musicPlayer, QObject *parent = nullptr) : QObject(parent), musicPlayer(musicPlayer)
     {
 
         audioBufferOutput = new QAudioBufferOutput(this);
 
-        this->musicPlayer->player->setAudioBufferOutput(audioBufferOutput);
-
         this->spectrumList.resize(32);
 
         // 连接音频缓冲信号到处理槽函数
-        connect(audioBufferOutput, &QAudioBufferOutput::audioBufferReceived, this, &AudioSpectrumAnalyzer::handleAudioBuffer);
+        connect(audioBufferOutput, &QAudioBufferOutput::audioBufferReceived, this, &AudioProcessor::handleAudioBuffer);
 
         // 初始化 kissfft
         nfft = 1024; // FFT 点数，可以根据需要调整
@@ -39,7 +47,7 @@ public:
         cx_out = new kiss_fft_cpx[nfft];
     }
 
-    ~AudioSpectrumAnalyzer()
+    ~AudioProcessor()
     {
         kiss_fft_free(cfg);
         delete[] cx_in;
@@ -48,8 +56,8 @@ public:
 
     void setUrl(const QUrl &url)
     {
-        this->musicPlayer->player->setSource(url);
-        this->musicPlayer->player->play();
+        // this->musicPlayer->player->setSource(url);
+        // this->musicPlayer->player->play();
     }
 
 public slots:

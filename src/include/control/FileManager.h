@@ -1,9 +1,20 @@
-//
-// Created by 周俊杰 on 2025/4/9.
-//
+/**
+ * @file FileManager.h
+ *
+ * @brief 文件管理类，管理所有文件。
+ *
+ * 该类使用 Qt 网络模块实现文件下载功能，支持进度跟踪和错误处理。
+ * 实现了下载进度信号，方便界面显示下载进度。
+ * 实现了下载完成和下载失败信号，方便界面处理结果。
+ * 管理文件的打开和关闭，确保资源正确释放，避免内存泄漏。
+ * @TODO 需要实现文件上传和多线程下载，能够合理管理静态资源，包括音频，图片等。
+ *
+ * @author zhou2004
+ * @date 2025-12-18
+ */
 
-#ifndef QFILEDOWNLOAD_H
-#define QFILEDOWNLOAD_H
+#ifndef FILEMANAGER_H
+#define FILEMANAGER_H
 
 #include <QCoreApplication>
 #include <QNetworkAccessManager>
@@ -12,16 +23,16 @@
 #include <QUrl>
 #include <QDebug>
 
-class FileDownloader : public QObject {
+class FileManager : public QObject {
     Q_OBJECT
 
 public:
-    FileDownloader() : manager(new QNetworkAccessManager(this)) {
+    FileManager() : manager(new QNetworkAccessManager(this)) {
         // 连接信号和槽
-        connect(manager, &QNetworkAccessManager::finished, this, &FileDownloader::onFinished);
+        connect(manager, &QNetworkAccessManager::finished, this, &FileManager::onFinished);
     }
 
-    ~FileDownloader() {
+    ~FileManager() {
         if (file.isOpen()) {
             file.close();
         }
@@ -36,7 +47,7 @@ public slots:
         }
 
         QNetworkReply *reply = manager->get(QNetworkRequest(url));
-        connect(reply, &QNetworkReply::downloadProgress, this, &FileDownloader::onDownloadProgress);
+        connect(reply, &QNetworkReply::downloadProgress, this, &FileManager::onDownloadProgress);
     }
 
 public slots:
@@ -80,4 +91,4 @@ private:
 //     return app.exec();
 // }
 
-#endif //QFILEDOWNLOAD_H
+#endif //FILEMANAGER_H

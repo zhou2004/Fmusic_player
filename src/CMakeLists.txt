@@ -49,11 +49,11 @@ find_program(QT_LRELEASE NAMES lrelease)
 #     SOURCES ${TS_FILE_PATHS}
 # )
 
-#set(PROJECT_SOURCES
-#        cpp/*.cpp
-##        cpp/MusicPlayer.cpp
-#        qml.qrc
-#)
+set(PROJECT_SOURCES
+        cpp/*.cpp
+#        cpp/MusicPlayer.cpp
+        qml.qrc
+)
 
  file(GLOB PROJECT_SOURCES
          ${CMAKE_CURRENT_SOURCE_DIR}/cpp/*.cpp
@@ -64,54 +64,53 @@ find_program(QT_LRELEASE NAMES lrelease)
  file(GLOB_RECURSE HEADERS
          ${CMAKE_CURRENT_SOURCE_DIR}/include/control/*.h
          ${CMAKE_CURRENT_SOURCE_DIR}/include/Decryptor/*.h
-         ${CMAKE_CURRENT_SOURCE_DIR}/include/Sql/*.h
+         ${CMAKE_CURRENT_SOURCE_DIR}/include/db/*.h
  )
 
-qt6_wrap_cpp(MOC_SOURCES ${HEADERS})
+ qt6_wrap_cpp(MOC_SOURCES ${HEADERS})
 
-qt_add_executable(${PROJECT_NAME}
-        MANUAL_FINALIZATION
-        ${PROJECT_SOURCES}
-        ${MOC_SOURCES}
-        resource.rc
-)
+ qt_add_executable(${PROJECT_NAME}
+         MANUAL_FINALIZATION
+         ${PROJECT_SOURCES}
+         ${MOC_SOURCES}
+         resource.rc
+ )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE
-        OpenSSL::SSL
-        OpenSSL::Crypto
+ target_link_libraries(${PROJECT_NAME} PRIVATE
+         OpenSSL::SSL
+         OpenSSL::Crypto
 
-        #Qt库
-        Qt6::Core
-        Qt${QT_VERSION_MAJOR}::Quick
-        Qt6::Gui
-        Qt6::Network
-        Qt${QT_VERSION_MAJOR}::Multimedia
-        Qt${QT_VERSION_MAJOR}::Bluetooth
-        Qt${QT_VERSION_MAJOR}::Sql
-        Qt6::Widgets
-        fluentuiplugin
+         #Qt库
+         Qt6::Core
+         Qt${QT_VERSION_MAJOR}::Quick
+#        Qt6::Gui
+         Qt6::Network
+         Qt${QT_VERSION_MAJOR}::Multimedia
+         Qt${QT_VERSION_MAJOR}::Sql
+         fluentuiplugin
 
 
-        #taglib库
-        TagLib::tag
-        TagLib::tag_c
-        TagLib::TagLib
+         #taglib库
+         TagLib::tag
+         TagLib::tag_c
+         TagLib::TagLib
 
 
-        #rapidjson库
-        rapidjson
+         #rapidjson库
+         #rapidjson
 
-        kissfft::kissfft-float
-        kissfft::kissfft-double
+         kissfft::kissfft-float
+         kissfft::kissfft-double
 
-        ${ZLIB_LIBRARIES}
+         ${ZLIB_LIBRARIES}
 
-)
+ )
 
 
- target_include_directories(${PROJECT_NAME} PRIVATE
-         ${CMAKE_CURRENT_SOURCE_DIR}/include
-         ${CMAKE_CURRENT_SOURCE_DIR}/include/control
+  target_include_directories(${PROJECT_NAME} PRIVATE
+          ${CMAKE_CURRENT_SOURCE_DIR}/include
+          ${CMAKE_CURRENT_SOURCE_DIR}/include/control
+          ${CMAKE_CURRENT_SOURCE_DIR}/include/db
  )
 
 
@@ -157,5 +156,3 @@ install(TARGETS ${PROJECT_NAME}
 
 qt_import_qml_plugins(${PROJECT_NAME})
 qt_finalize_executable(${PROJECT_NAME})
-
-

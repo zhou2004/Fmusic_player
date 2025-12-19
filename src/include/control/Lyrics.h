@@ -2,6 +2,8 @@
 // Created by 周俊杰 on 2025/3/22.
 //
 
+// @TODO: 目前只支持 Lrc 和 Krc 两种歌词格式，后续可以扩展更多格式支持,如果集成了其他歌词，可以删除此文件
+
 #ifndef LYRICS_H
 #define LYRICS_H
 
@@ -21,6 +23,7 @@
 #include <QObject>
 #include <QThreadPool>
 #include <algorithm>
+#include <QFileInfo>
 
 #include "MusicPlayer.h"
 #include "Decryptor/KRCDecryptor.h"
