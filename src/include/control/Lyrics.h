@@ -26,7 +26,7 @@
 #include <QFileInfo>
 
 #include "MusicPlayer.h"
-#include "Decryptor/KRCDecryptor.h"
+// #include "Decryptor/KRCDecryptor.h"
 #include "Decryptor/KLyricsParser.h"
 
 #include "Iconvert.h"
@@ -54,7 +54,7 @@ public:
 
     LyricType type;
 
-    KRCDecoder Kdecoder;
+    // KRCDecoder Kdecoder;
     K_LyricParser KlyricParser;
 
     explicit Lyrics(MusicPlayer* musicPlayer, QObject *parent = nullptr);
@@ -156,53 +156,53 @@ public slots:
     }
 
     // 解析歌词文件（支持本地路径和网络 URL）
-    void parseLyric(QString filename) {
-        if (isFilePath(filename) || isUrlPath(filename)) {
-            // filename = "D:\\pycharm\\pythonProject\\Fmusic_player\\bin\\Debug\\decoded_output.krc";
-            this->type = detectLyricType(std::filesystem::path(filename.toStdString()));
+    // void parseLyric(QString filename) {
+    //     if (isFilePath(filename) || isUrlPath(filename)) {
+    //         // filename = "D:\\pycharm\\pythonProject\\Fmusic_player\\bin\\Debug\\decoded_output.krc";
+    //         this->type = detectLyricType(std::filesystem::path(filename.toStdString()));
 
-            if (this->type == Lrc) {
-                emit this->lyrictypeChanged(QString("Lrc"));
-                parseLyrics* task = new parseLyrics(this,filename.toStdString());
-                threadPool.start(task);
-            }else if (this->type == Krc) {
-                emit this->lyrictypeChanged(QString("Krc"));
-                // std::cout << "Krc" << std::endl;
-                bool flag = Kdecoder._load(filename.toStdString());
-                if (flag) {
-                    std::string decodedData = Kdecoder.getDecoded();
-                    KlyricParser.parseLyrics(decodedData);
-                    emit this->lyricChanged();  // 通知 QML Lyrics数据已更新
-                }
+    //         if (this->type == Lrc) {
+    //             emit this->lyrictypeChanged(QString("Lrc"));
+    //             parseLyrics* task = new parseLyrics(this,filename.toStdString());
+    //             threadPool.start(task);
+    //         }else if (this->type == Krc) {
+    //             emit this->lyrictypeChanged(QString("Krc"));
+    //             // std::cout << "Krc" << std::endl;
+    //             bool flag = Kdecoder._load(filename.toStdString());
+    //             if (flag) {
+    //                 std::string decodedData = Kdecoder.getDecoded();
+    //                 KlyricParser.parseLyrics(decodedData);
+    //                 emit this->lyricChanged();  // 通知 QML Lyrics数据已更新
+    //             }
 
-                // std::map<std::tuple<int, int, int, int>, std::pair<int, int>> timestampMap = KlyricParser.buildTimestampMap(lyricData);
+    //             // std::map<std::tuple<int, int, int, int>, std::pair<int, int>> timestampMap = KlyricParser.buildTimestampMap(lyricData);
 
-                // int playbackPosition = 215000;
-                //
-                // K_LyricParser::findLyricAtTime(lyricData, timestampMap, playbackPosition);
-                //
-                // KlyricParser.Q_getLyrics();
+    //             // int playbackPosition = 215000;
+    //             //
+    //             // K_LyricParser::findLyricAtTime(lyricData, timestampMap, playbackPosition);
+    //             //
+    //             // KlyricParser.Q_getLyrics();
 
-            }else {
+    //         }else {
 
-            }
-        }
-        else {
-            this->type = Krc;
-            std::vector<unsigned char> out;
-            if (Kdecoder.Base64Decode(filename.toStdString(),out)) {
-                std::string decodedData = Kdecoder.decode(out);
-                KlyricParser.parseLyrics(decodedData);
-                emit this->lyricChanged();  // 通知 QML Lyrics数据已更新
-                std::vector<unsigned char>().swap(out);
-            }else {
-                KlyricParser.parseLyrics("[0,1]<0,1,0>暂无歌词，敬请期待...");
-                emit this->lyricChanged();  // 通知 QML Lyrics数据已更新
-            }
-        }
+    //         }
+    //     }
+    //     else {
+    //         this->type = Krc;
+    //         std::vector<unsigned char> out;
+    //         if (Kdecoder.Base64Decode(filename.toStdString(),out)) {
+    //             std::string decodedData = Kdecoder.decode(out);
+    //             KlyricParser.parseLyrics(decodedData);
+    //             emit this->lyricChanged();  // 通知 QML Lyrics数据已更新
+    //             std::vector<unsigned char>().swap(out);
+    //         }else {
+    //             KlyricParser.parseLyrics("[0,1]<0,1,0>暂无歌词，敬请期待...");
+    //             emit this->lyricChanged();  // 通知 QML Lyrics数据已更新
+    //         }
+    //     }
 
 
-    }
+    // }
 
     // 查找歌词位置
     QVariant get_Lyricspos(qint32 position) {

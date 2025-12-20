@@ -9,8 +9,7 @@
       "cacheVariables": {
         "QT_DIR": "$env{QT_ROOT}/lib/cmake",
         "Qt6_DIR": "$env{QT_ROOT}/lib/cmake/Qt6",
-        "CMAKE_PREFIX_PATH": "$env{QT_ROOT}",
-        "CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+        "CMAKE_PREFIX_PATH": "$env{QT_ROOT}"
       }
     }
   ]

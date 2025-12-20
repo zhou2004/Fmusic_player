@@ -6,7 +6,7 @@ set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
@@ -20,11 +20,6 @@ endif()
 # 查找 zlib 库
 find_package(ZLIB REQUIRED)
 
-# 查找 OpenSSL
-find_package(OpenSSL REQUIRED)
-
-#寻找rapidjson库  json解析器
-find_package(rapidjson CONFIG REQUIRED)
 
 #寻找taglib依赖包
 find_package(taglib CONFIG REQUIRED)
@@ -67,6 +62,10 @@ set(PROJECT_SOURCES
          ${CMAKE_CURRENT_SOURCE_DIR}/include/db/*.h
  )
 
+ list(REMOVE_ITEM HEADERS 
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/Decryptor/KRCDecryptor.h
+ )
+
  qt6_wrap_cpp(MOC_SOURCES ${HEADERS})
 
  qt_add_executable(${PROJECT_NAME}
@@ -77,34 +76,26 @@ set(PROJECT_SOURCES
  )
 
  target_link_libraries(${PROJECT_NAME} PRIVATE
-         OpenSSL::SSL
-         OpenSSL::Crypto
 
-         #Qt库
-         Qt6::Core
-         Qt${QT_VERSION_MAJOR}::Quick
-#        Qt6::Gui
-         Qt6::Network
-         Qt${QT_VERSION_MAJOR}::Multimedia
-         Qt${QT_VERSION_MAJOR}::Sql
-         fluentuiplugin
+        # Qt库
+        Qt6::Core
+        Qt${QT_VERSION_MAJOR}::Quick
+        Qt6::Network
+        Qt${QT_VERSION_MAJOR}::Multimedia
+        Qt${QT_VERSION_MAJOR}::Sql
+        # 建议显式加上 PrintSupport 以消除警告，虽然 fluentuiplugin 可能已经传递了它
+        # Qt${QT_VERSION_MAJOR}::PrintSupport 
+        fluentuiplugin
 
+        # 2. 修正 taglib 大小写 (Conan 生成的是小写)
+        taglib::tag
+        # taglib::tag_c  <-- 如果不写 C 代码，这行可以注释掉
 
-         #taglib库
-         TagLib::tag
-         TagLib::tag_c
-         TagLib::TagLib
+        # 3. 修正 kissfft (根据日志，Conan 只声明了 kissfft::kissfft)
+        kissfft::kissfft
 
-
-         #rapidjson库
-         #rapidjson
-
-         kissfft::kissfft-float
-         kissfft::kissfft-double
-
-         ${ZLIB_LIBRARIES}
-
- )
+        ${ZLIB_LIBRARIES}
+)
 
 
   target_include_directories(${PROJECT_NAME} PRIVATE
