@@ -92,6 +92,7 @@ FluFrame {
                 // TODO: 点击专辑图进入音乐播放界面的逻辑
                 onClicked: {
                     console.log("Album onClicked")
+                    mainWindow.musicPlayerPageVisible = true
                 }
                 onEntered: parent.showColorOverlay = true
                 onExited: parent.showColorOverlay = false
