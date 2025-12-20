@@ -111,7 +111,7 @@ QNetworkRequest Http::buildRequest(const QString &method,
         // 例如：开启跨域 Cookie，具体逻辑根据后端而定
     }
 
-    // @TODO: 触发请求拦截器,这里根据具体需求设计拦截器参数
+    // TODO: 触发请求拦截器,这里根据具体需求设计拦截器参数
     // 预留给请求拦截器修改
     QString methodMut = method;
     QJsonObject bodyDummy; // 这里只传空 body，真正 body 在 request() 里处理
@@ -160,7 +160,7 @@ QNetworkReply *Http::request(const QString &method,
     // 实例化响应体
     QNetworkReply *reply = nullptr;
 
-    // @TODO: 定义各种 HTTP 方法的请求逻辑，需要QT的 Network 模块支持
+    // TODO: 定义各种 HTTP 方法的请求逻辑，需要QT的 Network 模块支持
     // 根据不同方法发送请求,支持 GET, POST, PUT, DELETE, PATCH 等方法
     if (methodUpper == "GET") {
         reply = manager->get(request);

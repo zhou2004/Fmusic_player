@@ -51,7 +51,7 @@ FluFrame {
                 var s = totalSec % 60
                 musicDuration = (m < 10 ? "0" + m : m) + ":" + (s < 10 ? "0" + s : s)
                 slider.from = 0
-                slider.to = 10000
+                slider.to = durMs
             }
         }
         onPositionChanged: function(pos) {

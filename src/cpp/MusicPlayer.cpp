@@ -22,6 +22,10 @@
 #include <QDirIterator>
 #include <QFileInfo>
 #include <QDebug>
+#include <QtConcurrent/QtConcurrent>
+#include <QFutureWatcher>
+#include <qimagewriter.h>
+#include <QThread>
 
 MusicPlayer::MusicPlayer(QObject *parent)
     : QObject(parent)
@@ -45,6 +49,12 @@ MusicPlayer::MusicPlayer(QObject *parent)
     connect(m_player, &QMediaPlayer::playbackStateChanged,
             this, &MusicPlayer::handlePlaybackStateChanged);
     connect(m_player, &QMediaPlayer::mediaStatusChanged, this, &MusicPlayer::mediaStatusChanged);
+
+    // \[新增] 初始化扫描 watcher，用于监听后台扫描任务结束
+    m_scanWatcher = new QFutureWatcher<QVector<TrackModel>>(this);
+    // 当 future 执行完毕时，在主线程调用 onScanFinished
+    connect(m_scanWatcher, &QFutureWatcher<QVector<TrackModel>>::finished,
+            this, &MusicPlayer::onScanFinished);
 }
 
 MusicPlayer::~MusicPlayer() = default;
@@ -161,6 +171,10 @@ void MusicPlayer::setTrackList(const QVariantList &tracks)
         m_state.currentSongIndex = -1;
         emit currentSongIndexChanged(-1);
     }
+}
+
+QVector<TrackModel> MusicPlayer::getTrackList() {
+    return m_state.trackList;
 }
 
 //@TODO: 目前是通过遍历检查重复添加，效率较低，后续可以改为通过哈希表检查
@@ -313,9 +327,17 @@ void MusicPlayer::openLocalMusicFolder()
     scanLocalDirectory(dirPath);
 }
 
+// TODO: 这里的扫描和元数据提取使用了 QtConcurrent，在后台线程执行，避免阻塞 UI,已完成本地音乐扫描功能。
 void MusicPlayer::scanLocalDirectory(const QString &path)
 {
+    // 清空旧的 QML 本地列表缓存（你现在主要用 SQLite，这里只是保持一致）
     m_localTracks.clear();
+
+    // 如果上一次扫描还在进行，直接忽略本次请求（也可以选择 cancel）
+    if (m_scanWatcher && m_scanWatcher->isRunning()) {
+        qWarning() << "MusicPlayer::scanLocalDirectory scan already running, skip.";
+        return;
+    }
 
     // 支持 file:/// 开头的 URL
     QString localPath = path;
@@ -331,48 +353,134 @@ void MusicPlayer::scanLocalDirectory(const QString &path)
         return;
     }
 
-    QDirIterator it(localPath,
-                    QStringList() << "*.mp3" << "*.flac" << "*.wav" << "*.m4a" << "*.ogg" << "*.aac",
-                    QDir::Files,
-                    QDirIterator::Subdirectories);
+    // \[核心] 使用 QtConcurrent::run 在后台线程执行扫描和元数据提取
+    // 注意：这里使用 lambda 捕获 localPath，避免直接访问 this 中的 QObject 成员
+    auto future = QtConcurrent::run([localPath]() -> QVector<TrackModel> {
+        QVector<TrackModel> scannedTracks;
 
-    // 使用 TrackModel 收集扫描结果，然后批量写入 SQLite
-    QVector<TrackModel> scannedTracks;
+        // 递归遍历目录下所有支持的音频文件
+        QDirIterator it(localPath,
+                        QStringList() << "*.mp3" << "*.flac" << "*.wav"
+                                      << "*.m4a" << "*.ogg" << "*.aac",
+                        QDir::Files,
+                        QDirIterator::Subdirectories);
 
-    while (it.hasNext()) {
-        const QString filePath = it.next();
-        QFileInfo info(filePath);
-        // @TODO: 这里可以使用 QMediaMetaData 读取元数据，获取标题、艺术家、专辑、封面等信息，这里先简化处理
-        TrackModel t;
-        t.id        = filePath;
-        t.title     = info.completeBaseName();
-        t.artist    = QStringLiteral("Local Artist");
-        t.album     = QStringLiteral("Local Album");
-        t.cover     = QStringLiteral("qrc:/assets/defaultAlbum.jpg");
-        t.url       = QUrl::fromLocalFile(filePath).toString();
-        t.duration  = 0;
-        // 此处留了两个基础字段，方便后续扩展，可以在本地音乐中实现喜欢功能和歌词显示，例如可以导出歌词文件(这些功能都需要基于SQLite实现)
-        t.likeStatus = 0;
-        t.lyrics    = QString();
+        while (it.hasNext()) {
+            const QString filePath = it.next();
+            QFileInfo info(filePath);
 
-        scannedTracks.append(t);
+            TrackModel t;
+            // 这里使用绝对路径作为 id，确保在 SQLite 中唯一且不重复
+            t.id  = filePath;
+            t.url = QUrl::fromLocalFile(filePath).toString();
 
-    }
+            // ----------- 使用 QMediaPlayer+QMediaMetaData 读取元数据（在工作线程） -----------
+            QMediaPlayer metaPlayer;
+            QAudioOutput audioOutput;
+            metaPlayer.setAudioOutput(&audioOutput);
+            metaPlayer.setSource(QUrl::fromLocalFile(filePath));
 
-    // 将扫描结果写入 SQLite（通过 LocalTrackTable 封装，不在 MusicPlayer 里直接写 SQL）
+            // 等待元数据加载完成
+                QEventLoop loop;
+                connect(&metaPlayer, &QMediaPlayer::mediaStatusChanged, &loop, [&loop](QMediaPlayer::MediaStatus status) {
+                    if (status == QMediaPlayer::LoadedMedia) {
+                        loop.quit();
+                    }
+                });
+                loop.exec();
+
+            QMediaMetaData md = metaPlayer.metaData();
+
+            // 标题：优先用元数据 Title，否则退回到文件名（不带扩展名）
+            t.title = md.value(QMediaMetaData::Title).toString();
+            if (t.title.isEmpty()) {
+                t.title = info.completeBaseName();
+            }
+
+            // 艺术家：常用的是 ContributingArtist，某些文件可能只写了 Author 等
+            t.artist = md.stringValue(QMediaMetaData::ContributingArtist);
+            if (t.artist.isEmpty()) {
+                t.artist = QStringLiteral("Unknown Artist");
+            }
+
+            // 专辑
+            t.album = md.stringValue(QMediaMetaData::AlbumTitle);
+            if (t.album.isEmpty()) {
+                t.album = QStringLiteral("Unknown Album");
+            }
+
+            // 时长：QMediaMetaData::Duration 一般是毫秒
+            QVariant durVar = md.value(QMediaMetaData::Duration);
+            // 你的 TrackModel 中 duration 是 int（通常单位秒），这里转成秒存
+            t.duration = durVar.isValid() ? durVar.toInt() / 1000 : 0;
+
+            // 封面：这里简单使用默认图，也可以用 CoverArtImage 保存到缓存再给一个本地路径
+            // ... 在 lambda 里替换封面处理代码：
+            QImage albumArt = md.value(QMediaMetaData::ThumbnailImage).value<QImage>();
+
+            if (!albumArt.isNull()) {
+                // 1. 确定一个缓存目录，比如: <临时目录>/music_covers
+                const QString cacheRoot = QStandardPaths::writableLocation(QStandardPaths::TempLocation)
+                                          + "/music_covers";
+                QDir().mkpath(cacheRoot);
+
+                // 2. 以文件 md5 或完整路径做文件名，避免重复（这里简单用 baseName）
+                const QString baseName = info.completeBaseName();
+                const QString coverPath = cacheRoot + "/" + baseName + ".jpg";
+
+                // 3. 写成 jpg 文件
+                QImageWriter writer(coverPath, "jpg");
+                if (writer.write(albumArt)) {
+                    // 4. 保存为 file:// URL 或绝对路径，QML 都可以加载
+                    t.cover = QUrl::fromLocalFile(coverPath).toString();
+                } else {
+                    // 写失败则用默认封面
+                    t.cover = QStringLiteral("qrc:/assets/defaultAlbum.jpg");
+                }
+            } else {
+                // 没有嵌入封面，使用默认封面
+                t.cover = QStringLiteral("qrc:/assets/defaultAlbum.jpg");
+            }
+
+            // 其它扩展字段
+            t.likeStatus = 0;
+            t.lyrics.clear();
+
+            scannedTracks.append(t);
+        }
+
+        return scannedTracks;
+    });
+
+    // 让 watcher 监听这个 future，结束后会触发 onScanFinished（在主线程执行）
+    m_scanWatcher->setFuture(future);
+}
+
+// 扫描完成后的主线程回调：在这里写 SQLite，并通知 QML
+void MusicPlayer::onScanFinished()
+{
+    if (!m_scanWatcher)
+        return;
+
+    // 从 future 取出后台线程返回的扫描结果
+    m_scannedTracks = m_scanWatcher->result();
+
+    // 将扫描结果写入 SQLite（通过 LocalTrackTable 封装）
     if (!m_localTrackTable.ensureTable()) {
         qWarning() << "MusicPlayer: ensure local_tracks table failed";
     } else {
         if (!m_localTrackTable.clearAll()) {
             qWarning() << "MusicPlayer: clear local_tracks failed";
         }
-        if (!m_localTrackTable.insertOrReplaceBatch(scannedTracks)) {
+        if (!m_localTrackTable.insertOrReplaceBatch(m_scannedTracks)) {
             qWarning() << "MusicPlayer: insert scanned tracks to sqlite failed";
         }
     }
 
+    // 通知 QML：本地音乐列表已经更新（QML 通过 localTracksPage 从 SQLite 读取）
     emit localTracksChanged();
-    qDebug() << "MusicPlayer scanned local tracks count:" << m_localTracks.size();
+
+    qDebug() << "MusicPlayer scanned local tracks count (sqlite):" << m_scannedTracks.size();
 }
 
 int MusicPlayer::localTracksCount() const

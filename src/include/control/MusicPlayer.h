@@ -30,6 +30,7 @@
 #include <QDir>
 #include <QDirIterator>
 #include <QFileDialog>
+#include <QFutureWatcher>
 #include <QStandardPaths>
 #include <QRandomGenerator>
 
@@ -138,6 +139,14 @@ public:
     Q_INVOKABLE void setTrackList(const QVariantList &tracks);
 
     /**
+    *
+    * @brief 获取当前播放列表
+    *
+    * @return 当前播放队列。
+    */
+    Q_INVOKABLE QVector<TrackModel> getTrackList();
+
+    /**
      *
      * @brief 向播放列表末尾追加一首歌或多首歌
      *
@@ -214,7 +223,7 @@ public:
      */
     Q_INVOKABLE QJsonObject currentTrackInfo() const;
 
-    //@TODO: 本地音乐接口，直接和 MusicPlayer 集成在一起，不单独做 LocalMusicPlayer 类
+    // TODO: 本地音乐接口，直接和 MusicPlayer 集成在一起，不单独做 LocalMusicPlayer 类
     // ============= 本地音乐相关接口（直接集成在 MusicPlayer 中） =============
 
     /**
@@ -225,7 +234,7 @@ public:
      */
     Q_INVOKABLE void openLocalMusicFolder();
 
-    //@TODO: 本地音乐扫描，需要实现多线程扫描，避免阻塞 UI，还需要使用 QMediaMetaData提取元数据
+    // TODO: 本地音乐扫描，需要实现多线程扫描，避免阻塞 UI，还需要使用 QMediaMetaData提取元数据
     /**
      *
      * @brief 扫描指定目录下的音乐文件（本地路径或 file:// URL 均可），不弹对话框
@@ -237,7 +246,7 @@ public:
      */
     Q_INVOKABLE void scanLocalDirectory(const QString &path);
 
-    //@TODO: 此函数不需要单独写，将云音乐和本地音乐列表合并到一个播放列表中即可，可删除
+    // TODO: 此函数不需要单独写，将云音乐和本地音乐列表合并到一个播放列表中即可，可删除
     /**
      *
      * @brief 提供给 QML 的本地音乐列表模型，元素结构与 trackModel 一致
@@ -310,7 +319,7 @@ signals:
     */
     void playingChanged(bool playing);
 
-    //@TODO: 进度变化和曲目信息变化信号,这两个信号需要在内部回调中触发，是实时变化的
+    // TODO: 进度变化和曲目信息变化信号,这两个信号需要在内部回调中触发，是实时变化的
     /**
     *
     * @brief 播放进度变化（毫秒），通知 QML 更新显示
@@ -339,7 +348,7 @@ signals:
     void playModeChanged(int mode);
 
     //==================== 本地音乐相关信号 ====================
-    //@TODO: 本地音乐列表变化信号，在扫描完成后触发
+    // TODO: 本地音乐列表变化信号，在扫描完成后触发
     /**
     *
     * @brief 本地播放队列变化，通知 QML 更新显示
@@ -356,6 +365,9 @@ private slots:
 
     // QMediaPlayer 内部回调：播放状态变化
     void handlePlaybackStateChanged(QMediaPlayer::PlaybackState state);
+
+    // 扫描本地音乐目录完成后的回调（在主线程执行）
+    void onScanFinished();
 
     // 播放器状态改变时调用，用于通知 QML 数据已更新，调用信号：metaDataChanged
     void mediaStatusChanged(QMediaPlayer::MediaStatus status) {
@@ -379,7 +391,7 @@ private:
     // 当前页面歌曲列表（仅用于 UI 显示，不一定参与播放队列）
     QVector<TrackModel> m_currentPageSongs;
 
-    //@TODO: 此变量已弃用，可以删除
+    // TODO: 此变量已弃用，可以删除
     // 本地扫描到的音乐列表（不一定等于当前播放列表）
     QVariantList m_localTracks;
 
@@ -388,6 +400,11 @@ private:
 
     // 本地歌曲表操作对象（用于持久化到 SQLite）
     LocalTrackTable m_localTrackTable;
+
+    // \[新增] 后台扫描任务的 watcher，用于在扫描完成后回到主线程
+    QFutureWatcher<QVector<TrackModel>> *m_scanWatcher = nullptr;
+    // \[可选] 缓存扫描结果（也可以不缓存，直接从 watcher 取）
+    QVector<TrackModel> m_scannedTracks;
 
     // 帮助函数：根据当前索引加载对应的 media
     void loadCurrentTrack();
