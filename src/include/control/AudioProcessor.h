@@ -41,7 +41,7 @@ public:
         connect(audioBufferOutput, &QAudioBufferOutput::audioBufferReceived, this, &AudioProcessor::handleAudioBuffer);
 
         // 初始化 kissfft
-        nfft = 1024; // FFT 点数，可以根据需要调整
+        int nfft = 1024; // FFT 点数，可以根据需要调整
         cfg = kiss_fft_alloc(nfft, 0, 0, 0);
         cx_in = new kiss_fft_cpx[nfft];
         cx_out = new kiss_fft_cpx[nfft];
@@ -102,7 +102,7 @@ private slots:
         }
 
         // 将频谱分成 32 个频段
-        int bands = 32;
+        constexpr int bands = 32;
         float bandSize = (nfft / 2) / bands;
         float spectrumBands[bands];
 
@@ -132,7 +132,7 @@ private:
     MusicPlayer* musicPlayer;  // MusicPlayer 的实例
     QAudioBufferOutput *audioBufferOutput;
     QList<float> spectrumList = {30};
-    int nfft;
+    static constexpr int nfft = 1024;
     kiss_fft_cfg cfg;
     kiss_fft_cpx *cx_in;
     kiss_fft_cpx *cx_out;

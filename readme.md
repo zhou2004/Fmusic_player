@@ -142,6 +142,10 @@ cmake --build ./cmake-build-debug --target all -j 10 #指定并行构建的线�
 5. 构建工具：CMake 3.20 以上。
 6. 依赖管理：Vcpkg。
 
+conan安装依赖
 
+```bash
+conan install . --build=missing -c tools.cmake.cmaketoolchain:generator=Ninja
+```
 
 

@@ -38,7 +38,7 @@ struct Lyric {
 };
 
 // 歌词类型
-enum LyricType
+enum class LyricType
 {
     Lrc,
     Krc,
@@ -67,9 +67,9 @@ public:
         std::transform(ext.begin(),  ext.end(),  ext.begin(),
                       [](unsigned char c){ return std::tolower(c); });
 
-        if (ext == ".lrc") return Lrc;
-        if (ext == ".krc") return Krc;
-        return Unknown;
+        if (ext == ".lrc") return LyricType::Lrc;
+        if (ext == ".krc") return LyricType::Krc;
+        return LyricType::Unknown;
     }
 
 
@@ -135,7 +135,7 @@ public slots:
 
 
     QVariant Q_getLyrics() {
-        if (this->type == Lrc) {
+        if (this->type == LyricType::Lrc) {
             std::cout << "Lrc" << std::endl;
             QList<QJsonObject> q_lyrics;
             QJsonObject music_detail_info;
@@ -145,7 +145,7 @@ public slots:
                 q_lyrics.append(music_detail_info);
             }
             return QVariant::fromValue(q_lyrics);  // QList<QJsonObject>
-        }else if (this->type == Krc) {
+        }else if (this->type == LyricType::Krc) {
             std::cout << "Krc" << std::endl;
             return QVariant::fromValue(this->KlyricParser.Q_getLyrics());   //QList<QList<QJsonObject>>
         }else {
@@ -206,7 +206,7 @@ public slots:
 
     // 查找歌词位置
     QVariant get_Lyricspos(qint32 position) {
-        if (this->type == Lrc) {
+        if (this->type == LyricType::Lrc) {
             // 使用 std::upper_bound 查找第一个 <= position 的时间戳
             auto it = std::upper_bound(this->lyrics.begin(),  this->lyrics.end(),  float(position),
         [](float pos, const Lyric& lyric) {
@@ -223,7 +223,7 @@ public slots:
                 return QVariant::fromValue(prevIndex);
             }
             return -1; // 如果没有找到，返回默认值
-        } else if (this->type == Krc) {
+        } else if (this->type == LyricType::Krc) {
             return QVariant::fromValue(this->KlyricParser.findLyricAtTime(position));
         } else {
             return -1;
