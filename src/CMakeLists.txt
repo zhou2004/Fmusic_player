@@ -131,6 +131,20 @@ endif ()
 
 
 
+if (WIN32)
+    target_sources(${PROJECT_NAME} PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/WinSMTCController.cpp
+    )
+
+    find_package(cppwinrt QUIET)
+    if(cppwinrt_FOUND)
+        target_link_libraries(${PROJECT_NAME} PRIVATE cppwinrt::cppwinrt)
+    endif()
+
+    target_link_libraries(${PROJECT_NAME} PRIVATE WindowsApp)
+    target_compile_definitions(${PROJECT_NAME} PRIVATE -DWIN32_LEAN_AND_MEAN)
+endif()
+
 set_target_properties(${PROJECT_NAME} PROPERTIES
         ${BUNDLE_ID_OPTION}
         MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
