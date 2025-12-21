@@ -499,6 +499,23 @@ QVariantList MusicPlayer::localTracksPage(int offset, int limit) const
     return m_localTrackTable.page(offset, limit);
 }
 
+QVariantList MusicPlayer::queryTracksPaged(
+        int offset,
+        int limit,
+        const QString &artist,
+        const QString &album,
+        const QString &title,
+        const QString &orderBy,
+        bool orderAsc
+    ) const {
+    // 安全检查留给表类或这里简单防御
+    if (offset < 0 || limit <= 0)
+        return QVariantList();
+    return m_localTrackTable.queryTracksPaged(
+        offset, limit, artist, album, title, orderBy, orderAsc);
+}
+
+
 // ======================= 内部回调 & 辅助函数实现 =======================
 
 void MusicPlayer::handlePositionChanged(qint64 position)

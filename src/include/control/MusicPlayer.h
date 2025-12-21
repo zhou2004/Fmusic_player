@@ -275,6 +275,31 @@ public:
 
     /**
      *
+     * @brief 分页查询本地歌曲，支持按艺术家、专辑、标题过滤，支持排序
+     * 只查 artist：queryTracksPaged(0, 20, "周杰伦")
+     * 查 album+title：queryTracksPaged(0, 20, "", "专辑名", "歌名")
+     * 查全部+按title排序：queryTracksPaged(0, 20, "", "", "", "title", true
+     * @param offset
+     * @param limit
+     * @param artist
+     * @param album
+     * @param title
+     * @param orderBy
+     * @param orderAsc
+     * @return 歌曲列表
+     */
+    Q_INVOKABLE QVariantList queryTracksPaged(
+        int offset,
+        int limit,
+        const QString &artist,
+        const QString &album,
+        const QString &title,
+        const QString &orderBy,
+        bool orderAsc
+    ) const;
+
+    /**
+     *
      * @brief 获取当前播放模式
      *
      * @return 播放模式。

@@ -34,6 +34,31 @@ public:
     // 分页查询（offset 从 0 开始，limit > 0）
     QVariantList page(int offset, int limit) const;
 
+    /**
+     *
+     * @brief 分页查询本地歌曲，支持按艺术家、专辑、标题过滤，支持排序
+     * 只查 artist：queryTracksPaged(0, 20, "周杰伦")
+     * 查 album+title：queryTracksPaged(0, 20, "", "专辑名", "歌名")
+     * 查全部+按title排序：queryTracksPaged(0, 20, "", "", "", "title", true
+     * @param offset
+     * @param limit
+     * @param artist
+     * @param album
+     * @param title
+     * @param orderBy
+     * @param orderAsc
+     * @return 歌曲列表
+     */
+    QVariantList queryTracksPaged(
+    int offset,
+    int limit,
+    const QString &artist = QString(),
+    const QString &album = QString(),
+    const QString &title = QString(),
+    const QString &orderBy = "file_path",
+    bool orderAsc = true
+) const;
+
 private:
     QSqlDatabase db() const;
 };
