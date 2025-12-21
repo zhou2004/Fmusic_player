@@ -16,6 +16,7 @@
  */
 
 #include "MusicPlayer.h"
+#include "Decryptor/KLyricsParser.h"
 #include <QVariant>
 #include <QUrl>
 #include <QFileDialog>
@@ -444,7 +445,49 @@ void MusicPlayer::scanLocalDirectory(const QString &path)
 
             // 其它扩展字段
             t.likeStatus = 0;
-            t.lyrics.clear();
+            // t.lyrics = extract_Lyrics(filePath);
+            // 假设 t.lyrics 是 QString 类型
+            t.lyrics = QString::fromUtf8(u8R"lrc([00:00.00] 作词 : G.E.M.邓紫棋
+            [00:01.00] 作曲 : G.E.M.邓紫棋/Lupo Groinig
+            [00:02.00] 编曲 : Lupo Groinig
+            [00:03.00] 制作人 : Lupo Groinig
+            [00:12.24]还没到的樱花季  还没用的照相机
+            [00:17.48]还没光临的餐厅  还在期待  有着你的旅行
+            [00:23.24]等待日落的巴黎  铁塔之下牵着你
+            [00:29.58]等待说着我愿意  等待未来  每天身边有你
+            [00:35.10]一点一滴每一天珍惜
+            [00:39.22]怕突然来不及  好好的爱你
+            [00:45.15]时针一直倒数着  我们剩下的快乐
+            [00:50.70]此刻相拥的狂热  却永远都深刻
+            [00:56.70]心跳一直倒数着  生命剩下的温热
+            [01:02.44]至少用力地爱着  还乌黑的头发  有你就不怕白了
+            [01:10.69]漆黑过后是旭日  泪流以后是坚持
+            [01:16.32]真的爱是日复日  从不放弃  重复说你愿意
+            [01:21.75]还没退化的眼睛  抓紧时间看看你
+            [01:28.09]爱是从来不止息  一个风景  每天新的生命
+            [01:33.81]一点一滴每一天珍惜
+            [01:37.72]用尽每一口气  好好的爱你
+            [01:43.69]时针一直倒数着  我们剩下的快乐
+            [01:49.42]此刻相拥的狂热  却永远都深刻
+            [01:55.06]心跳一直倒数着  生命剩下的温热
+            [02:01.10]至少用力地爱着  还乌黑的头发  有你就不怕白了
+            [02:09.76]咖啡再不喝就酸了  晚餐再不吃就冷了
+            [02:15.44]爱着为什么不说呢  难道错过了才来后悔着
+            [02:21.02]谁梦未实现就醒了  谁心没开过就灰了
+            [02:27.18]追逐爱的旅途曲折  就算再曲折为你都值得
+            [02:32.35]一点一滴每一天珍惜
+            [02:36.17]用尽每一口气  好好的爱你
+            [02:42.26]时针一直倒数着  我们剩下的快乐
+            [02:47.84]此刻相拥的狂热  却永远都深刻
+            [02:53.73]心跳一直倒数着  生命剩下的温热
+            [02:59.85]至少痛并快乐着  爱过才算活着  有你别无所求了
+            [03:11.12]有你别无所求了  有你别无所求了
+            [03:22.41]有你别无所求了  有你别无所求了
+            [03:34.02]有你别无所求了
+            [03:44.80]监制：Lupo Groinig
+            )lrc");
+
+            // qWarning().noquote() << t.lyrics.toUtf8().constData();
 
             scannedTracks.append(t);
         }
@@ -498,6 +541,23 @@ QVariantList MusicPlayer::localTracksPage(int offset, int limit) const
     // 直接从 SQLite 的 local_tracks 表分页查询
     return m_localTrackTable.page(offset, limit);
 }
+
+QVariantList MusicPlayer::queryTracksPaged(
+        int offset,
+        int limit,
+        const QString &artist,
+        const QString &album,
+        const QString &title,
+        const QString &orderBy,
+        bool orderAsc
+    ) const {
+    // 安全检查留给表类或这里简单防御
+    if (offset < 0 || limit <= 0)
+        return QVariantList();
+    return m_localTrackTable.queryTracksPaged(
+        offset, limit, artist, album, title, orderBy, orderAsc);
+}
+
 
 // ======================= 内部回调 & 辅助函数实现 =======================
 

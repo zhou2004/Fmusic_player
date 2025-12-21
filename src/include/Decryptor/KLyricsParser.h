@@ -13,6 +13,11 @@
 #include <sstream>
 #include <regex>
 #include <chrono> // 用于高精度时钟
+#include <taglib/fileref.h>
+#include <taglib/tag.h>
+#include <taglib/mpegfile.h>
+#include <taglib/id3v2tag.h>
+#include <taglib/unsynchronizedlyricsframe.h>
 //#include "Decryptor/KRCDecryptor.h"
 #include "MusicPlayer.h"
 #include <QObject>
@@ -164,6 +169,24 @@ public:
             return music_pos;
         }
     }
+
+	static QString getLyrics(const QString &filePath) {
+		TagLib::MPEG::File file(filePath.toStdString().c_str());
+		if (!file.isValid()) return {};
+
+		TagLib::ID3v2::Tag* tag = file.ID3v2Tag();
+		if (!tag) return {};
+
+		// 查找所有歌词帧（USLT）
+		TagLib::ID3v2::FrameList list = tag->frameList("USLT");
+		if (!list.isEmpty()) {
+			auto* lyricsFrame = dynamic_cast<TagLib::ID3v2::UnsynchronizedLyricsFrame*>(list.front());
+			if (lyricsFrame) {
+				return QString::fromStdWString(lyricsFrame->text().toWString());
+			}
+		}
+		return {};
+	}
 
 public slots:
 	// 获取歌词

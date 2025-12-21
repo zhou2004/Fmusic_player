@@ -1,103 +1,175 @@
-// language: qmllang
+// qmllang
 import QtQuick 2.15
 import QtQuick.Controls 2.15
-import Qt5Compat.GraphicalEffects
+import Qt5Compat.GraphicalEffects 1.0
+import "../"
 
 Item {
-    id: root
-    property var lyricsModel    // 外部传入 ListModel
-    property int currentPosition: 0 // 当前播放位置（毫秒）
+    id: lyricItemRoot
+    width: parent ? parent.width : 800
+    height: parent ? parent.height : 600
 
-    // 当前行索引
-    property int currentIndex: -1
+    property var lyricData: []
+    property int current: -1
+    property bool isFollow: true
+    property int fontSize: 17
+    property int delayFollow: 10000
 
-    // 根据 currentPosition 计算当前行
-    function updateCurrentIndex() {
-        if (!lyricsModel || lyricsModel.count === 0)
-            return
+    Component.onCompleted: {
+        console.log("RightPanel initialized. lyricData:", lyricData ? lyricData.length : 0)
+        // 试着基于当前播放位置初始化索引（如果有全局 musicPlayer 可用）
+        if (lyricData && lyricData.length > 0) {
+            var pos = (typeof musicPlayer !== "undefined" && musicPlayer && musicPlayer.position) ? musicPlayer.position : 0
+            updateCurrentFromPosition(pos)
+            if (current >= 0) listView.positionViewAtIndex(current, ListView.Center)
+        }
+    }
+
+    onLyricDataChanged: {
+        console.log("lyricData changed:", lyricData ? lyricData.length : 0)
+        if (lyricData && lyricData.length > 0) {
+            var pos = (typeof musicPlayer !== "undefined" && musicPlayer && musicPlayer.position) ? musicPlayer.position : 0
+            updateCurrentFromPosition(pos)
+            if (current >= 0 && isFollow) listView.positionViewAtIndex(current, ListView.Center)
+        } else {
+            current = -1
+        }
+    }
+
+    function updateCurrentFromPosition(position) {
+        if (!lyricData || lyricData.length === 0) { current = -1; return }
         var idx = 0
-        for (var i = 0; i < lyricsModel.count; ++i) {
-            var item = lyricsModel.get(i)
-            if (item.time <= currentPosition) {
+        for (var i = 0; i < lyricData.length; ++i) {
+            var item = lyricData[i]
+            if (!item) continue
+            if (position >= item.tim) {
                 idx = i
+                // 如果不是最后一条，且下一条的时间仍小于等于 position，则继续循环
             } else {
                 break
             }
         }
-        if (currentIndex !== idx) {
-            currentIndex = idx
+        if (current !== idx) {
+            current = idx
         }
     }
 
-    onCurrentPositionChanged: updateCurrentIndex()
-
-    // 中央高亮区背景（类似 BetterLyrics 中的中心对齐）
-    Rectangle {
-        anchors.fill: parent
-        color: "transparent"
-
-        // 上下渐隐
-        LinearGradient {
-            anchors.fill: parent
-            start: Qt.point(0, 0)
-            end: Qt.point(0, height)
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: Qt.rgba(0,0,0,0.8) }
-                GradientStop { position: 0.5; color: Qt.rgba(0,0,0,0.1) }
-                GradientStop { position: 1.0; color: Qt.rgba(0,0,0,0.8) }
+    Connections {
+        enabled: typeof musicPlayer !== "undefined" && musicPlayer != null
+        target: musicPlayer
+        function onPositionChanged(pos) {
+            // pos 为毫秒
+            updateCurrentFromPosition(pos)
+            if (isFollow && current >= 0) {
+                listView.positionViewAtIndex(current, ListView.Center)
             }
+        }
+    }
+
+    MouseArea {
+        anchors.fill: parent
+        hoverEnabled: true
+        onWheel: function(wheel) {
+            // 禁止父级阻塞滚动：让 listView 本身可交互（ListView.interactive）
+            // 这里仅标记为用户交互，暂不自动跟随
+            lyricItemRoot.isFollow = false
+            lyricTimer.restart()
         }
     }
 
     ListView {
-        id: lyricsView
+        id: listView
         anchors.fill: parent
-        anchors.margins: 16
-        model: lyricsModel
-
-        spacing: 8
+        width: parent.width - 30
+        height: parent.height
+        model: lyricData
         clip: true
-        cacheBuffer: 4000
-        highlightMoveDuration: 300
         interactive: true
+        spacing: 12
+        highlightRangeMode: ListView.StrictlyEnforceRange
+        preferredHighlightBegin: height/2 - 40
+        preferredHighlightEnd: height/2
+        highlightMoveDuration: 400
 
-        delegate: Item {
-            width: lyricsView.width
-            height: 32
-
-            property bool isCurrent: (index === root.currentIndex)
-
-            Text {
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.verticalCenter: parent.verticalCenter
-                width: parent.width * 0.9
-                text: model.text
-                wrapMode: Text.NoWrap
-                horizontalAlignment: Text.AlignHCenter
-                color: isCurrent ? "#FFFFFF" : "#888888"
-                font.pixelSize: isCurrent ? 18 : 14
-            }
+        QCScrollBar.vertical: QCScrollBar {
+            handleNormalColor: "#"+ lyricItemRoot.scroolBarColor
         }
 
-        // 当前行高亮条
-        highlight: Rectangle {
-            width: parent.width
-            height: 40
+        delegate: Rectangle {
+            id: delegateRoot
+            width: listView.width
             color: "transparent"
-            border.color: Qt.rgba(255,255,255,0.16)
-        }
+            radius: 8
+            property bool isCurrent: index === lyricItemRoot.current
+            property bool isHoverd: false
+            scale: isCurrent ? 1.12 : (isHoverd ? 1.03 : 1.0)
+            transformOrigin: Item.Center
+            Behavior on scale { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
 
-        onCurrentIndexChanged: {
-            if (currentIndex >= 0) {
-                positionViewAtIndex(currentIndex, ListView.Center)
+            height: Math.max(48, contentColumn.implicitHeight + 12)
+
+            Column {
+                id: contentColumn
+                anchors.horizontalCenter: parent.horizontalCenter
+                width: parent.width * 0.75
+                spacing: 6
+                anchors.verticalCenter: parent.verticalCenter
+
+                Text {
+                    id: mainText
+                    text: modelData ? modelData.lyric : ""
+                    wrapMode: Text.Wrap
+                    horizontalAlignment: Text.AlignHCenter
+                    width: parent.width
+                    font.pointSize: lyricItemRoot.fontSize
+                    font.bold: isCurrent
+                    color: isCurrent ? lyricItemRoot.textColor : "#B0FFFFFF"
+                }
+                Text {
+                    id: transText
+                    text: modelData ? modelData.tlrc : ""
+                    wrapMode: Text.Wrap
+                    horizontalAlignment: Text.AlignHCenter
+                    width: parent.width
+                    font.pointSize: Math.max(12, lyricItemRoot.fontSize - 2)
+                    color: isCurrent ? lyricItemRoot.textColor : "#80CCCCCC"
+                    visible: modelData && modelData.tlrc && modelData.tlrc.length > 0
+                }
+            }
+
+            Rectangle {
+                anchors.fill: parent
+                color: isHoverd ? Qt.rgba(1,1,1,0.04) : "transparent"
+                z: -1
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onEntered: { delegateRoot.isHoverd = true; lyricItemRoot.isFollow = false; lyricTimer.restart() }
+                onExited: { delegateRoot.isHoverd = false }
+                onClicked: {
+                    if (typeof musicPlayer !== "undefined" && musicPlayer && modelData && modelData.tim !== undefined) {
+                        // 使用 C\+\+ 对象的 seek 函数（项目中存在时）
+                        if (typeof musicPlayer.seek === "function") musicPlayer.seek(modelData.tim)
+                        else if (typeof musicPlayer.position !== "undefined") musicPlayer.position = modelData.tim
+                    }
+                    listView.currentIndex = index
+                    lyricItemRoot.current = index
+                }
             }
         }
+
+        Behavior on contentY { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
     }
 
-    // 当 root.currentIndex 变化时同步 ListView.currentIndex
-    onCurrentIndexChanged: {
-        if (currentIndex >= 0 && currentIndex < lyricsModel.count) {
-            lyricsView.currentIndex = currentIndex
+    Timer {
+        id: lyricTimer
+        interval: delayFollow
+        repeat: false
+        onTriggered: {
+            lyricItemRoot.isFollow = true
+            if (lyricItemRoot.current >= 0) listView.positionViewAtIndex(lyricItemRoot.current, ListView.Center)
         }
     }
 }

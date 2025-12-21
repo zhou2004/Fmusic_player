@@ -11,6 +11,7 @@ Item {
 
     // trackInfo 不再在定义时调用函数
     property var trackInfo: ({})
+    property int music_pos: 0
 
     signal requestClose()
 
@@ -25,6 +26,11 @@ Item {
     Connections {
         target: musicPlayer
 
+        function onPositionChanged(pos) {
+            // pos 为毫秒
+            music_pos = pos
+        }
+
         function onCurrentTrackInfoChanged(info) {
             if (info && typeof info === "object") {
                 trackInfo = info
@@ -33,6 +39,7 @@ Item {
             }
             console.log("MusicPlayerPage trackInfo updated:", JSON.stringify(trackInfo))
         }
+
     }
 
 
@@ -134,8 +141,29 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width * 0.6
 
-            lyricsModel: musicPlayer.lyricsModel
-            currentPosition: musicPlayer.position
+            lyricData: trackInfo && trackInfo.lyrics ? parseLyrics(trackInfo.lyrics) : []
+
         }
+    }
+
+    function parseLyrics(lyricsText) {
+        var lyricsArray = []
+        var lines = lyricsText.split('\n')
+        var timeTagRegex = /\[(\d{2}):(\d{2})(?:\.(\d{2,3}))?\]/
+
+        for (var i = 0; i < lines.length; i++) {
+            var line = lines[i]
+            var match = timeTagRegex.exec(line)
+            if (match) {
+                var minutes = parseInt(match[1])
+                var seconds = parseInt(match[2])
+                var milliseconds = match[3] ? parseInt(match[3].padEnd(3, '0')) : 0
+                var timeInMs = (minutes * 60 + seconds) * 1000 + milliseconds
+                var text = line.replace(timeTagRegex, '').trim()
+                lyricsArray.push({ tim: timeInMs, lyric: text ,tlrc: ""} )
+            }
+        }
+        console.log(lyricsArray[0].lyric)
+        return lyricsArray
     }
 }

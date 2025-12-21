@@ -9,6 +9,7 @@
 #include <MusicPlayer.h>
 
 #include <QProcess>
+#include <SystemMediaTransportControlsInterop.h>
 
 #include "Iconvert.h"
 
@@ -16,6 +17,17 @@
 #include "AudioProcessor.h"
 #include "Decryptor/KRCDecryptor.h"
 #include "Decryptor/KLyricsParser.h"
+
+// 强制弹出控制台用于调试（建议仅 Debug 使用）
+static void openConsole()
+{
+#ifdef _WIN32
+    AllocConsole();
+    freopen("CONOUT$", "w", stdout);
+    freopen("CONOUT$", "w", stderr);
+#endif
+    std::cout << "Console Initialized..." << std::endl;
+}
 
 int main(int argc, char *argv[]) {
 #if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)

@@ -155,6 +155,7 @@ Rectangle {
                 text:"Add to Playlist"
                 iconSource: FluentIcons.MusicInfo
                 onClicked: {
+                    musicPlayer.addTracks([localPageContent.musicModel[mIndex]])
                     showInfo("Add to Playlist")
                 }
             }
