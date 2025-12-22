@@ -12,11 +12,10 @@
 #include <SystemMediaTransportControlsInterop.h>
 
 #include "Iconvert.h"
-
-#include "Lyrics.h"
+#include "ApiClient.h"
 #include "AudioProcessor.h"
 #include "Decryptor/KRCDecryptor.h"
-#include "Decryptor/KLyricsParser.h"
+#include "KLyricsParser.h"
 
 // 强制弹出控制台用于调试（建议仅 Debug 使用）
 static void openConsole()
@@ -102,6 +101,10 @@ int main(int argc, char *argv[]) {
 
 
     MusicPlayer musicPlayer;
+
+    K_LyricParser lyricParser;
+
+    ApiClient apiClient;
     //
     // FAlbumArtManager albumArtManager(&musicPlayer);  // 将 musicPlayer 的实例传递给 albumArtManager
     //
@@ -133,7 +136,8 @@ int main(int argc, char *argv[]) {
     // // engine.rootContext()->setContextProperty("analyzer", &analyzer);
     //
     // //注册json类
-    // engine.rootContext()->setContextProperty("qjson", &qjson);
+    engine.rootContext()->setContextProperty("apiClient", &apiClient);
+    engine.rootContext()->setContextProperty("lyricParser", &lyricParser);
 
     //注册download类
     // engine.rootContext()->setContextProperty("downloader", &downloader);
@@ -143,7 +147,16 @@ int main(int argc, char *argv[]) {
     // std::string fileName = "D:/KuGou/KugouMusic/sanguo.krc";
     // KRCDecoder decoder;
     // decoder._load(fileName);
-    // K_LyricParser KlyricParser;
+
+    // QString data = apiClient.getKrcContent("唯一","G.E.M.邓紫棋");
+    //
+    // qWarning() << "KRC Data:" << data;
+
+
+    // QVariantList lyricList = KlyricParser.parseLyrics(lyric_data);
+
+    // 直接打印整个列表（可能会显示地址或不完整信息）
+    // qWarning() << lyricList;
     // std::string decodedData = decoder.getDecoded();
     // K_LyricData lyricData = KlyricParser.parseLyrics(decodedData);
     //
