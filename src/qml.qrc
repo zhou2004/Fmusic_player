@@ -36,7 +36,8 @@
         <file>settingsPage/AboutPage.qml</file>
         <file>settingsPage/DisplayPage.qml</file>
 
-        <file>js/myjs.js</file>
+        <file>js/Api.js</file>
+        <file>js/Request.js</file>
 
     </qresource>
 </RCC>

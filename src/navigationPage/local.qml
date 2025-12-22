@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 import FluentUI 1.0
 import "../components"
+import "../js/Api.js" as Service
 import QtQml.Models 2.15
 
 ColumnLayout {
@@ -12,6 +13,10 @@ ColumnLayout {
     // 如果父级已经有布局管理，Layout.fillWidth: true 会更好
     Layout.fillWidth: true
     Layout.fillHeight: true
+    Component.onCompleted: {
+        loadData()
+    }
+
 
     // 在这里设置全局左边距
     property int leftMarginSet: 10
@@ -24,6 +29,27 @@ ColumnLayout {
     property int currentPage: 0    // 从 0 开始
     property int totalCount: musicPlayer.localTracksCount()
     property int totalPage: totalCount === 0 ? 0 : Math.ceil(totalCount / pageSize)
+
+    // 异步加载逻辑
+    function loadData() {
+        console.log("开始请求...");
+
+        // 支持 .then() 写法
+        Service.getAllSongs({ pageNum: 1 , pageSize: 50, songName: "", album: "", artistName: ""})
+            .then(function(response) {
+            console.log("完整数据如下: \n" + JSON.stringify(response, null, 4));
+            // model.append(data)...
+        });
+
+        // 如果你的 QML 环境支持 async/await (Qt 5.15+ / Qt 6)
+        // 也可以这样写：
+        /*
+        async function loadAsync() {
+            var list = await Service.getAllSongsService({ page: 1 });
+            console.log("await 数据:", list);
+        }
+        */
+    }
 
     function refreshPage() {
         totalCount = musicPlayer.localTracksCount()
@@ -52,6 +78,10 @@ ColumnLayout {
             currentPage = 0
             refreshPage()
         }
+    }
+
+    Connections {
+        target: apiClient
     }
 
     FluText {
@@ -210,4 +240,5 @@ ColumnLayout {
             }
         }
     }
+
 }

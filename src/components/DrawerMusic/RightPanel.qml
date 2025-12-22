@@ -1,282 +1,302 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import Qt5Compat.GraphicalEffects 1.0
-import "../"
+// 如果是 Qt5 且没装 Compat，用 import QtGraphicalEffects 1.15
 
 Item {
     id: lyricItemRoot
     width: parent ? parent.width : 800
     height: parent ? parent.height : 600
 
-    property var lyricData: []
-    property int current: -1
-    property bool isFollow: true
-    property int fontSize: 17
-    property int delayFollow: 1000
+    // ============================================
+    // 调试开关
+    property bool debugMode: true
+    // ============================================
 
-    // 防抖 / 重试相关
+    property var lyricData: []
+    property int currentTime: 0
+    property int currentLineIndex: -1
+    property bool isFollow: true
+
+    // --- 样式配置 ---
+    property int fontSize: 22
+    property int lineSpacing: 30 // 行间距
+
+    // 1. 默认/非焦点颜色 (所有未播放、已播放的行都用这个颜色)
+    property color textColor: "#80FFFFFF" // 半透明白
+
+    // 2. 焦点/高亮颜色 (当前行逐字扫过的颜色)
+    property color highlightColor: "#fbfbfb" // 金黄色
+
+    // 3. 荧光发光参数 (关键调整)
+    property color glowColor: "#1da5ed" // 发光颜色通常和高亮色一致
+    property int glowRadius: 1          // 不要太大，太大会糊
+    property real glowSpread: 0.2        // 扩散度，越小越柔和
+
+    // 滚动相关
+    property int delayFollow: 2000
     property int pendingCenterIndex: -1
-    property int lastCenteredIndex: -1
 
     Component.onCompleted: {
-        console.log("RightPanel initialized. lyricData:", lyricData ? lyricData.length : 0)
-        if (lyricData && lyricData.length > 0) {
-            var pos = (typeof musicPlayer !== "undefined" && musicPlayer && musicPlayer.position) ? musicPlayer.position : 0
-            updateCurrentFromPosition(pos)
-            if (current >= 0) {
-                // 初始时直接设置 pending，由防抖器在合适时机平滑居中
-                pendingCenterIndex = current
-                centerDebounce.restart()
-            }
-        }
-    }
-
-    onLyricDataChanged: {
-        console.log("lyricData changed:", lyricData ? lyricData.length : 0)
-        if (lyricData && lyricData.length > 0) {
-            var pos = (typeof musicPlayer !== "undefined" && musicPlayer && musicPlayer.position) ? musicPlayer.position : 0
-            var changed = updateCurrentFromPosition(pos)
-            if (current >= 0 && isFollow && changed) {
-                pendingCenterIndex = current
-                centerDebounce.restart()
-            }
-        } else {
-            current = -1
-        }
-    }
-
-    // 返回是否发生变化
-    function updateCurrentFromPosition(position) {
-        if (!lyricData || lyricData.length === 0) {
-            if (current !== -1) current = -1
-            return false
-        }
-        var idx = 0
-        for (var i = 0; i < lyricData.length; ++i) {
-            var item = lyricData[i]
-            if (!item) continue
-            if (position >= item.tim) {
-                idx = i
-            } else {
-                break
-            }
-        }
-        var changed = (current !== idx)
-        current = idx
-        return changed
+        if(debugMode) console.log("[DEBUG] Lyric Component Loaded.");
     }
 
     Connections {
-        enabled: typeof musicPlayer !== "undefined" && musicPlayer != null
-        target: musicPlayer
+        target: (typeof musicPlayer !== "undefined") ? musicPlayer : null
+        ignoreUnknownSignals: true
         function onPositionChanged(pos) {
-            var changed = updateCurrentFromPosition(pos)
-            if (isFollow && current >= 0 && changed) {
-                pendingCenterIndex = current
-                centerDebounce.restart()
+            lyricItemRoot.currentTime = pos;
+            if (debugMode && pos % 1000 < 50) {
+                // console.log("[DEBUG] Recv Position:", pos);
             }
         }
     }
 
-    MouseArea {
-        anchors.fill: parent
-        hoverEnabled: true
-        onWheel: function(wheel) {
-            lyricItemRoot.isFollow = false
-            lyricTimer.restart()
+    onLyricDataChanged: updateCurrentLine()
+    onCurrentTimeChanged: updateCurrentLine()
+
+    function updateCurrentLine() {
+        if (!lyricData || lyricData.length === 0) return;
+        var newIndex = -1;
+        for (var i = 0; i < lyricData.length; ++i) {
+            if (currentTime >= lyricData[i].lineStartTime) {
+                newIndex = i;
+            } else {
+                break;
+            }
+        }
+        if (newIndex !== currentLineIndex) {
+            currentLineIndex = newIndex;
+            if (isFollow && currentLineIndex >= 0) {
+                pendingCenterIndex = currentLineIndex;
+                centerDebounce.restart();
+            }
         }
     }
 
     ListView {
         id: listView
         anchors.fill: parent
-        width: parent.width - 30
-        height: parent.height
+        anchors.margins: 20
         model: lyricData
         clip: true
-        interactive: true
-        spacing: 12
+        spacing: lyricItemRoot.lineSpacing
 
-        // 使用 ListView 高亮机制平滑移动到中间，保留丝滑体验
+        // 高亮行保持居中
         highlightRangeMode: ListView.StrictlyEnforceRange
-        preferredHighlightBegin: height / 2 - 40
-        preferredHighlightEnd: height / 2
-        highlightMoveDuration: 420
+        preferredHighlightBegin: height / 2 - 50
+        preferredHighlightEnd: height / 2 + 50
+        highlightMoveDuration: 500
 
-        // 适度缓存，避免频繁重建 delegate
-        cacheBuffer: 600
-
-        // 始终开启 layer，让 GPU 处理可视变换（视觉缩放不影响布局）
-        layer.enabled: true
-        layer.smooth: true
-
-        QCScrollBar.vertical: QCScrollBar {
-            handleNormalColor: "#"+ lyricItemRoot.scroolBarColor
-        }
-
-        delegate: Rectangle {
-            id: delegateRoot
+        delegate: Item {
+            id: lineDelegate
             width: listView.width
-            // 固定 delegate 高度，缩放只作用在 visual 中
-            property int fixedHeight: 72
-            height: fixedHeight
-            color: "transparent"
-            radius: 8
-            property bool isCurrent: index === lyricItemRoot.current
-            property bool isHoverd: false
+            // 【关键修改】高度改为 Column 的高度 + 上下边距(例如20)，保证包裹住原文和翻译
+            height: contentColumn.implicitHeight + 24
 
-            Item {
-                id: visual
-                anchors.fill: parent
-                anchors.margins: 6
-                transformOrigin: Item.Center
+            property int lineStart: modelData.lineStartTime
+            property var charsList: modelData.lyrics
+            property bool isCurrentLine: index === lyricItemRoot.currentLineIndex
 
-                // 缩放为纯视觉效果，不改变父项高度
-                scale: isCurrent ? 1.08 : (isHoverd ? 1.02 : 1.0)
-                // 滑动时缩短动画，静止时较平滑
-                Behavior on scale { NumberAnimation { duration: listView.moving ? 100 : 260; easing.type: Easing.OutCubic } }
-
-                // 把 visual 放到自身 layer 中，保证 GPU 合成，提高流畅度
-                layer.enabled: true
-                layer.smooth: true
-
-                Column {
-                    id: contentColumn
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    width: parent.width * 0.9
-                    spacing: 6
-                    anchors.verticalCenter: parent.verticalCenter
-
-                    /* 文本与荧光层：放在同一容器，容器高度绑定到 mainText.contentHeight，
-                       确保换行与不换行下堆叠位置一致 */
-                    Item {
-                        id: textWrapper
-                        width: parent.width
-                        // 使用 contentHeight 获取文本的真实渲染高度（支持换行）
-                        height: Math.max(20, mainText.contentHeight)
-                        anchors.horizontalCenter: parent.horizontalCenter
-                        clip: false
-
-                        // 发光原文（位于主文本下方，用作 FastBlur 的 source）
-                        Text {
-                            id: glowText
-                            text: modelData ? modelData.lyric : ""
-                            visible: isCurrent
-                            wrapMode: Text.Wrap
-                            width: parent.width
-                            anchors.top: parent.top
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            font.pointSize: lyricItemRoot.fontSize
-                            font.bold: true
-                            horizontalAlignment: Text.AlignHCenter
-                            color: (lyricItemRoot.textColor && lyricItemRoot.textColor !== "") ? lyricItemRoot.textColor : "#64bbf3"
-                            opacity: 0.95
-                            z: -2
-                            layer.enabled: true
-                            layer.smooth: true
-                        }
-
-                        FastBlur {
-                            id: glowBlur
-                            source: glowText
-                            radius: isCurrent ? (listView.moving ? 6 : 14) : 0    // 滑动时减小 radius
-                            transparentBorder: true
-                            anchors.fill: glowText
-                            visible: isCurrent
-                            opacity: 0.6                                       // 降低不透明，避免遮盖变暗
-                            z: -3
-                            layer.enabled: true
-                        }
-
-                        Text {
-                            id: mainText
-                            text: modelData ? modelData.lyric : ""
-                            wrapMode: Text.Wrap
-                            horizontalAlignment: Text.AlignHCenter
-                            width: parent.width
-                            anchors.top: parent.top
-                            anchors.horizontalCenter: parent.horizontalCenter
-                            font.pointSize: lyricItemRoot.fontSize
-                            font.bold: isCurrent
-                            color: isCurrent ? ((lyricItemRoot.textColor && lyricItemRoot.textColor !== "") ? lyricItemRoot.textColor : "#FFFFFF") : "#B0FFFFFF"
-                            z: 1
-                            layer.enabled: true
-                            layer.smooth: true
-                        }
-                    }
-
-                    Text {
-                        id: transText
-                        text: modelData ? modelData.tlrc : ""
-                        wrapMode: Text.Wrap
-                        horizontalAlignment: Text.AlignHCenter
-                        width: parent.width
-                        font.pointSize: Math.max(12, lyricItemRoot.fontSize - 2)
-                        color: isCurrent ? lyricItemRoot.textColor : "#80CCCCCC"
-                        visible: modelData && modelData.tlrc && modelData.tlrc.length > 0
+            // 0. 辅助计算 (保持不变)
+            property string fullLineText: {
+                var txt = "";
+                if (charsList) {
+                    for (var i = 0; i < charsList.length; i++) {
+                        txt += charsList[i].text;
                     }
                 }
+                return txt;
             }
 
+            TextMetrics {
+                id: tm
+                text: lineDelegate.fullLineText
+                font.pointSize: lyricItemRoot.fontSize
+                font.bold: true
+            }
+
+            // 1. 鼠标悬停背景 (现在会完整包裹两行)
             Rectangle {
                 anchors.fill: parent
-                color: isHoverd ? Qt.rgba(1,1,1,0.04) : "transparent"
-                z: -1
+                // 稍微留一点边距，让高亮背景不至于贴着列表边缘
+                anchors.margins: 2
+                color: isHovered ? "#1AFFFFFF" : "transparent"
+                radius: 6
             }
+            property bool isHovered: false
 
+            // 【关键修改】使用 Column 垂直排列 原文 和 翻译
+            Column {
+                id: contentColumn
+                width: parent.width
+                anchors.centerIn: parent // 让整个内容块在行内垂直居中
+                spacing: 10 // 【关键修改】原文和翻译间隔 10
+
+                // 2. 原文歌词排版
+                Flow {
+                    id: flowLayout
+                    // 宽度逻辑保持不变：智能判断居中还是换行
+                    width: Math.min(parent.width * 0.95, tm.width + 10)
+
+                    // 在 Column 内部，需要手动指定水平居中
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    spacing: 0
+
+                    Repeater {
+                        model: charsList
+                        delegate: Item {
+                            id: charDelegate
+                            width: bgText.implicitWidth
+                            height: bgText.implicitHeight
+
+                            property string charText: modelData.text
+                            property int charOffset: modelData.start_time
+                            property int charDuration: modelData.duration
+                            property int absStart: lineDelegate.lineStart + charOffset
+                            property int absEnd: absStart + charDuration
+
+                            property real progress: {
+                                if (!lineDelegate.isCurrentLine) return 0.0;
+                                var t = lyricItemRoot.currentTime;
+                                if (t < absStart) return 0.0;
+                                if (t >= absEnd) return 1.0;
+                                return (t - absStart) / charDuration;
+                            }
+
+                            // A. 底色文字
+                            Text {
+                                id: bgText
+                                text: charDelegate.charText
+                                font.pointSize: lyricItemRoot.fontSize
+                                font.bold: true
+                                color: lyricItemRoot.textColor
+                                anchors.centerIn: parent
+                                renderType: Text.QtRendering
+                            }
+
+                            // B. 高亮遮罩
+                            Item {
+                                id: maskItem
+                                anchors.left: parent.left
+                                anchors.top: parent.top
+                                anchors.bottom: parent.bottom
+                                width: parent.width * charDelegate.progress
+                                clip: true
+                                visible: lineDelegate.isCurrentLine
+
+                                Text {
+                                    id: fgText
+                                    text: charDelegate.charText
+                                    font.pointSize: lyricItemRoot.fontSize
+                                    font.bold: true
+                                    color: lyricItemRoot.highlightColor
+                                    anchors.left: parent.left
+                                    anchors.verticalCenter: parent.verticalCenter
+                                    renderType: Text.QtRendering
+                                }
+
+                                // C. 荧光效果
+                                layer.enabled: lineDelegate.isCurrentLine
+                                layer.effect: Glow {
+                                    samples: 16
+                                    radius: lyricItemRoot.glowRadius
+                                    color: lyricItemRoot.glowColor
+                                    spread: lyricItemRoot.glowSpread
+                                    transparentBorder: true
+                                }
+                            }
+
+                            MouseArea {
+                                anchors.fill: parent
+                                cursorShape: Qt.PointingHandCursor
+                                onClicked: {
+                                    if (typeof musicPlayer !== "undefined") {
+                                        if(musicPlayer.seek) musicPlayer.seek(charDelegate.absStart)
+                                        else musicPlayer.position = charDelegate.absStart
+                                    }
+                                    lyricItemRoot.isFollow = true
+                                    lyricItemRoot.currentLineIndex = lineDelegate.index
+                                    listView.currentIndex = lineDelegate.index
+                                }
+                            }
+                        }
+                    }
+                }
+
+                // 3. 翻译歌词
+                Text {
+                    id: transText
+                    // 在 Column 内部水平居中
+                    anchors.horizontalCenter: parent.horizontalCenter
+
+                    text: modelData.tlrc || ""
+                    visible: text !== "" // 没有翻译时自动隐藏，不占高度
+
+                    width: parent.width * 0.95 // 限制宽度以支持换行
+                    horizontalAlignment: Text.AlignHCenter
+                    wrapMode: Text.Wrap
+
+                    // 样式调整：翻译通常比原文稍小，且颜色淡一点区分层级
+                    font.pointSize: lyricItemRoot.fontSize * 0.85
+                    font.bold: true
+                    color: lineDelegate.isCurrentLine ? "#FFFFFF" : lyricItemRoot.textColor
+                    opacity: lineDelegate.isCurrentLine ? 1.0 : 0.7
+
+                    renderType: Text.QtRendering
+                }
+            } // End Column
+
+            // 行交互
             MouseArea {
                 anchors.fill: parent
+                propagateComposedEvents: true
                 hoverEnabled: true
-                onEntered: { delegateRoot.isHoverd = true; lyricItemRoot.isFollow = false; lyricTimer.restart() }
-                onExited: { delegateRoot.isHoverd = false }
+                onEntered: lineDelegate.isHovered = true
+                onExited: lineDelegate.isHovered = false
                 onClicked: {
-                    if (typeof musicPlayer !== "undefined" && musicPlayer && modelData && modelData.tim !== undefined) {
-                        if (typeof musicPlayer.seek === "function") musicPlayer.seek(modelData.tim)
-                        else if (typeof musicPlayer.position !== "undefined") musicPlayer.position = modelData.tim
+                    if (typeof musicPlayer !== "undefined") {
+                        if(musicPlayer.seek) musicPlayer.seek(lineDelegate.lineStart)
+                        else musicPlayer.position = lineDelegate.lineStart
                     }
-                    // 直接设置 currentIndex：触发高亮平滑移动
+                    lyricItemRoot.isFollow = true
                     listView.currentIndex = index
-                    lyricItemRoot.current = index
-                    pendingCenterIndex = index
-                    centerDebounce.restart()
                 }
             }
         }
 
-        Behavior on contentY { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
-    }
+        MouseArea {
+            anchors.fill: parent
+            propagateComposedEvents: true
+            onWheel: (wheel) => {
+                lyricItemRoot.isFollow = false
+                restoreFollowTimer.restart()
+                wheel.accepted = false
+            }
+        }
 
-    // 防抖器：合并快速连续的居中请求；若列表正在滑动则延后重试
-    Timer {
-        id: centerDebounce
-        interval: 220
-        repeat: false
-        onTriggered: {
-            if (pendingCenterIndex >= 0 && pendingCenterIndex !== lastCenteredIndex) {
-                if (!listView.moving) {
-                    // 使用 currentIndex 触发 ListView 的高亮/滚动动画，从而更丝滑
+        Timer {
+            id: centerDebounce
+            interval: 100
+            repeat: false
+            onTriggered: {
+                if (pendingCenterIndex >= 0) {
                     listView.currentIndex = pendingCenterIndex
-                    lastCenteredIndex = pendingCenterIndex
                     pendingCenterIndex = -1
-                } else {
-                    // 延后重试，避开用户手势
-                    centerDebounce.restart()
                 }
-            } else {
-                pendingCenterIndex = -1
             }
         }
-    }
 
-    Timer {
-        id: lyricTimer
-        interval: delayFollow
-        repeat: false
-        onTriggered: {
-            lyricItemRoot.isFollow = true
-            if (lyricItemRoot.current >= 0) {
-                pendingCenterIndex = lyricItemRoot.current
-                centerDebounce.restart()
+        Timer {
+            id: restoreFollowTimer
+            interval: lyricItemRoot.delayFollow
+            repeat: false
+            onTriggered: {
+                lyricItemRoot.isFollow = true
+                if (currentLineIndex >= 0) {
+                    pendingCenterIndex = currentLineIndex;
+                    centerDebounce.restart();
+                }
             }
         }
     }

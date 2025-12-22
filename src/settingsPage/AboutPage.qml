@@ -213,8 +213,6 @@ ColumnLayout {
                     width: 50
                     height: 50
                     isHovered: false
-                    sourceSize.width: 50
-                    sourceSize.height: 50
                     smooth: false
                     anchors.verticalCenter: parent.verticalCenter
                 }
@@ -296,8 +294,6 @@ ColumnLayout {
                     width: 50
                     height: 50
                     isHovered: false
-                    sourceSize.width: 50
-                    sourceSize.height: 50
                     smooth: false
                     anchors.verticalCenter: parent.verticalCenter
                 }

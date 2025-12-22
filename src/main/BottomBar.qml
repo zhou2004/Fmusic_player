@@ -78,8 +78,6 @@ FluFrame {
             id: albumPicture
             width: parent.height * 0.7
             height: parent.height * 0.7
-            sourceSize.width: parent.height * 0.7
-            sourceSize.height: parent.height * 0.7
             radius: 15
             smooth: false
             anchors.verticalCenter: parent.verticalCenter

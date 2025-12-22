@@ -2,7 +2,7 @@ import QtQuick 2.15
 import FluentUI 1.0
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import "../js/myjs.js" as MyJS
+import "../js/Api.js" as Service
 FluWindow {
     id: loginWindow
     width: 300
@@ -44,39 +44,37 @@ FluWindow {
             font.pixelSize: 14
             id: loginPivot
 
-            // 手机号登录界面
+            // 邮箱登录界面
             FluPivotItem {
-                id: phoneLoginItem
-                title: qsTr("Phone")
+                id: emailLoginItem
+                title: qsTr("Email")
                 contentItem: Column {
                     spacing: 10
                     topPadding: 10
 
-                    // 手机号输入框
+                    // 邮箱输入框
                     Row {
                         width: parent.width
                         spacing: 5
 
                         FluTextBox {
-                            id: phoneNumBox
-                            placeholderText: qsTr("Phone Number")
-                            width: parent.width - phoneVarButton.width - 5
+                            id: emailNumBox
+                            placeholderText: qsTr("Email Number")
+                            width: parent.width - emailVarButton.width - 5
                         }
 
                         FluFilledButton {
-                            id: phoneVarButton
+                            id: emailVarButton
                             text: qsTr("Send")
-                            height: phoneNumBox.height
+                            height: emailNumBox.height
                             width: 60
                             enabled: true // 初始状态为可点击
 
                             onClicked: {
-                                qjson.send_kugou_checkcode(phoneNumBox.text);
-                                MyJS.myFunc1();
-                                MyJS.myFunc2();
+                                qjson.send_kugou_checkcode(emailNumBox.text);
 
                                 // 禁用按钮并启动计时器
-                                phoneVarButton.enabled = false;
+                                emailVarButton.enabled = false;
                                 timer.start();
                             }
                         }
@@ -87,7 +85,7 @@ FluWindow {
                             repeat: false
                             onTriggered: {
                                 // 60秒后恢复按钮状态
-                                phoneVarButton.enabled = true;
+                                emailVarButton.enabled = true;
                             }
                         }
                     }

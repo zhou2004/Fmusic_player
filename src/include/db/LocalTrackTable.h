@@ -55,7 +55,7 @@ public:
     const QString &artist = QString(),
     const QString &album = QString(),
     const QString &title = QString(),
-    const QString &orderBy = "file_path",
+    const QString &orderBy = "title",
     bool orderAsc = true
 ) const;
 

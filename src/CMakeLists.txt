@@ -17,6 +17,9 @@ else()
     set(APPLICATION_DIR_PATH ${CMAKE_RUNTIME_OUTPUT_DIRECTORY})
 endif()
 
+# 查找 OpenSSL 库
+find_package(OPENSSL REQUIRED)
+
 # 查找 zlib 库
 find_package(ZLIB REQUIRED)
 
@@ -91,6 +94,9 @@ set(PROJECT_SOURCES
         taglib::tag
         # taglib::tag_c  <-- 如果不写 C 代码，这行可以注释掉
 
+         OpenSSL::Crypto
+         OpenSSL::SSL
+
         # 3. 修正 kissfft (根据日志，Conan 只声明了 kissfft::kissfft)
         kissfft::kissfft
 
@@ -101,6 +107,7 @@ set(PROJECT_SOURCES
   target_include_directories(${PROJECT_NAME} PRIVATE
           ${CMAKE_CURRENT_SOURCE_DIR}/include
           ${CMAKE_CURRENT_SOURCE_DIR}/include/control
+          ${CMAKE_CURRENT_SOURCE_DIR}/include/Decryptor
           ${CMAKE_CURRENT_SOURCE_DIR}/include/db
  )
 
