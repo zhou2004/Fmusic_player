@@ -6,8 +6,11 @@
 #include "stdafx.h"
 #include "singleton.h"
 
-/**
- * @brief The FluTextStyle class
+/*
+ * FluTextStyle
+ *
+ * 文字样式单例：统一定义应用中使用的字体族与预设字号/样式（Caption、Body、Title、Display 等），
+ * 便于 QML 中统一引用和调整文本外观。
  */
 class FluTextStyle : public QObject {
     Q_OBJECT

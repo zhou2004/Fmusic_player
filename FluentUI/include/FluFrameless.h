@@ -110,6 +110,16 @@ using QT_NATIVE_EVENT_RESULT_TYPE = long;
 using QT_ENTER_EVENT_TYPE = QEvent;
 #endif
 
+/*
+ * FluFrameless
+ *
+ * 提供无窗口边框的窗口管理支持（标题栏、拖拽、最大化/最小化、系统菜单等），
+ * 在 Windows 平台上包含大量与 DWM / Window Composition 相关的本地 API 定义与处理逻辑，
+ * 并实现原生事件过滤以支持无边框窗口的行为（例如拖动、窗口效果、模糊/Mica/Acrylic 等）。
+ *
+ * 注意：该类跨平台接口在不同平台下有不同的实现细节（Windows 需要使用 WinAPI），
+ * 因此头文件包含了平台判断与必要的类型别名。
+ */
 class FluFrameless : public QQuickItem, QAbstractNativeEventFilter {
     Q_OBJECT
     Q_PROPERTY_AUTO_P(QQuickItem *, appbar)

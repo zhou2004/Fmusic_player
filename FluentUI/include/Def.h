@@ -3,6 +3,15 @@
 #include <QObject>
 #include <QtQml/qqml.h>
 
+/*
+ * Def.h
+ *
+ * 定义多个与 FluentUI QML 模块相关的枚举命名空间（例如主题类型、页面/窗口类型、导航/标签视图类型等），
+ * 并通过 Qt 元对象系统导出为 QML 可用的枚举（`Q_NAMESPACE` + `Q_ENUM_NS` + `QML_NAMED_ELEMENT`）。
+ *
+ * 这些枚举用于在 QML 中以类型安全的方式指定组件的模式、布局或行为，例如 `FluThemeType::Dark`。
+ */
+
 namespace FluSheetType {
     Q_NAMESPACE
     enum Position {

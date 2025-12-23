@@ -7,8 +7,13 @@
 #include "stdafx.h"
 #include "singleton.h"
 
-/**
- * @brief The FluColors class
+/*
+ * FluColors
+ *
+ * 颜色与强调色集合单例，向 QML 暴露一组预定义颜色（Grey 系列、Black/White 等）以及若干 `FluAccentColor` 实例
+ *（Yellow/Orange/Red/...）。方便在 QML 中统一引用应用颜色。
+ *
+ * 提供 `createAccentColor` 用于基于给定主色创建临时/动态的强调色对象。
  */
 class FluColors : public QObject {
     Q_OBJECT

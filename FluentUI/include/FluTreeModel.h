@@ -8,8 +8,19 @@
 #include "stdafx.h"
 
 
+/*
+ * FluTreeModel.h
+ *
+ * 提供树形数据模型及节点类，供 QML 中树视图组件使用：
+ * - `FluTreeNode` 表示树上的单个节点，包含数据、深度、子节点和父节点引用，并提供用于遍历/查询的 Q_INVOKABLE 方法；
+ * - `FluTreeModel` 继承自 `QAbstractTableModel`，将树结构展开为表格行以便用于 QML 的视图组件，暴露了行/列操作和节点操作接口。
+ */
+
 /**
- * @brief The FluTreeNode class
+ * FluTreeNode
+ *
+ * - 封装单个树节点的数据和层级信息
+ * - 提供 `data()`, `depth()`, `isExpanded()` 等用于 QML 访问的接口
  */
 class FluTreeNode : public QObject {
     Q_OBJECT
@@ -95,6 +106,12 @@ public:
     FluTreeNode *_parent = nullptr;
 };
 
+/*
+ * FluTreeModel
+ *
+ * - 将树形节点展开为行，供 QML 列表/视图组件使用
+ * - 提供插入、删除、展开/折叠、选中、刷新等操作的 Q_INVOKABLE 接口，便于 QML 调用
+ */
 class FluTreeModel : public QAbstractTableModel {
     Q_OBJECT
     Q_PROPERTY_AUTO(int, dataSourceSize)
@@ -105,43 +122,28 @@ public:
 
     explicit FluTreeModel(QObject *parent = nullptr);
 
+    // 覆盖模型接口：行数、列数、数据与角色名
     [[nodiscard]] int rowCount(const QModelIndex &parent = {}) const override;
-
     [[nodiscard]] int columnCount(const QModelIndex &parent = {}) const override;
-
     [[nodiscard]] QVariant data(const QModelIndex &index,
                                 int role = Qt::DisplayRole) const override;
-
     [[nodiscard]] QHash<int, QByteArray> roleNames() const override;
 
+    // QML 可调用接口：行操作、节点访问与展开/折叠等
     Q_INVOKABLE void removeRows(int row, int count);
-
     Q_INVOKABLE void insertRows(int row, const QList<FluTreeNode *> &data);
-
     Q_INVOKABLE QObject *getRow(int row);
-
     Q_INVOKABLE void setRow(int row, QVariantMap data);
-
     Q_INVOKABLE void setData(QList<FluTreeNode *> data);
-
     Q_INVOKABLE void setDataSource(QList<QMap<QString, QVariant>> data);
-
     Q_INVOKABLE void collapse(int row);
-
     Q_INVOKABLE void expand(int row);
-
     Q_INVOKABLE FluTreeNode *getNode(int row);
-
     Q_INVOKABLE void refreshNode(int row);
-
     Q_INVOKABLE void checkRow(int row, bool checked);
-
     Q_INVOKABLE bool hitHasChildrenExpanded(int row);
-
     Q_INVOKABLE void allExpand();
-
     Q_INVOKABLE void allCollapse();
-
     Q_INVOKABLE QVariant selectionModel();
 
 private:

@@ -3,6 +3,16 @@
 #include <QObject>
 #include <QtQml/qqml.h>
 
+/*
+ * FluentIconDef.h
+ *
+ * 定义 FluentUI 使用的一组图标枚举（`FluentIcons::Type`），每个枚举值对应字体图标中的代码点。
+ * 使用 `Q_NAMESPACE`/`Q_ENUM_NS` 将枚举导出到 Qt 元对象系统，并通过 `qmlRegisterUncreatableMetaObject`
+ * 或 `qmlRegisterUncreatableMetaObject(FluentIcons::staticMetaObject, ...)` 在 QML 中以只读元对象方式访问枚举常量。
+ *
+ * 说明：枚举值通常映射到内置字体（`FluentIcons.ttf`）中的图标码点，QML 中可结合文本和字体显示图标。
+ */
+
 namespace FluentIcons {
     Q_NAMESPACE
     enum class Type {
