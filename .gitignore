@@ -7,4 +7,3 @@ package/
 release/
 bin/
 build/
-CMakeUserPresets.json

@@ -29,8 +29,6 @@
 // #include "Decryptor/KRCDecryptor.h"
 #include "Decryptor/KLyricsParser.h"
 
-#include "Iconvert.h"
-
 // 定义存储歌词的结构体
 struct Lyric {
     float timestamp; // 时间戳（毫秒）
