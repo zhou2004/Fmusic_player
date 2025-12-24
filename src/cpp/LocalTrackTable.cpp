@@ -155,3 +155,78 @@ QVariantList LocalTrackTable::page(int offset, int limit) const
 
     return list;
 }
+
+QVariantList LocalTrackTable::queryTracksPaged(
+    int offset,
+    int limit,
+    const QString &artist,
+    const QString &album,
+    const QString &title,
+    const QString &orderBy,
+    bool orderAsc
+) const
+{
+    QVariantList list;
+    if (offset < 0 || limit <= 0)
+        return list;
+
+    if (!DatabaseManager::instance().init())
+        return list;
+
+    QSqlDatabase database = db();
+    QSqlQuery q(database);
+
+    QString sql = "SELECT id, file_path, title, artist, album, cover, url, duration, likeStatus, lyrics FROM local_tracks";
+    QStringList whereClauses;
+    QVariantList bindValues;
+
+    if (!artist.isEmpty()) {
+        whereClauses << "artist LIKE ?";
+        bindValues << "%" + artist + "%";
+    }
+    if (!album.isEmpty()) {
+        whereClauses << "album LIKE ?";
+        bindValues << "%" + album + "%";
+    }
+    if (!title.isEmpty()) {
+        whereClauses << "title LIKE ?";
+        bindValues << "%" + title + "%";
+    }
+    if (!whereClauses.isEmpty()) {
+        sql += " WHERE " + whereClauses.join(" AND ");
+    }
+
+    // 排序字段白名单，防止SQL注入
+    QStringList validOrderFields = {"file_path", "title", "artist", "album"};
+    QString orderField = validOrderFields.contains(orderBy) ? orderBy : "file_path";
+    sql += QString(" ORDER BY %1 COLLATE NOCASE %2").arg(orderField, orderAsc ? "ASC" : "DESC");
+    sql += " LIMIT ? OFFSET ?";
+
+    q.prepare(sql);
+    for (const QVariant &v : bindValues)
+        q.addBindValue(v);
+    q.addBindValue(limit);
+    q.addBindValue(offset);
+
+    if (!q.exec()) {
+        qWarning() << "LocalTrackTable: queryTracksPaged failed:" << q.lastError().text();
+        return list;
+    }
+
+    while (q.next()) {
+        QVariantMap map;
+        const QString filePath = q.value(1).toString();
+        map["id"]        = filePath;
+        map["title"]     = q.value(2).toString();
+        map["artist"]    = q.value(3).toString();
+        map["album"]     = q.value(4).toString();
+        map["cover"]     = q.value(5).toString();
+        map["url"]       = q.value(6).toString();
+        map["duration"]  = q.value(7).toInt();
+        map["likeStatus"] = q.value(8).toInt();
+        map["lyrics"]    = q.value(9).toString();
+        list.append(map);
+    }
+
+    return list;
+}

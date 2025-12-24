@@ -5,19 +5,20 @@ import FluentUI 1.0
 
 Item {
     id: root
+    width: parent.width
+    height: parent.height
     property string title: ""
     property string artist: ""
     property string album: ""
     property url cover: ""
 
     Column {
-        anchors.fill: parent
+        // anchors.fill: parent
         spacing: 24
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.verticalCenter: parent.verticalCenter
+        anchors.centerIn: parent
 
         Rectangle {
-            width: parent.width * 0.9
+            width: root.width * 0.7
             height: width
             radius: 16
             color: "#202020"
@@ -33,29 +34,38 @@ Item {
         }
 
         Column {
-            width: parent.width * 0.9
+            width: root.width * 0.7
             spacing: 6
 
             Text {
                 text: root.title
                 color: "white"
-                font.pixelSize: 20
+                font.pixelSize: root.width * 0.06
                 font.bold: true
                 elide: Text.ElideRight
+                wrapMode: Text.WrapAnywhere
+                width: parent.width
+                horizontalAlignment: Text.AlignHCenter
             }
 
             Text {
                 text: root.artist
                 color: "#DDDDDD"
-                font.pixelSize: 14
+                font.pixelSize: root.width * 0.05
                 elide: Text.ElideRight
+                wrapMode: Text.WrapAnywhere
+                width: parent.width
+                horizontalAlignment: Text.AlignHCenter
             }
 
             Text {
                 text: root.album
                 color: "#AAAAAA"
-                font.pixelSize: 13
+                font.pixelSize: root.width * 0.05
                 elide: Text.ElideRight
+                wrapMode: Text.WrapAnywhere
+                width: parent.width
+                horizontalAlignment: Text.AlignHCenter
             }
         }
     }

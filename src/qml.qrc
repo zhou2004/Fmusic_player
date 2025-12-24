@@ -28,6 +28,7 @@
         <file>components/MusicInfo.qml</file>
         <file>components/SrollText.qml</file>
         <file>components/RandomSelector.qml</file>
+        <file>components/QCScrollBar.qml</file>
         <file>components/DrawerMusic/MusicPlayerPage.qml</file>
         <file>components/DrawerMusic/LeftPanel.qml</file>
         <file>components/DrawerMusic/RightPanel.qml</file>

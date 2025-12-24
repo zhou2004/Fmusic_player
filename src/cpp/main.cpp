@@ -11,7 +11,11 @@
 
 #include <MusicPlayer.h>
 #include "WinSMTCController.h"
-
+#include "AudioProcessor.h"
+#include "Decryptor/KRCDecryptor.h"
+#include <QProcess>
+#include <SystemMediaTransportControlsInterop.h>
+#include "KLyricsParser.h"
 #include <iostream>
 
 #ifdef Q_OS_WIN

@@ -17,13 +17,13 @@ ColumnLayout {
     property int leftMarginSet: 10
 
     // 初始化为空数组，用来接收 C++ 的 QVariantList
-    property var musicModel: []
+    property var musicModel: musicPlayer.localTracksPage(0, pageSize)
 
     // 分页相关属性
     property int pageSize: 20
     property int currentPage: 0    // 从 0 开始
-    property int totalCount: 0
-    property int totalPage: 0
+    property int totalCount: musicPlayer.localTracksCount()
+    property int totalPage: totalCount === 0 ? 0 : Math.ceil(totalCount / pageSize)
 
     function refreshPage() {
         totalCount = musicPlayer.localTracksCount()

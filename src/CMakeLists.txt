@@ -11,6 +11,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(APPLICATION_DIR_PATH ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 
+# 查找 OpenSSL 库
+find_package(OPENSSL REQUIRED)
+
 # 查找 zlib 库
 find_package(ZLIB REQUIRED)
 
@@ -72,6 +75,12 @@ add_custom_target(Script-UpdateTranslations
         Qt6::Sql
         fluentuiplugin
         taglib::tag
+        # taglib::tag_c  <-- 如果不写 C 代码，这行可以注释掉
+
+         OpenSSL::Crypto
+         OpenSSL::SSL
+
+        # 3. 修正 kissfft (根据日志，Conan 只声明了 kissfft::kissfft)
         kissfft::kissfft
         ZLIB::ZLIB
 )
@@ -80,6 +89,7 @@ add_custom_target(Script-UpdateTranslations
   target_include_directories(${PROJECT_NAME} PRIVATE
           ${CMAKE_CURRENT_SOURCE_DIR}/include
           ${CMAKE_CURRENT_SOURCE_DIR}/include/control
+          ${CMAKE_CURRENT_SOURCE_DIR}/include/Decryptor
           ${CMAKE_CURRENT_SOURCE_DIR}/include/db
  )
 
