@@ -87,6 +87,8 @@ int main(int argc, char *argv[])
     // 2) 初始化引擎和播放器逻辑
     QQmlApplicationEngine engine;
     MusicPlayer musicPlayer;
+    K_LyricParser lyricParser;
+    ApiClient apiClient;
 
 #ifdef Q_OS_WIN
     // 改动：使用堆对象，确保生命周期贯穿整个应用
@@ -108,6 +110,8 @@ int main(int argc, char *argv[])
     // 3) 注册上下文属性
     engine.addImportPath("qrc:/");
     engine.rootContext()->setContextProperty("musicPlayer", &musicPlayer);
+    engine.rootContext()->setContextProperty("apiClient", &apiClient);
+    engine.rootContext()->setContextProperty("lyricParser", &lyricParser);
 
     // 4) 加载主界面
     const QUrl url(QStringLiteral("qrc:/App.qml"));
