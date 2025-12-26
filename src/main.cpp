@@ -106,6 +106,8 @@ int main(int argc, char *argv[])
     MusicPlayer musicPlayer;
     K_LyricParser lyricParser;
     ApiClient apiClient;
+    AudioProcessor audioProcessor(&musicPlayer);
+
 
 #if defined(ENABLE_SMTC) && defined(Q_OS_WIN)
     auto smtc = std::make_unique<WinSMTCController>(&engine);
@@ -130,6 +132,7 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("musicPlayer", &musicPlayer);
     engine.rootContext()->setContextProperty("apiClient", &apiClient);
     engine.rootContext()->setContextProperty("lyricParser", &lyricParser);
+    engine.rootContext()->setContextProperty("audioProcessor", &audioProcessor);
 
     // =========================================================
     // 4. 加载主界面 (适配 QTP0004 NEW 策略)

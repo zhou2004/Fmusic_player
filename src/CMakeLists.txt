@@ -128,6 +128,8 @@ if (TS_FILES)
 
 endif()
 
+
+
 qt_finalize_executable(${PROJECT_NAME})
 
 include(GNUInstallDirs)

@@ -102,52 +102,28 @@ Item {
     }
 
 
-    Image {
-        id: bgImage
+    // 1. 使用流体背景组件
+    FluidBackground {
+        id: fluidBg
         anchors.fill: parent
-        source: trackInfo && trackInfo.cover ? trackInfo.cover : "qrc:/qt/qml/FMusic/Assets/defaultAlbum.jpg"
-        fillMode: Image.PreserveAspectCrop
-        visible: false
+        z: -1 // 放在最底层
+
+        // 【关键】绑定原始封面路径
+        // 组件内部会自动调用 audioProcessor.processFluidCover(rawSource)
+        rawSource: trackInfo && trackInfo.cover ?
+            trackInfo.cover :
+            "qrc:/qt/qml/FMusic/Assets/defaultAlbum.jpg"
     }
+    // FluidBackground {
+    //     id: fluidBg
+    //     anchors.fill: parent
+    //     // 传入原始图片路径，组件内部会自动拼接 "image://fluid/" 前缀调用 C++
+    //     source: trackInfo && trackInfo.cover ? trackInfo.cover : "qrc:/qt/qml/FMusic/Assets/defaultAlbum.jpg"
+    // }
 
-    FastBlur {
-        id: blur
-        anchors.fill: parent
-        source: bgImage
-        radius: 64
-    }
 
-    Rectangle {
-        anchors.fill: parent
-        color: "transparent"
 
-        Rectangle {
-            id: glow
-            width: parent.width * 0.6
-            height: parent.height
-            gradient: Gradient {
-                GradientStop { position: 0.0; color: Qt.rgba(1,1,1,0.0) }
-                GradientStop { position: 0.5; color: Qt.rgba(1,1,1,0.18) }
-                GradientStop { position: 1.0; color: Qt.rgba(1,1,1,0.0) }
-            }
-            rotation: 20
-            opacity: 0.7
-            x: -width
 
-            NumberAnimation on x {
-                from: -glow.width
-                to: parent.width
-                duration: 6000
-                loops: Animation.Infinite
-                easing.type: Easing.InOutQuad
-            }
-        }
-    }
-
-    Rectangle {
-        anchors.fill: parent
-        color: Qt.rgba(0, 0, 0, 0.45)
-    }
 
     Row {
         id: headerRow

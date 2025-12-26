@@ -2,6 +2,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import FluentUI 1.0
+import "../"
 
 Item {
     id: root
@@ -17,21 +18,30 @@ Item {
         spacing: 24
         anchors.centerIn: parent
 
-        Rectangle {
+        RoundImage {
+            source: root.cover
             width: root.width * 0.7
             height: width
             radius: 16
-            color: "#202020"
-            clip: true   // 按圆角裁剪内部 Image
-
-            Image {
-                anchors.fill: parent
-                anchors.margins: 4
-                source: root.cover
-                fillMode: Image.PreserveAspectFit
-                smooth: true
-            }
+            smooth: false
+            // anchors.verticalCenter: parent.verticalCenter
         }
+
+        // Rectangle {
+        //     width: root.width * 0.7
+        //     height: width
+        //     radius: 16
+        //     color: "#202020"
+        //     clip: true   // 按圆角裁剪内部 Image
+        //
+        //     Image {
+        //         anchors.fill: parent
+        //         anchors.margins: 4
+        //         source: root.cover
+        //         fillMode: Image.PreserveAspectFit
+        //         smooth: true
+        //     }
+        // }
 
         Column {
             width: root.width * 0.7

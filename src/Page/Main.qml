@@ -47,7 +47,7 @@ FluWindow {
     onMusicPlayerPageVisibleChanged: {
         if (!musicPlayerPageVisible) {
             hoverRegion = "";
-            appBars.visible = true;
+            // appBars.visible = true;
             // bottomBarVisible = true
         } else
         // hoverRegion = ""

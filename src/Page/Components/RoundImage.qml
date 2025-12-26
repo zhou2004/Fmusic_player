@@ -11,7 +11,7 @@ Item {
     property var onButtonClick: null
     property bool showColorOverlay: false
     property color colorOverlayColor: "#80000000"
-    property bool isHovered: true
+    property bool isHovered: false
     // 注意：开启 mipmap 后 smooth 属性通常会被自动处理，但为了兼容性可以保留
     property alias smooth: image.smooth
 
