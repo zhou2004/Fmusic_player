@@ -1,11 +1,10 @@
-cmake_minimum_required(VERSION 3.21)
+cmake_minimum_required(VERSION 3.30)
 
 set(VERSION "1.0.0")
 
 project(FMusic VERSION ${VERSION} LANGUAGES CXX)
 
-# 1. 【关键修正】添加了 Widgets 和 PrintSupport (FluentUI 需要它们)
-find_package(Qt6 REQUIRED COMPONENTS Core Quick Multimedia Network Sql LinguistTools Widgets PrintSupport)
+find_package(Qt6 REQUIRED COMPONENTS Core Quick Qml Multimedia Network Sql LinguistTools Widgets PrintSupport)
 
 qt_standard_project_setup()
 
@@ -38,23 +37,20 @@ file(GLOB_RECURSE HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/include/db/*.h
 )
 
-# 2. 【关键修正】去掉了错误的 INSTALL_HEADERS 关键字
-# 直接把 headers 放在列表里，IDE 就能识别了
 qt_add_executable(${PROJECT_NAME}
         MANUAL_FINALIZATION
         ${PROJECT_SOURCES}
         ${HEADERS}
 )
 
-# 3. 【关键修正】链接库中添加了 Qt6::Widgets 和 Qt6::PrintSupport
 target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt6::Core
         Qt6::Quick
         Qt6::Network
         Qt6::Multimedia
         Qt6::Sql
-        Qt6::Widgets       # FluentUI 依赖
-        Qt6::PrintSupport  # FluentUI 依赖
+        Qt6::Widgets
+        Qt6::PrintSupport
         fluentuiplugin
         taglib::tag
         kissfft::kissfft
@@ -109,14 +105,11 @@ set_target_properties(${PROJECT_NAME} PROPERTIES
         RUNTIME_OUTPUT_DIRECTORY "${APPLICATION_DIR_PATH}"
 )
 
-# 1. 定义 .ts 文件
+# 国际化支持
 file(GLOB TS_FILES "i18n/*.ts")
 
-# 2. 【关键】设定输出路径
-# 这里使用变量拼接，适配 Debug/Release。如果你只想死磕 Debug，可以写死 "bin/Debug/i18n"
 set(I18N_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE}/i18n")
 
-# 3. 为每个 .ts 文件设置 OUTPUT_LOCATION 属性
 foreach(ts_file ${TS_FILES})
     set_source_files_properties(${ts_file}
             PROPERTIES OUTPUT_LOCATION "${I18N_OUTPUT_PATH}"
@@ -136,3 +129,24 @@ if (TS_FILES)
 endif()
 
 qt_finalize_executable(${PROJECT_NAME})
+
+include(GNUInstallDirs)
+
+# 安装主程序
+install(TARGETS ${PROJECT_NAME}
+        RUNTIME DESTINATION .
+        BUNDLE  DESTINATION .
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+)
+
+# 安装翻译文件
+install(DIRECTORY "${I18N_OUTPUT_PATH}/" DESTINATION "i18n")
+
+# 生成并安装 Qt 部署脚本 (windeployqt 自动化)
+qt_generate_deploy_qml_app_script(
+        TARGET ${PROJECT_NAME}
+        OUTPUT_SCRIPT qt_deploy_script
+        NO_UNSUPPORTED_PLATFORM_ERROR
+        DEPLOY_TOOL_OPTIONS "--no-translations"
+)
+install(SCRIPT ${qt_deploy_script})

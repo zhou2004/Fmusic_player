@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.30)
 
 #编译参数设置
 option(FLUENTUI_BUILD_STATIC_LIB "Build static library." OFF)
@@ -198,4 +198,4 @@ target_include_directories(${PROJECT_NAME} PRIVATE
 )
     
 #安装
-install(DIRECTORY ${FLUENTUI_QML_PLUGIN_DIRECTORY} DESTINATION ${CMAKE_INSTALL_PREFIX}/imports)
+install(DIRECTORY ${FLUENTUI_QML_PLUGIN_DIRECTORY} DESTINATION ${CMAKE_INSTALL_PREFIX})
