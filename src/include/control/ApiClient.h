@@ -12,9 +12,10 @@
 #define APICLIENT_H
 
 #include <QUrlQuery>
-
 #include "Http.h"
 #include "KRCDecryptor.h"
+
+
 
 
 // 你也可以拆成多个类：UserApi, SongApi, PlaylistApi 等
@@ -31,292 +32,207 @@ public:
     // ===================== 用户相关 ===================
 
     // /** 用户登录 */
-    void login(const QJsonObject &data,
-               const ResultCb &onSuccess,
-               const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void login(const QJsonObject &data);
 
     // /** 用户登出 */
-    void logout(const ResultCb &onSuccess,
-                const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void logout();
 
     // /** 发送邮箱验证码 */
-    void sendEmailCode(const QString &email,
-                       const ResultCb &onSuccess,
-                       const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void sendEmailCode(const QString &email);
 
     // /** 用户注册 */
-    void registerUser(const QJsonObject &data,
-                      const ResultCb &onSuccess,
-                      const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void registerUser(const QJsonObject &data);
 
     // /** 重置密码 */
-    void resetPassword(const QJsonObject &data,
-                       const ResultCb &onSuccess,
-                       const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void resetPassword(const QJsonObject &data);
 
     // /** 获取用户信息 */
-    void getUserInfo(const ResultCb &onSuccess,
-                     const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void getUserInfo();
 
     // /** 更新用户信息 */
-    void updateUserInfo(const QJsonObject &data,
-                        const ResultCb &onSuccess,
-                        const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void updateUserInfo(const QJsonObject &data);
 
     // /** 注销账号 */
-    void deleteUser(const ResultCb &onSuccess,
-                    const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void deleteUser();
 
     // === banner / 推荐 ===
-    void getBanner(const ResultCb &onSuccess,
-                   const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void getBanner();
+
     // === 推荐歌单 ===
-    void getRecommendedPlaylists(const ResultCb &onSuccess,
-                                 const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void getRecommendedPlaylists();
     // === 推荐歌曲 ===
-    void getRecommendedSongs(const ResultCb &onSuccess,
-                             const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void getRecommendedSongs();
 
 
     // ================== 歌曲相关 ====================
 
     // === 获取所有歌曲 ===
-    void getAllSongs(const QJsonObject &data,
-                     const ResultCb &onSuccess,
-                     const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void getAllSongs(const QJsonObject &data);
     // === 获取所有 VIP 歌曲 ===
-    void getAllVipSongs(const QJsonObject &data,
-                        const ResultCb &onSuccess,
-                        const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void getAllVipSongs(const QJsonObject &data);
     // === 获取歌曲详情 ===
-    void getSongDetail(int id,
-                       const ResultCb &onSuccess,
-                       const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void getSongDetail(int id);
 
     // ===================== 歌手相关 ======================
 
     // === 获取所有歌手 ===
-    void getAllArtists(const QJsonObject &data,
-                       const ResultCb &onSuccess,
-                       const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void getAllArtists(const QJsonObject &data);
     // === 获取歌手详情 ===
-    void getArtistDetail(int id,
-                         const ResultCb &onSuccess,
-                         const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void getArtistDetail(int id);
 
     // ===================== 歌单相关 ======================
 
     // === 获取所有歌单 ===
-    void getAllPlaylists(const QJsonObject &data,
-                         const ResultCb &onSuccess,
-                         const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void getAllPlaylists(const QJsonObject &data);
     // === 获取歌单详情 ===
-    void getPlaylistDetail(int id,
-                           const ResultCb &onSuccess,
-                           const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void getPlaylistDetail(int id);
 
     // ===================== 收藏相关 =======================
 
     // === 获取喜爱歌曲 ===
-    void getFavoriteSongs(const QJsonObject &data,
-                          const ResultCb &onSuccess,
-                          const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void getFavoriteSongs(const QJsonObject &data);
     // === 收藏歌曲 ===
-    void collectSong(int songId,
-                     const ResultCb &onSuccess,
-                     const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void collectSong(int songId);
     // === 取消收藏歌单 ===
-    void cancelCollectSong(int songId,
-                           const ResultCb &onSuccess,
-                           const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void cancelCollectSong(int songId);
     // === 获取喜爱歌单 ===
-    void getFavoritePlaylists(const QJsonObject &data,
-                              const ResultCb &onSuccess,
-                              const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void getFavoritePlaylists(const QJsonObject &data);
     // === 收藏歌单 ===
-    void collectPlaylist(int playlistId,
-                         const ResultCb &onSuccess,
-                         const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void collectPlaylist(int playlistId);
     // === 取消收藏歌单 ===
-    void cancelCollectPlaylist(int playlistId,
-                               const ResultCb &onSuccess,
-                               const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void cancelCollectPlaylist(int playlistId);
 
     // ==================== 评论相关 =========================
 
     // === 添加歌曲评论 ===
-    void addSongComment(const QJsonObject &data,
-                        const ResultCb &onSuccess,
-                        const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void addSongComment(const QJsonObject &data);
     // === 添加歌单评论 ===
-    void addPlaylistComment(const QJsonObject &data,
-                            const ResultCb &onSuccess,
-                            const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void addPlaylistComment(const QJsonObject &data);
     // === 点赞评论 ===
-    void likeComment(int commentId,
-                     const ResultCb &onSuccess,
-                     const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void likeComment(int commentId);
     // === 取消点赞评论 ===
-    void cancelLikeComment(int commentId,
-                           const ResultCb &onSuccess,
-                           const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void cancelLikeComment(int commentId);
     // === 删除评论 ===
-    void deleteComment(int commentId,
-                       const ResultCb &onSuccess,
-                       const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void deleteComment(int commentId);
 
     // ======================= 反馈 ==================
 
     // === 添加反馈 ===
-    void addFeedback(const QString &content,
-                     const ResultCb &onSuccess,
-                     const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void addFeedback(const QString &content);
 
     // ================== 订单 / 支付 ==================
 
     // === 创建订单 ===
-    void createOrder(const QString &orderNo,
+    Q_INVOKABLE void createOrder(const QString &orderNo,
                      int userId,
-                     int planId,
-                     const ResultCb &onSuccess,
-                     const ErrorCb &onError = nullptr);
+                     int planId);
     // === 支付订单 ===
-    void payOrder(const QString &orderNo,
-                  const ResultCb &onSuccess,
-                  const ErrorCb &onError = nullptr);
+    Q_INVOKABLE void payOrder(const QString &orderNo);
 
     // ================== 第三方其他接口 ==================
     // 辅助函数：发送同步 GET 请求（复用你提供的逻辑）
-    QByteArray sendSyncGet(const QUrl& url) {
-        // 伪装成浏览器或常用客户端，防止被拦截
-        QNetworkReply *reply = m_http->get(url.toString());
-        if (!reply) return QByteArray();
-
-        QEventLoop loop;
-        connect(reply, &QNetworkReply::finished, &loop, &QEventLoop::quit);
-        loop.exec(); // 阻塞等待
-
-        QByteArray data;
-        if (reply->error() == QNetworkReply::NoError) {
-            data = reply->readAll();
-        } else {
-            qWarning() << "Network Error:" << reply->errorString() << "URL:" << url.toString();
-        }
-        reply->deleteLater();
-        return data;
-    }
+    QByteArray sendSyncGet(const QUrl& url);
 
     // --- 主函数：获取 KRC 内容 ---
-    Q_INVOKABLE QString getKrcContent(const QString& title, const QString& artist) {
-        // ==========================================
-        // 步骤 1: 搜索获取 Hash
-        // ==========================================
-        QUrl searchUrl("http://ioscdn.kugou.com/api/v3/search/song");
-        QUrlQuery searchQuery;
-        searchQuery.addQueryItem("keyword", artist + " " + title); // 组合搜索词
-        searchQuery.addQueryItem("page", "1");
-        searchQuery.addQueryItem("pagesize", "1");
-        searchQuery.addQueryItem("showtype", "10");
-        searchQuery.addQueryItem("plat", "2");
-        searchQuery.addQueryItem("version", "7910");
-        searchQuery.addQueryItem("tag", "1");
-        searchQuery.addQueryItem("correct", "1");
-        searchQuery.addQueryItem("privilege", "1");
-        searchQuery.addQueryItem("sver", "5");
-        searchUrl.setQuery(searchQuery);
+    Q_INVOKABLE QString getKrcContent(const QString& title, const QString& artist);
 
-        QByteArray searchData = sendSyncGet(searchUrl);
-        if (searchData.isEmpty()) return QString();
+signals:
+    void loginSuccess(const QJsonObject &data);
+    void loginError(const QString &message, int code);
 
-        // 解析 Hash
-        QString fileHash;
-        QJsonDocument searchDoc = QJsonDocument::fromJson(searchData);
-        QJsonObject searchRoot = searchDoc.object();
-        if (searchRoot.contains("data") && searchRoot["data"].isObject()) {
-            QJsonArray infoArr = searchRoot["data"].toObject()["info"].toArray();
-            if (!infoArr.isEmpty()) {
-                fileHash = infoArr.first().toObject()["hash"].toString();
-            }
-        }
+    void logoutSuccess(const QJsonObject &data);
+    void logoutError(const QString &message, int code);
 
-        if (fileHash.isEmpty()) {
-            qWarning() << "Step 1 Failed: No hash found for" << title;
-            return QString();
-        }
-        // qDebug() << "Step 1 Success. Hash:" << fileHash;
+    void sendEmailCodeSuccess(const QJsonObject &data);
+    void sendEmailCodeError(const QString &message, int code);
 
-        // ==========================================
-        // 步骤 2: 获取 ID 和 AccessKey
-        // ==========================================
-        QUrl keyUrl("http://krcs.kugou.com/search");
-        QUrlQuery keyQuery;
-        keyQuery.addQueryItem("ver", "1");
-        keyQuery.addQueryItem("man", "no");
-        keyQuery.addQueryItem("client", "pc");
-        keyQuery.addQueryItem("hash", fileHash);
-        keyUrl.setQuery(keyQuery);
+    void registerUserSuccess(const QJsonObject &data);
+    void registerUserError(const QString &message, int code);
 
-        QByteArray keyData = sendSyncGet(keyUrl);
-        if (keyData.isEmpty()) return QString();
+    void resetPasswordSuccess(const QJsonObject &data);
+    void resetPasswordError(const QString &message, int code);
 
-        // 解析 ID 和 AccessKey
-        QString krcId;
-        QString accessKey;
-        QJsonDocument keyDoc = QJsonDocument::fromJson(keyData);
-        QJsonObject keyRoot = keyDoc.object();
+    void getUserInfoSuccess(const QJsonObject &data);
+    void getUserInfoError(const QString &message, int code);
 
-        // 注意：krcs.kugou.com 的返回结构通常在 candidates 数组里
-        if (keyRoot.contains("candidates") && keyRoot["candidates"].isArray()) {
-            QJsonArray candidates = keyRoot["candidates"].toArray();
-            if (!candidates.isEmpty()) {
-                QJsonObject bestMatch = candidates.first().toObject();
-                krcId = bestMatch["id"].toString();
-                accessKey = bestMatch["accesskey"].toString();
-            }
-        }
+    void updateUserInfoSuccess(const QJsonObject &data);
+    void updateUserInfoError(const QString &message, int code);
 
-        if (krcId.isEmpty() || accessKey.isEmpty()) {
-            qWarning() << "Step 2 Failed: ID or AccessKey not found.";
-            return QString();
-        }
-        // qDebug() << "Step 2 Success. ID:" << krcId << "Key:" << accessKey;
+    void deleteUserSuccess(const QJsonObject &data);
+    void deleteUserError(const QString &message, int code);
 
-        // ==========================================
-        // 步骤 3: 下载 KRC Content
-        // ==========================================
-        QUrl downloadUrl("http://lyrics2.kugou.com/download");
-        QUrlQuery downloadQuery;
-        downloadQuery.addQueryItem("ver", "1");
-        downloadQuery.addQueryItem("client", "pc");
-        downloadQuery.addQueryItem("id", krcId);
-        downloadQuery.addQueryItem("accesskey", accessKey);
-        downloadQuery.addQueryItem("fmt", "krc");
-        downloadQuery.addQueryItem("charset", "utf8");
-        downloadUrl.setQuery(downloadQuery);
+    void getBannerSuccess(const QJsonObject &data);
+    void getBannerError(const QString &message, int code);
 
-        QByteArray downloadData = sendSyncGet(downloadUrl);
-        if (downloadData.isEmpty()) return QString();
+    void getRecommendedPlaylistsSuccess(const QJsonObject &data);
+    void getRecommendedPlaylistsError(const QString &message, int code);
 
-        // 解析 Content
-        QString contentBase64;
-        QJsonDocument downloadDoc = QJsonDocument::fromJson(downloadData);
-        QJsonObject downloadRoot = downloadDoc.object();
+    void getRecommendedSongsSuccess(const QJsonObject &data);
+    void getRecommendedSongsError(const QString &message, int code);
 
-        if (downloadRoot.contains("content")) {
-            contentBase64 = downloadRoot["content"].toString();
-        }
+    void getAllSongsSuccess(const QJsonObject &data);
+    void getAllSongsError(const QString &message, int code);
 
-        if (contentBase64.isEmpty()) {
-            qWarning() << "Step 3 Failed: Content is empty.";
-            return QString();
-        }
+    void getAllVipSongsSuccess(const QJsonObject &data);
+    void getAllVipSongsError(const QString &message, int code);
 
-        QString krc_data = KRCDecoder::parseKrcFromBase64(contentBase64);
-        std::cout << krc_data.toStdString() << std::endl;
-        // qDebug().noquote() << "Step 3 Success. KRC Data :" << krc_data;
+    void getSongDetailSuccess(const QJsonObject &data);
+    void getSongDetailError(const QString &message, int code);
 
-        return krc_data;
-    }
+    void getAllArtistsSuccess(const QJsonObject &data);
+    void getAllArtistsError(const QString &message, int code);
+
+    void getArtistDetailSuccess(const QJsonObject &data);
+    void getArtistDetailError(const QString &message, int code);
+
+    void getAllPlaylistsSuccess(const QJsonObject &data);
+    void getAllPlaylistsError(const QString &message, int code);
+
+    void getPlaylistDetailSuccess(const QJsonObject &data);
+    void getPlaylistDetailError(const QString &message, int code);
+
+    void getFavoriteSongsSuccess(const QJsonObject &data);
+    void getFavoriteSongsError(const QString &message, int code);
+
+    void collectSongSuccess(const QJsonObject &data);
+    void collectSongError(const QString &message, int code);
+
+    void cancelCollectSongSuccess(const QJsonObject &data);
+    void cancelCollectSongError(const QString &message, int code);
+
+    void getFavoritePlaylistsSuccess(const QJsonObject &data);
+    void getFavoritePlaylistsError(const QString &message, int code);
+
+    void collectPlaylistSuccess(const QJsonObject &data);
+    void collectPlaylistError(const QString &message, int code);
+
+    void cancelCollectPlaylistSuccess(const QJsonObject &data);
+    void cancelCollectPlaylistError(const QString &message, int code);
+
+    void addSongCommentSuccess(const QJsonObject &data);
+    void addSongCommentError(const QString &message, int code);
+
+    void addPlaylistCommentSuccess(const QJsonObject &data);
+    void addPlaylistCommentError(const QString &message, int code);
+
+    void likeCommentSuccess(const QJsonObject &data);
+    void likeCommentError(const QString &message, int code);
+
+    void cancelLikeCommentSuccess(const QJsonObject &data);
+    void cancelLikeCommentError(const QString &message, int code);
+
+    void deleteCommentSuccess(const QJsonObject &data);
+    void deleteCommentError(const QString &message, int code);
+
+    void addFeedbackSuccess(const QJsonObject &data);
+    void addFeedbackError(const QString &message, int code);
+
+    void createOrderSuccess(const QJsonObject &data);
+    void createOrderError(const QString &message, int code);
+
+    void payOrderSuccess(const QJsonObject &data);
+    void payOrderError(const QString &message, int code);
+
 
 private:
     Http *m_http;

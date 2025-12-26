@@ -277,7 +277,7 @@ Item {
 
         Timer {
             id: centerDebounce
-            interval: 300
+            interval: 100
             repeat: false
             onTriggered: {
                 if (pendingCenterIndex >= 0) {
