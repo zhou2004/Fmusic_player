@@ -16,7 +16,7 @@ Rectangle {
 
     id: musicInfoRectangle
     width: parent ? parent.width : 700
-    height: 64
+    height: 70
     color: "transparent"
 
     Rectangle {
@@ -63,10 +63,8 @@ Rectangle {
         RoundImage {
             source: mCover
             id: musicInfoCover
-            width: parent.height * 0.8
-            height: parent.height * 0.8
-            sourceSize.width: parent.height * 0.8
-            sourceSize.height: parent.height * 0.8
+            width: parent.height * 0.9
+            height: parent.height * 0.9
             radius: 10
             smooth: false
             anchors.verticalCenter: parent.verticalCenter

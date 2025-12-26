@@ -152,24 +152,7 @@ int main(int argc, char *argv[])
 
     engine.load(url);
 
-    // =========================================================
-    // 5. 业务请求 (复用 apiClient)
-    // =========================================================
-    QJsonObject body;
-    body["pageNum"] = 1;
-    body["pageSize"] = 10;
 
-    // 【修正】直接使用上面的 apiClient 对象，而不是 new 一个新的
-    apiClient.getAllSongs(
-        body,
-        [](const Http::Result &res) {
-            if (res.code == 0) qDebug() << "Songs loaded success";
-        },
-        [](const QString &msg, int status) {
-            Q_UNUSED(status);
-            qWarning() << "Network error:" << msg;
-        }
-    );
 
     return app.exec();
 }
