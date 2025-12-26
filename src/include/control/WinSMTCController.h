@@ -3,11 +3,10 @@
 #include <QObject>
 #include <QJsonObject>
 
-#ifdef Q_OS_WIN
+#ifdef ENABLE_SMTC
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Media.h>
 #include <winrt/Windows.Storage.Streams.h>
-#endif
 
 class WinSMTCController : public QObject {
     Q_OBJECT
@@ -30,7 +29,6 @@ signals:
     void metadataObserved(const QJsonObject &info);
 
 private:
-#ifdef Q_OS_WIN
     // Platform-specific initialization helpers
     void initWinRT();
     void shutdownWinRT();
@@ -49,8 +47,8 @@ private:
     // Event tokens for clean unregistration
     winrt::event_token m_btnToken{};
     winrt::event_token m_seekToken{};
-#endif
 
     // Store last metadata provided by application
     QJsonObject m_lastMetadata;
 };
+#endif

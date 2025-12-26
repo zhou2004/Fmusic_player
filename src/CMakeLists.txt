@@ -1,117 +1,98 @@
 cmake_minimum_required(VERSION 3.20)
 
-project(Fmusic VERSION 0.1 LANGUAGES CXX)
+set(VERSION "1.0.0")
 
-set(CMAKE_AUTOMOC ON)
-set(CMAKE_AUTORCC ON)
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+project(FMusic VERSION ${VERSION} LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
+# 1. 【关键修正】添加了 Widgets 和 PrintSupport (FluentUI 需要它们)
+find_package(Qt6 REQUIRED COMPONENTS Core Quick Multimedia Network Sql LinguistTools Widgets PrintSupport)
+
+qt_standard_project_setup()
 
 set(APPLICATION_DIR_PATH ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 
-# 查找 OpenSSL 库
+# Option to enable SMTC support
+option(ENABLE_SMTC "Enable SMTC support" OFF)
+
+if(ENABLE_SMTC)
+    add_compile_definitions(ENABLE_SMTC=1)
+endif()
+
+# 查找所需的包
 find_package(OPENSSL REQUIRED)
-
-# 查找 zlib 库
 find_package(ZLIB REQUIRED)
-
-
-#寻找taglib依赖包
 find_package(taglib CONFIG REQUIRED)
-
 find_package(kissfft CONFIG REQUIRED)
 
-#寻找qt的依赖包
-find_package(Qt6 REQUIRED COMPONENTS Core Quick Multimedia Network Sql)
-
-# 国际化支持
-find_program(QT_LUPDATE NAMES lupdate lupdate-qt6)
-find_program(QT_LRELEASE NAMES lrelease lrelease-qt6)
-set(I18N_DIR "${CMAKE_CURRENT_LIST_DIR}/i18n")
-file(GLOB TS_FILE_PATHS ${I18N_DIR}/*.ts)
-add_custom_target(Script-UpdateTranslations
-    COMMAND ${QT_LUPDATE} ${CMAKE_CURRENT_LIST_DIR} -ts ${I18N_DIR}/${PROJECT_NAME}_en_US.ts WORKING_DIRECTORY ${I18N_DIR}
-    COMMAND ${QT_LUPDATE} ${CMAKE_CURRENT_LIST_DIR} -ts ${I18N_DIR}/${PROJECT_NAME}_zh_CN.ts WORKING_DIRECTORY ${I18N_DIR}
-    COMMAND ${QT_LRELEASE} ${I18N_DIR}/${PROJECT_NAME}_en_US.ts WORKING_DIRECTORY ${I18N_DIR}
-    COMMAND ${QT_LRELEASE} ${I18N_DIR}/${PROJECT_NAME}_zh_CN.ts WORKING_DIRECTORY ${I18N_DIR}
-    COMMAND ${CMAKE_COMMAND} -E make_directory ${APPLICATION_DIR_PATH}/i18n
-    COMMAND ${CMAKE_COMMAND} -E copy ${I18N_DIR}/${PROJECT_NAME}_en_US.qm ${I18N_DIR}/${PROJECT_NAME}_zh_CN.qm ${APPLICATION_DIR_PATH}/i18n
-    SOURCES ${TS_FILE_PATHS}
+file(GLOB PROJECT_SOURCES
+        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/*.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 )
 
+list(REMOVE_ITEM PROJECT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/cpp/WinSMTCController.cpp")
 
- file(GLOB PROJECT_SOURCES
-         ${CMAKE_CURRENT_SOURCE_DIR}/cpp/*.cpp
-         qml.qrc
- )
+#设置信号与槽的控制类
+file(GLOB_RECURSE HEADERS
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/control/*.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/decrypt/*.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/db/*.h
+)
 
- #设置信号与槽的控制类
- file(GLOB_RECURSE HEADERS
-         ${CMAKE_CURRENT_SOURCE_DIR}/include/control/*.h
-         ${CMAKE_CURRENT_SOURCE_DIR}/include/Decryptor/*.h
-         ${CMAKE_CURRENT_SOURCE_DIR}/include/db/*.h
- )
+# 2. 【关键修正】去掉了错误的 INSTALL_HEADERS 关键字
+# 直接把 headers 放在列表里，IDE 就能识别了
+qt_add_executable(${PROJECT_NAME}
+        MANUAL_FINALIZATION
+        ${PROJECT_SOURCES}
+        ${HEADERS}
+)
 
- list(REMOVE_ITEM HEADERS 
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/Decryptor/KRCDecryptor.h
- )
-
- qt6_wrap_cpp(MOC_SOURCES ${HEADERS})
-
- qt_add_executable(${PROJECT_NAME}
-         MANUAL_FINALIZATION
-         ${PROJECT_SOURCES}
-         ${MOC_SOURCES}
-         resource.rc
- )
-
- target_link_libraries(${PROJECT_NAME} PRIVATE
+# 3. 【关键修正】链接库中添加了 Qt6::Widgets 和 Qt6::PrintSupport
+target_link_libraries(${PROJECT_NAME} PRIVATE
         Qt6::Core
         Qt6::Quick
         Qt6::Network
         Qt6::Multimedia
         Qt6::Sql
+        Qt6::Widgets       # FluentUI 依赖
+        Qt6::PrintSupport  # FluentUI 依赖
         fluentuiplugin
         taglib::tag
-        # taglib::tag_c  <-- 如果不写 C 代码，这行可以注释掉
-
-         OpenSSL::Crypto
-         OpenSSL::SSL
-
-        # 3. 修正 kissfft (根据日志，Conan 只声明了 kissfft::kissfft)
         kissfft::kissfft
         ZLIB::ZLIB
+        OpenSSL::Crypto
+        OpenSSL::SSL
 )
 
+target_include_directories(${PROJECT_NAME} PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/control
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/decrypt
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/db
+)
 
-  target_include_directories(${PROJECT_NAME} PRIVATE
-          ${CMAKE_CURRENT_SOURCE_DIR}/include
-          ${CMAKE_CURRENT_SOURCE_DIR}/include/control
-          ${CMAKE_CURRENT_SOURCE_DIR}/include/Decryptor
-          ${CMAKE_CURRENT_SOURCE_DIR}/include/db
- )
+file(GLOB_RECURSE QML_FILES_IN_PAGE RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "Page/*.qml")
 
-#如果是Windows平台，则生成rc文件，还有inno setup脚本文件
-set(EXAMPLE_VERSION_RC_PATH "")
-if (WIN32)
-    set(EXAMPLE_VERSION_RC_PATH ${CMAKE_CURRENT_BINARY_DIR}/version_${PROJECT_NAME}.rc)
-    configure_file(
-            ${CMAKE_SOURCE_DIR}/.cmake/version_exe.rc.in
-            ${EXAMPLE_VERSION_RC_PATH}
-    )
-    configure_file(
-            ${CMAKE_SOURCE_DIR}/.cmake/InstallerScript.iss.in
-            ${CMAKE_SOURCE_DIR}/package/InstallerScript.iss
-    )
-endif ()
+set(ALL_QML_FILES
+        App.qml
+        ${QML_FILES_IN_PAGE}
+)
 
+file(GLOB_RECURSE ASSETS_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "Assets/*")
 
+qt_policy(SET QTP0001 NEW)
+qt_policy(SET QTP0004 NEW)
 
-if (WIN32)
+qt_add_qml_module(${PROJECT_NAME}
+        URI "FMusic"
+        VERSION 1.0
+        QML_FILES
+        ${ALL_QML_FILES}
+        RESOURCES
+        ${ASSETS_FILES}
+)
+
+if(ENABLE_SMTC)
     target_sources(${PROJECT_NAME} PRIVATE
-        ${CMAKE_CURRENT_SOURCE_DIR}/cpp/WinSMTCController.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/cpp/WinSMTCController.cpp
     )
 
     find_package(cppwinrt QUIET)
@@ -125,12 +106,33 @@ endif()
 
 set_target_properties(${PROJECT_NAME} PROPERTIES
         WIN32_EXECUTABLE TRUE
+        RUNTIME_OUTPUT_DIRECTORY "${APPLICATION_DIR_PATH}"
 )
 
-include(GNUInstallDirs)
-install(TARGETS ${PROJECT_NAME}
-        BUNDLE DESTINATION .
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+# 1. 定义 .ts 文件
+file(GLOB TS_FILES "i18n/*.ts")
 
-qt_import_qml_plugins(${PROJECT_NAME})
+# 2. 【关键】设定输出路径
+# 这里使用变量拼接，适配 Debug/Release。如果你只想死磕 Debug，可以写死 "bin/Debug/i18n"
+set(I18N_OUTPUT_PATH "${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE}/i18n")
+
+# 3. 为每个 .ts 文件设置 OUTPUT_LOCATION 属性
+foreach(ts_file ${TS_FILES})
+    set_source_files_properties(${ts_file}
+            PROPERTIES OUTPUT_LOCATION "${I18N_OUTPUT_PATH}"
+    )
+endforeach()
+
+if (TS_FILES)
+
+    add_custom_target(create_i18n_dir
+            COMMAND ${CMAKE_COMMAND} -E make_directory "${I18N_OUTPUT_PATH}"
+            COMMENT "Creating i18n directory structure..."
+    )
+    qt6_add_lrelease(${PROJECT_NAME}
+            TS_FILES ${TS_FILES}
+    )
+
+endif()
+
 qt_finalize_executable(${PROJECT_NAME})

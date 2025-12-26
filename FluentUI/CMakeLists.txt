@@ -144,10 +144,6 @@ if (WIN32)
     )
 endif ()
 
-
-if (FLUENTUI_BUILD_STATIC_LIB)
-    set(FLUENTUI_QML_PLUGIN_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/FluentUI)
-endif ()
 qt_add_library(${PROJECT_NAME} ${LIB_TYPE})
 qt_add_qml_module(${PROJECT_NAME}
         PLUGIN_TARGET ${PLUGIN_TARGET_NAME}

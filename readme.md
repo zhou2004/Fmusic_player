@@ -1,151 +1,133 @@
-# FMusic：基于Qt的全平台音乐播放器
 
-一款遵循FluentUI设计规范的跨平台音乐播放器，软件采用Qt Qml绘制界面，C++实现所有功能，理论上支持所有平台
-（Windows，MacOS，Linux，Android，IOS，Web）。
+<div align=center>
+<img src="./src/Assets/icon.svg" alt="FMusic logo" width="110" />
 
-> [!NOTE]
-> 目前正在开发中，很多功能还未完善。
-> 如果希望参与开发，请联系作者。
+# FMusic
 
+Qt-based Cross-Platform Music Player 🎵🎉
 
-# 💖项目背景
+</div>
 
-随着数字音乐的普及，用户对音乐播放器的需求日益增长。
-现有的音乐播放器大多局限于单一平台，无法满足用户在不同设备上无缝切换的需求。
-此外，许多播放器界面复杂，用户体验不佳，且存在广告过多、隐私保护不足等问题。
-因此，开发一款跨平台、界面简洁、内存小功能强且开源的音乐播放器，增加自己学习计算机的能力，
-而且具有重要的市场价值和社会意义
+<div align=center>
 
-# 💕项目构建
+English | [简体中文](README_zh_CN.md)
 
-### Windows 10/11 :
-前置条件：
-1. 安装 Qt 6.8.1 和 Qt Creator或者Clion。
-2. mingw编译器11.0以上。
-3. 安装 CMake 3.20 以上。
-4. 生成器：Ninja或 make均可。
-5. 安装 Vcpkg
-6. 安装 MySQL 8.0 数据库。
+[![Status](https://img.shields.io/badge/status-active%20development-yellowgreen)](https://github.com/zhou2004/Fmusic_player)
+[![License](https://img.shields.io/badge/license-TBD-lightgrey)](#license)
+[![Qt](https://img.shields.io/badge/Qt-6.8.1-41b883?logo=qt)](https://www.qt.io)
+[![Language](https://img.shields.io/badge/language-C%2B%2B-blue?logo=c%2B%2B)](https://isocpp.org)
+[![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](#)
 
-克隆项目代码
+FMusic is a cross-platform music player that follows Fluent UI design principles. 
+The user interface is implemented with Qt QML while core functionality is written in modern C++, 
+enabling support for Windows, macOS, Linux, Android, iOS and web platforms where applicable.
+
+</div>
+
+> Note: This project is under active development. Many features are work-in-progress. Contributions are welcome — please contact the author if you would like to help. 😉
+
+## Background 🧭
+
+As digital music becomes ubiquitous, users expect a simple, 
+fast and privacy-respecting player that works seamlessly across devices. 
+Many existing players are platform-limited, ad-heavy, or overly complex. 
+FMusic aims to be lightweight, visually consistent (Fluent UI), open-source, 
+and feature-rich while serving as a personal learning project for the developer.
+
+## Build (Windows 10 / 11) 🛠️
+
+### Prerequisites: 
+
+1. C++ Tools: Visual Studio 2022 (with C++ desktop development workload) or MinGW. 
+2. CMake: Version 3.20 or newer. 
+3. Conan: Version 2.0+ (Package Manager). 
+4. Qt: Qt 6.8.1 (Ensure QT_ROOT environment variable is set or CMake can find it).
+
+### First Time Setup (Conan):
+
+Before building for the first time, detect your system's compiler profile for Conan:
 
 ```bash
+conan profile detect --force
+```
+
+### Build via Command Line
+
+Clone the repository:
+
+```Bash
 git clone https://github.com/zhou2004/Fmusic_player.git
-```
+cd Fmusic_player
 
-进入项目目录
+```
+Build Release Version:
 
 ```bash
-cd fmusic_player
+# 1. Configure (This automatically installs dependencies via Conan)
+cmake --preset FMusic-release
+
+# 2. Build
+cmake --build --preset release
 ```
 
-安装依赖(1)
-```bash
-vcpkg install   #这个手动安装依赖为源码编译安装，时间较长,若失败或者网络问题可以使用下面的命令(2)
-```
-
-安装依赖(2) 
-
-DCMAKE_MAKE_PROGRAM:生成器路径 , DCMAKE_C_COMPILER:C编译器路径 
-
-DCMAKE_CXX_COMPILER:C++编译器路径 , DVCPKG_TARGET_TRIPLET:vcpkg构建平台目标(此处为mingw_x64) 
-
-DCMAKE_TOOLCHAIN_FILE:vcpkg工具链文件路径 ,DVCPKG_INSTALLED_DIR:vcpkg依赖安装目录 , -G:生成器类型 -B :构建目录 -S:源代码目录
+Build Debug Version:
 
 ```bash
-cmake -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=/path/to/ninja.exe -DCMAKE_C_COMPILER=/path/to/gcc.exe -DCMAKE_CXX_COMPILER=/path/to/g++.exe -DVCPKG_TARGET_TRIPLET=x64-mingw-dynamic -DCMAKE_TOOLCHAIN_FILE=D:/path/to/vcpkg/scripts/buildsystems/vcpkg.cmake -DVCPKG_INSTALLED_DIR=./vcpkg_installed -G Ninja -S . -B ./cmake-build-debug
+# 1. Configure
+cmake --preset FMusic-debug
+
+# 2. Build
+cmake --build --preset debug
 ```
 
-构建编译项目
+>Note: The executable will be generated in bin/Release or bin/Debug.
 
-```bash
-cmake --build ./cmake-build-debug --target all -j 10 #指定并行构建的线程数为10
-```
+Build via CLion (Recommended)
 
-如果构建环境为windows+mingw，也可以使用CMakeUserPresets.json来快速构建
+1. Open the Fmusic_player folder in CLion. 
+2. CLion will automatically detect CMakePresets.json. 
+3. Go to Settings -> Build, Execution, Deployment -> CMake and enable the FMusic-release or FMusic-debug profile. 
+4. Wait for the initial configuration to finish (Conan will download dependencies automatically). 
+5. Click the Build (Hammer) icon.
 
-```json
-{
-  "version": 3,
-  "configurePresets": [
-    {
-      "name": "Qt-Debug",
-      "inherits": "Qt-Default",
-      "binaryDir": "${sourceDir}/build/debug",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Debug",
-        "CMAKE_CXX_FLAGS": "-DQT_QML_DEBUG"
-      }
-    },
-    {
-      "name": "Qt-Release",
-      "inherits": "Qt-Default",
-      "binaryDir": "${sourceDir}/build/release",
-      "cacheVariables": {
-        "CMAKE_BUILD_TYPE": "Release"
-      }
-    },
-    {
-      "hidden": true,
-      "name": "Qt-Default",
-      "inherits": "6.8.1_mingw_64"
-    },
-    {
-      "hidden": true,
-      "name": "6.8.1_mingw_64",
-      "inherits": "Qt",
-      "environment": {
-        "QT_DIR": "path to qt sdk",
-        "VCPKG_ROOT": "path to vcpkg"
-      },
-      "cacheVariables": {
-        "VCPKG_TARGET_TRIPLET": "x64-mingw-dynamic",
-        "VCPKG_HOST_TRIPLET":   "x64-mingw-dynamic"
-      },
-      "generator": "Ninja"
-    }
-  ]
-}
-```
+## Key Features ✨
 
-# 🌟主要功能
-## 基本功能
-1. 本地音乐播放：支持 MP3、WAV、FLAC 等格式(√)。
-2. 播放控制：播放、暂停、快进、快退、上一曲、下一曲(√)。
-3. 音量控制：支持音量调节(√)。
-4. 播放列表管理：创建、删除、编辑播放列表(待添加)。
-5. 歌词显示：支持本地歌词加载和在线歌词同步(√)。
-6. UI 主题切换：支持浅色、深色模式切换(待优化扩展)。
-## 扩展功能
-1. 音效增强：提供均衡器调节功能。
-2. 格式转换：支持音频格式转换（可扩展）。
-3. 在线音乐支持：支持云端音乐播放（未来扩展）。
+Basic
+- 🎧 Local playback: MP3, WAV, FLAC, and other common formats.
+- ▶️ Playback controls: play, pause, seek, previous/next track.
+- 🔊 Volume control.
+- 📝 Lyrics: support for local lyric files and online synchronization.
+- 🌓 Theme support: light and dark modes (improvements planned).
+- 🗂️ Playlist management: create, edit and remove playlists (enhancements planned).
 
-# 需求优先级
+Extended / Planned
+- 🎚️ Built-in equalizer and audio effects.
+- 🔁 Audio format conversion tools.
+- ☁️ Cloud and online music integration (future work).
 
-| 需求 | 重要性 | 实现优先级 |
-|:----|:----|:----|
-| 本地音乐播放 | 高 | 第一阶段 |
-| 播放控制（播放、暂停等） | 高 | 第一阶段 |
-| 播放列表管理 | 高 | 第一阶段 |
-| 音量控制 | 高 | 第一阶段 |
-| 歌词显示 | 中 | 第二阶段 |
-| UI 主题切换 | 中 | 第二阶段 |
-| 音效调节 | 低 | 第二阶段 |
-| 在线音乐支持 | 低 | 第三阶段 |
+## Constraints & Technology Stack
+- Language: C++ 20 (Qt 6.8.1)
+- UI: QML with Fluent UI styling
+- Compilers: MinGW64 or MSVC (x64)
+- Build system: CMake 3.20+, Ninja recommended
 
-# 约束条件
-1. 开发语言：C++（Qt6.8.1 框架）。
-2. UI 框架：FluentUI（基于 QML）。
-3. 数据库：MySQL 8.0。
-4. 编译器：MinGW64 或 MSVC64。
-5. 构建工具：CMake 3.20 以上。
-6. 依赖管理：Vcpkg。
+## Contributing 🤝
+Contributions, bug reports and suggestions are welcome. Please open issues or pull requests on the repository. 
+If you want to join development directly, contact the project author.
 
-conan安装依赖
+## Third-Party Libraries 📚
 
-```bash
-conan install . --build=missing -c tools.cmake.cmaketoolchain:generator=Ninja
-```
+This project stands on the shoulders of giants. We utilize the following open-source libraries to deliver the best experience:
 
+- **[Qt 6.8.1](https://www.qt.io)** - Powerful cross-platform application development framework.
+- **[FluentUI for QML](https://github.com/zhuzichu520/FluentUI)** - A fluent design system component library for Qt/QML.
+- **[TagLib 2.0](https://taglib.org/)** - A library for reading and editing the meta-data of audio formats (ID3, Vorbis, etc.).
+- **[KissFFT 131.1.0](https://github.com/mborgerding/kissfft)** - A Fast Fourier Transform (FFT) library, used for audio spectrum visualization.
+- **[OpenSSL 3.0.15](https://www.openssl.org/)** - Robust, commercial-grade toolkit for the Transport Layer Security (TLS) protocol.
+- **[zlib 1.3.1](https://zlib.net/)** - A massively spiffy yet delicately unobtrusive compression library.
 
+*Dependency management is handled by **[Conan](https://conan.io)**.*
+
+## License 📜
+
+This project is licensed under the GPL License - see the LICENSE file for details.

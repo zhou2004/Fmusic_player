@@ -2,7 +2,7 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls 2.15
 import FluentUI 1.0
-import "../components"
+import "../Components"
 import QtQml.Models 2.15
 
 ColumnLayout {
@@ -114,7 +114,7 @@ ColumnLayout {
 
     Loader {
         id: demoData
-        source: "DemoData.qml"
+        source: "qrc:/qt/qml/FMusic/Page/Components/DemoData.qml"
         asynchronous: true
     }
 

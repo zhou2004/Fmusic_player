@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import FluentUI 1.0
-import "../components"
+import "../Components"
 
 ColumnLayout {
     id: settingsAboutInfo
@@ -16,14 +16,14 @@ ColumnLayout {
 
         Image {
             id: settingsAboutlogoImage
-            source: "qrc:/assets/icon.svg"
+            source: "qrc:/qt/qml/FMusic/Assets/icon.svg"
             sourceSize.width: 80
             sourceSize.height: 80
         }
 
         FluText {
             id: settingsAboutLogoText
-            text: qsTr("FMusicPlayer")
+            text: "FMusicPlayer"
             font.pixelSize: 40
             font.bold: true
             Layout.leftMargin: 10

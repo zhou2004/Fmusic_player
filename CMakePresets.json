@@ -1,16 +1,48 @@
 {
   "version": 3,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 20
+  },
   "configurePresets": [
     {
+      "name": "base",
       "hidden": true,
-      "name": "Qt",
       "generator": "Ninja",
-      "binaryDir": "${sourceDir}/build",
+      "binaryDir": "${sourceDir}/build/${presetName}",
       "cacheVariables": {
-        "QT_DIR": "$env{QT_ROOT}/lib/cmake",
+        "CMAKE_PROJECT_TOP_LEVEL_INCLUDES": "${sourceDir}/conan_provider.cmake",
         "Qt6_DIR": "$env{QT_ROOT}/lib/cmake/Qt6",
         "CMAKE_PREFIX_PATH": "$env{QT_ROOT}"
       }
+    },
+    {
+      "name": "FMusic-release",
+      "displayName": "Release Build",
+      "description": "Release build with Conan dependencies",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release"
+      }
+    },
+    {
+      "name": "FMusic-debug",
+      "displayName": "Debug Build",
+      "description": "Debug build with Conan dependencies",
+      "inherits": "base",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "release",
+      "configurePreset": "FMusic-release"
+    },
+    {
+      "name": "debug",
+      "configurePreset": "FMusic-debug"
     }
   ]
 }

@@ -15,14 +15,10 @@ FluLauncher {
 
         FluApp.useSystemAppBar = false
 
-        // 设置窗口的图标
-        // FluApp.windowIcon = "qrc:/assets/icon_256.ico"
-
-
         // 核心控件，路由注册：
         FluRouter.routes = {
-            "/":"qrc:/main/main.qml",
-        }
+            "/": "qrc:/qt/qml/FMusic/Page/Main.qml",
+        };
 
         // 跳转路由到 / ，即加载 main.qml
         FluRouter.navigate("/")

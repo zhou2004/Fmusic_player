@@ -9,7 +9,6 @@ ColumnLayout {
 
     FluExpander {
         headerText: qsTr("Personalization")
-        headerIconSource: FluentIcons.Personalize
         Layout.rightMargin: 10
         Layout.topMargin: 10
         Layout.fillWidth: true

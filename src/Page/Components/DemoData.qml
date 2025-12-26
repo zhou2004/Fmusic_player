@@ -14,7 +14,7 @@ Item {
             for (let i = 0; i < 10; i++) {
                 demoMusicData.append({
                     index: i,
-                    cover: "qrc:/assets/defaultAlbum.jpg",
+                    cover: "qrc:/qt/qml/FMusic/Assets/defaultAlbum.jpg",
                     title: "杜鹃",
                     artist: "Realzat / 加木",
                     album: "杜鹃",

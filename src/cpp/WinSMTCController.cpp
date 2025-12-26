@@ -1,5 +1,7 @@
 #include "WinSMTCController.h"
 
+#ifdef ENABLE_SMTC
+
 #include <QDebug>
 #include <QDateTime>
 #include <QDir>
@@ -11,6 +13,7 @@
 #include <QUrl>
 #include <QWindow>
 
+// 注意：Q_OS_WIN 的判断最好保留在内部，作为双重保险
 #ifdef Q_OS_WIN
 #include <windows.h>
 #include <SystemMediaTransportControlsInterop.h>
@@ -84,10 +87,6 @@ static QString materializeQtResourceToTempFile(const QString& qrcPath)
 }
 
 // 关键：把 cover 输入最终变成 Windows 原生路径（C:\... 并且用反斜杠）
-// 支持：
-// - file:///E:/... => E:\...
-// - 直接 E:/... 或 E:\... 或相对路径 => 绝对 + 反斜杠
-// - qrc:/ 或 :/ => 临时文件绝对路径 + 反斜杠
 static QString toNativeWindowsPathForCover(const QString& coverRaw)
 {
     if (coverRaw.trimmed().isEmpty()) return {};
@@ -103,7 +102,7 @@ static QString toNativeWindowsPathForCover(const QString& coverRaw)
     // 2) file:///...
     else if (coverRaw.startsWith("file:", Qt::CaseInsensitive)) {
         QUrl u(coverRaw);
-        const QString local = u.toLocalFile(); // Windows 下通常是 E:/... 或 E:\...
+        const QString local = u.toLocalFile();
         if (local.isEmpty()) return {};
         absPath = QFileInfo(local).absoluteFilePath();
     }
@@ -117,6 +116,11 @@ static QString toNativeWindowsPathForCover(const QString& coverRaw)
     return absPath;
 }
 #endif
+
+// ========================================================
+// 只有在 ENABLE_SMTC 开启时，WinSMTCController 类才存在
+// 所以下面的实现代码必须包裹在 #ifdef ENABLE_SMTC 内部
+// ========================================================
 
 WinSMTCController::WinSMTCController(QObject* parent) : QObject(parent)
 {
@@ -228,13 +232,12 @@ void WinSMTCController::updateMetadata(const QJsonObject& info)
         t.MaxSeekTime(msToTimeSpan(durationMs));
         m_smtc.UpdateTimelineProperties(t);
 
-        // 4) 专辑图：严格按你要求的 StorageFile 方式
+        // 4) 专辑图
         const QString coverRaw = info.value("cover").toString();
         const QString nativePath = toNativeWindowsPathForCover(coverRaw);
 
         if (!nativePath.isEmpty() && QFileInfo::exists(nativePath)) {
-            qDebug() << "[SMTC] Cover raw:" << coverRaw;
-            qDebug() << "[SMTC] Cover native path:" << nativePath;
+            // qDebug() << "[SMTC] Cover native path:" << nativePath;
 
             const QString coverKey = coverRaw;
             QPointer<WinSMTCController> self(this);
@@ -243,22 +246,18 @@ void WinSMTCController::updateMetadata(const QJsonObject& info)
             op.Completed([self, coverKey, nativePath](auto const& async, auto const& status) {
                 if (!self) return;
 
-                // 先打出 WinRT async 的错误码，避免“失败但沉默”
                 try {
                     auto asyncInfo = async.template as<Windows::Foundation::IAsyncInfo>();
                     const HRESULT hr = asyncInfo.ErrorCode();
 
                     if (status != AsyncStatus::Completed) {
-                        QMetaObject::invokeMethod(self.data(), [hr, nativePath]() {
+                         QMetaObject::invokeMethod(self.data(), [hr, nativePath]() {
                             qWarning() << "[SMTC] GetFileFromPathAsync NOT completed. HRESULT="
-                                       << Qt::hex << (qulonglong)hr
-                                       << " path=" << nativePath;
-                        }, Qt::QueuedConnection);
-                        return;
+                                       << Qt::hex << (qulonglong)hr << " path=" << nativePath;
+                         }, Qt::QueuedConnection);
+                         return;
                     }
-                } catch (...) {
-                    // ignore
-                }
+                } catch (...) {}
 
                 try {
                     auto file = async.GetResults();
@@ -267,47 +266,29 @@ void WinSMTCController::updateMetadata(const QJsonObject& info)
                     QMetaObject::invokeMethod(self.data(), [self, coverKey, thumb]() {
                         if (!self) return;
                         if (!self->m_smtc) return;
-
-                        // 切歌校验：避免旧异步结果覆盖新封面
+                        // 切歌校验
                         if (self->m_lastMetadata.value("cover").toString() != coverKey) return;
 
                         try {
                             self->m_updater.Thumbnail(thumb);
                             self->m_updater.Update();
-                            qDebug() << "[SMTC] Cover updated via StorageFile(CreateFromFile).";
-                        } catch (...) {
-                            qWarning() << "[SMTC] Failed to set thumbnail (exception).";
-                        }
+                        } catch (...) {}
                     }, Qt::QueuedConnection);
 
                 } catch (winrt::hresult_error const& e) {
-                    QMetaObject::invokeMethod(self.data(), [msg = QString::fromWCharArray(e.message().c_str()), nativePath]() {
-                        qWarning() << "[SMTC] GetResults/CreateFromFile WinRT error:" << msg
-                                   << " path=" << nativePath;
+                    QMetaObject::invokeMethod(self.data(), [msg = QString::fromWCharArray(e.message().c_str())]() {
+                         qWarning() << "[SMTC] WinRT error:" << msg;
                     }, Qt::QueuedConnection);
-                } catch (...) {
-                    QMetaObject::invokeMethod(self.data(), [nativePath]() {
-                        qWarning() << "[SMTC] GetResults/CreateFromFile unknown error. path=" << nativePath;
-                    }, Qt::QueuedConnection);
-                }
+                } catch (...) {}
             });
-        } else {
-            if (!coverRaw.isEmpty()) {
-                qWarning() << "[SMTC] Cover path invalid/not found. raw=" << coverRaw
-                           << " native=" << nativePath;
-            }
         }
 
         m_lastUpdateTime = 0;
         m_lastSentMs = 0;
 
-        qDebug() << "[SMTC] Metadata updated:" << info.value("title").toString();
-
     } catch (winrt::hresult_error const& e) {
         qWarning() << "[SMTC] updateMetadata WinRT error:" << QString::fromWCharArray(e.message().c_str());
-    } catch (...) {
-        qWarning() << "[SMTC] updateMetadata unknown error";
-    }
+    } catch (...) {}
 #endif
 }
 
@@ -344,7 +325,6 @@ void WinSMTCController::setPlaybackState(bool playing)
 {
 #ifdef Q_OS_WIN
     if (!ensureSmtcReady()) return;
-
     try {
         m_smtc.PlaybackStatus(playing ? MediaPlaybackStatus::Playing : MediaPlaybackStatus::Paused);
         m_lastUpdateTime = 0;
@@ -376,12 +356,12 @@ void WinSMTCController::shutdownWinRT()
                 m_seekToken = {};
             }
         }
-
         m_updater = nullptr;
         m_smtc = nullptr;
-
         winrt::uninit_apartment();
         qDebug() << "[SMTC] WinRT apartment uninitialized.";
     } catch (...) {}
 }
 #endif
+
+#endif // ENABLE_SMTC  <--- 【关键修改】文件末尾闭合

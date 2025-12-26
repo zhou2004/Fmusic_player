@@ -1,13 +1,13 @@
 import QtQuick 2.15
 import FluentUI 1.0
-import "../components"
+import "Components"
 
 FluFrame {
     property int bottomBarHeight
     property int bottomBarWidth
     property string songName: "杜鹃"
     property string singerName: "Realzat / 加木"
-    property url albumCover: "qrc:/assets/defaultAlbum.jpg"
+    property url albumCover: "qrc:/qt/qml/FMusic/Assets/defaultAlbum.jpg"
     property string musicDuration: "04:34"
     property string musicPlayTime: "00:00"
     property int infoTextSize: 13

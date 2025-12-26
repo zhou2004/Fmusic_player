@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
 import FluentUI 1.0
-import "../settingsPage"
+import "../SettingsPage"
 
 ColumnLayout {
     id: settingsPageContent
@@ -14,8 +14,8 @@ ColumnLayout {
     property string appDeviceID: "c8a30833-8e3d-c158-598c-2961b30048f5" //设备ID
     property color linkColor: "#4A3C1D" // 链接颜色
     property color linkColorDark: "#b5a64c" // 深色主题下的链接颜色
-    property url feelzhouAvatar: "qrc:/assets/feelzhou.jpg" // 作者头像
-    property url feelliaoAvatar: "qrc:/assets/feelliao.jpg" // 作者头像
+    property url feelzhouAvatar: "qrc:/qt/qml/FMusic/Assets/feelzhou.jpg" // 作者头像
+    property url feelliaoAvatar: "qrc:/qt/qml/FMusic/Assets/feelliao.jpg" // 作者头像
 
     FluText {
         id: settingsTitle

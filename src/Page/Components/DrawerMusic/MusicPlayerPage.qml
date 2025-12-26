@@ -105,7 +105,7 @@ Item {
     Image {
         id: bgImage
         anchors.fill: parent
-        source: trackInfo && trackInfo.cover ? trackInfo.cover : "qrc:/assets/defaultAlbum.jpg"
+        source: trackInfo && trackInfo.cover ? trackInfo.cover : "qrc:/qt/qml/FMusic/Assets/defaultAlbum.jpg"
         fillMode: Image.PreserveAspectCrop
         visible: false
     }
@@ -191,7 +191,7 @@ Item {
             title: trackInfo && trackInfo.title ? trackInfo.title : "未知歌曲"
             artist: trackInfo && trackInfo.artist ? trackInfo.artist : "未知歌手"
             album: trackInfo && trackInfo.album ? trackInfo.album : "未知专辑"
-            cover: trackInfo && trackInfo.cover ? trackInfo.cover : "qrc:/assets/defaultAlbum.jpg"
+            cover: trackInfo && trackInfo.cover ? trackInfo.cover : "qrc:/qt/qml/FMusic/Assets/defaultAlbum.jpg"
         }
 
         RightPanel {
