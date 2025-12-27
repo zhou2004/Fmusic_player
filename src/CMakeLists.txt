@@ -30,6 +30,23 @@ file(GLOB PROJECT_SOURCES
 
 list(REMOVE_ITEM PROJECT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/cpp/WinSMTCController.cpp")
 
+# 嵌入可执行文件图标
+# 1. 设置你的图标路径 (请修改这里为你的实际 .ico 路径)
+set(APP_ICON_PATH "${CMAKE_CURRENT_SOURCE_DIR}/Assets/icon_256.ico")
+
+# 2. 如果是 Windows，自动生成资源文件并添加到源列表中
+if(WIN32)
+    # 定义生成的 rc 文件路径（在 build 目录，不污染源码）
+    set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_BINARY_DIR}/FMusic_icon.rc")
+
+    # 写入内容：IDI_ICON1 ICON "path/to/icon.ico"
+    # 注意：需要转义引号
+    file(WRITE "${APP_ICON_RESOURCE_WINDOWS}" "IDI_ICON1 ICON \"${APP_ICON_PATH}\"")
+
+    # 将生成的 rc 文件加入到你的源文件列表
+    list(APPEND PROJECT_SOURCES "${APP_ICON_RESOURCE_WINDOWS}")
+endif()
+
 #设置信号与槽的控制类
 file(GLOB_RECURSE HEADERS
         ${CMAKE_CURRENT_SOURCE_DIR}/include/control/*.h
@@ -126,6 +143,16 @@ if (TS_FILES)
             TS_FILES ${TS_FILES}
     )
 
+endif()
+
+
+
+# 3. 如果是 macOS (顺便处理一下 Mac 的图标)
+if(APPLE)
+    # Mac 需要 .icns 文件
+    set(APP_ICON_MACOS "${CMAKE_CURRENT_SOURCE_DIR}/logo.icns")
+    set_source_files_properties(${APP_ICON_MACOS} PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+    list(APPEND PROJECT_SOURCES "${APP_ICON_MACOS}")
 endif()
 
 
