@@ -8,8 +8,6 @@ on:
   pull_request:
     branches: [ "master" ]
 
-  workflow_dispatch:
-
 jobs:
   build:
     runs-on: windows-latest
@@ -43,7 +41,7 @@ jobs:
           host: 'windows'
           target: 'desktop'
           arch: 'win64_msvc2022_64'
-          modules: 'qtmultimedia qttools qt5compat'
+          modules: 'qtmultimedia qt5compat'
 
       - uses: ilammy/msvc-dev-cmd@v1
         with:
