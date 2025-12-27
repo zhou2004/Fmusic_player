@@ -153,4 +153,5 @@ qt_generate_deploy_qml_app_script(
 install(SCRIPT ${qt_deploy_script})
 
 install(FILES "${CMAKE_SOURCE_DIR}/packages/AppxManifest.xml" DESTINATION .)
+install(FILES "${CMAKE_SOURCE_DIR}/packages/priconfig.xml" DESTINATION .)
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/packages/Assets" DESTINATION .)
