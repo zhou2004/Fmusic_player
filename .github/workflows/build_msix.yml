@@ -62,14 +62,17 @@ jobs:
           cmake --preset FMusic-release
 
       - name: Build
-        run: cmake --build --preset release
+        run: cmake --build --preset release --parallel
 
       - name: Install to dist
         run: cmake --build build\FMusic-release --target install
 
-      - name: Create MSIX Package
+        - name: Prepare MSIX Resources
         run: |
           makepri.exe new /pr "dist" /cf "dist\priconfig.xml"
+
+      - name: Create MSIX Package
+        run: |
           MakeAppx pack /d "dist" /p "FMusic.msix"
 
       - name: Sign MSIX Package
