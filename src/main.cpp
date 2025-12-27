@@ -16,6 +16,8 @@
 #endif
 #include "AudioProcessor.h"
 #include "KRCDecryptor.h"
+#include "KGMADecryptor.h"
+#include "NCMDecryptor.h"
 #include <QProcess>
 #include <SystemMediaTransportControlsInterop.h>
 #include "KLyricsParser.h"
@@ -107,6 +109,26 @@ int main(int argc, char *argv[])
     K_LyricParser lyricParser;
     ApiClient apiClient;
     AudioProcessor audioProcessor(&musicPlayer);
+
+
+    // // 示例
+    // std::string result = KGMA::KGMADecrypt("F:/KugouMusic/The Kid LAROI、Justin Bieber - STAY (Explicit).kgma");
+    //
+    // if (result.empty()) {
+    //     std::cout << "解密失败或不是受支持的文件" << std::endl;
+    // } else {
+    //     std::cout << "解密成功，文件位于: " << result << std::endl;
+    //     // 这里的 result 可能是 "D:/music/song.flac"
+    // }
+
+    // std::string result = NCM::NCMDecrypt("F:/NCM/G.E.M. 邓紫棋 - 天空没有极限.ncm");
+    // if (result.empty()) {
+    //     std::cout << "解密失败或不是受支持的文件" << std::endl;
+    // } else {
+    //     std::cout << "解密成功，文件位于: " << result << std::endl;
+    //     // 这里的 result 可能是 "D:/music/song.flac"
+    // }
+
 
 
 #if defined(ENABLE_SMTC) && defined(Q_OS_WIN)

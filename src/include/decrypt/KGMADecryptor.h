@@ -1,36 +1,29 @@
+#pragma once
+
 #include <string>
-#include <sstream>
 #include <fstream>
-
-#include <taglib/fileref.h>
-#include <taglib/tag.h>
-#include <taglib/tpropertymap.h>
-#include <taglib/mpegfile.h>
-#include <taglib/id3v2tag.h>
-#include <taglib/id3v2frame.h>
-#include <taglib/id3v2header.h>
-#include <taglib/attachedpictureframe.h>
-#include <taglib/flacfile.h>
-#include <taglib/flacpicture.h>
-#include <taglib/xiphcomment.h>
-#include <taglib/id3v2framefactory.h>
-#include <taglib/textidentificationframe.h>
-
-#include "Cde.h"
-
-// using namespace std;
+#include <vector>
+#include <filesystem>
+#include <cstring>
+#include <iostream> // 用于简单的错误打印，可视情况移除
 
 class KGMA
 {
-	enum MType { VPR, OTHER };
+private:
+    // 类型定义
+    enum MType { VPR, KGM, OTHER };
 
-	MType H;
+    // ----------------------------------------------------------------------
+    // [数据表区域] 请确保保留原有的表数据，这里必须是 static constexpr
+    // ----------------------------------------------------------------------
+    constexpr static unsigned char VprHeader[] = { 0x05, 0x28, 0xBC, 0x96, 0xE9, 0xE4, 0x5A, 0x43,0x91, 0xAA, 0xBD, 0xD0, 0x7A, 0xF5, 0x36, 0x31 };
+    constexpr static unsigned char KgmHeader[] = { 0x7C, 0xD5, 0x32, 0xEB, 0x86, 0x02, 0x7F, 0x4B,0xA8, 0xAF, 0xA6, 0x8E, 0x0F, 0xFF, 0x99, 0x14 };
+    constexpr static unsigned char VprMaskDiff[] = { 0x25, 0xDF, 0xE8, 0xA6, 0x75, 0x1E, 0x75, 0x0E,0x2F, 0x80, 0xF3, 0x2D, 0xB8, 0xB6, 0xE3, 0x11, 0x00 };
 
-	constexpr static unsigned char VprHeader[] = { 0x05, 0x28, 0xBC, 0x96, 0xE9, 0xE4, 0x5A, 0x43,0x91, 0xAA, 0xBD, 0xD0, 0x7A, 0xF5, 0x36, 0x31 };
-	constexpr static unsigned char KgmHeader[] = { 0x7C, 0xD5, 0x32, 0xEB, 0x86, 0x02, 0x7F, 0x4B,0xA8, 0xAF, 0xA6, 0x8E, 0x0F, 0xFF, 0x99, 0x14 };
-	constexpr static unsigned char VprMaskDiff[] = { 0x25, 0xDF, 0xE8, 0xA6, 0x75, 0x1E, 0x75, 0x0E,0x2F, 0x80, 0xF3, 0x2D, 0xB8, 0xB6, 0xE3, 0x11, 0x00 };
+    constexpr static char FLAC_HEAD[4] = { 'f', 'L', 'a', 'C' };
+    constexpr static char MP3_HEAD[3] = { 'I', 'D', '3' };
 
-	constexpr static unsigned char table1[] = {
+    constexpr static unsigned char table1[] = {
 		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 		0x00, 0x01, 0x21, 0x01, 0x61, 0x01, 0x21, 0x01, 0xe1, 0x01, 0x21, 0x01, 0x61, 0x01, 0x21, 0x01,
 		0xd2, 0x23, 0x02, 0x02, 0x42, 0x42, 0x02, 0x02, 0xc2, 0xc2, 0x02, 0x02, 0x42, 0x42, 0x02, 0x02,
@@ -90,174 +83,161 @@ class KGMA
 		0x52, 0xDC, 0x03, 0xF3, 0xF9, 0x4E, 0x42, 0xE9, 0x3D, 0x61, 0xEF, 0x7C, 0xB6, 0xB3, 0x93, 0x50,
 	};
 
-	bool CheakHeader(std::stringstream& ms)
-	{
-		char magic_hander[16];
-		ms.read(magic_hander, 16);
-		if (strncmp(magic_hander, (char*)VprHeader, 16) == 0) { H = VPR; return true; };
-		if (strncmp(magic_hander, (char*)KgmHeader, 16) == 0) { H = OTHER; return true; };
-		if ((strncmp(magic_hander, (char*)FLAC_HEADER, 3) == 0) or (strncmp(magic_hander, (char*)MP3_HEADER, 3) == 0)) { return false; }
-		throw std::runtime_error("文件已损坏或不是一个支持的文件");
-	}
+    // ----------------------------------------------------------------------
+    // [静态辅助函数]
+    // ----------------------------------------------------------------------
 
-	int HeaderLength(std::stringstream& ms)
-	{
-		int length = 0;
-		ms.read((char*)&length, 4);
-		return length;
-	}
+    // 检查头并返回类型引用
+    static bool CheckHeader(std::ifstream& fs, MType& detectedType)
+    {
+        char magic[16];
+        fs.read(magic, 16);
+        if (fs.gcount() < 16) return false;
 
-	std::string GetKey(std::stringstream& ms)
-	{
-		std::string key(17, 0);
-		ms.seekg(28, std::ios_base::beg);
-		ms.read(key.data(), 16);
-		return key;
-	}
+        if (std::memcmp(magic, VprHeader, 16) == 0) { detectedType = VPR; return true; }
+        if (std::memcmp(magic, KgmHeader, 16) == 0) { detectedType = KGM; return true; }
 
-	void DecodeAudio(std::stringstream& ms, std::ofstream& f, const std::string& key)
-	{
-		size_t pos = 0, offset = 0;
-		char med8, msk8;
-		char buffer[4096];
-		while (!ms.eof())
-		{
-			ms.read(buffer, 4096);
+        return false;
+    }
 
-			for (int i = 0; i < 4096; i++)
-			{
-				med8 = (key)[(pos) % 17] ^ buffer[i];
-				med8 ^= (med8 & 15) << 4;
+    static std::string GetKey(std::ifstream& fs)
+    {
+        char key[17] = {0};
+        fs.seekg(28, std::ios::beg);
+        fs.read(key, 16);
+        return std::string(key, 16);
+    }
 
-				msk8 = 0;
-				offset = pos >> 4;
-				while (offset >= 0x11)
-				{
-					msk8 ^= table1[offset % 272];
-					offset >>= 4;
-					msk8 ^= table2[offset % 272];
-					offset >>= 4;
-				}
-				msk8 = MaskV2PreDef[pos % 272] ^ msk8;
-				msk8 ^= (msk8 & 15) << 4;
+    // 处理缓冲区 (注意：现在需要传入 type，因为无法访问非静态成员)
+    static void ProcessBuffer(char* buffer, size_t size, size_t& pos, const std::string& key, MType type)
+    {
+        unsigned char med8, msk8;
+        size_t offset;
+        const size_t keyLen = 17;
 
-				buffer[i] = med8 ^ msk8;
-				if (H == VPR) { buffer[i] ^= VprMaskDiff[pos % 17]; };
-				pos++;
-			}
-			f.write(buffer, ms.gcount());
-		}
-		f.flush();
-		f.close();
-	}
+        for (size_t i = 0; i < size; i++)
+        {
+            med8 = key[pos % keyLen] ^ buffer[i];
+            med8 ^= (med8 & 15) << 4;
 
-	musicInfo GetMusicInfo(std::filesystem::path originalFilePath)
-	{
-		using namespace TagLib;
-		musicInfo info;
-		std::ifstream file(originalFilePath);
-		char magic_hander[3];
-		file.read(magic_hander, 3);
-		if (strncmp(magic_hander, (char*)FLAC_HEADER, 3) == 0)
-		{
-			file.close();
-			info.format = "flac";
-		}
-		else
-		{
-			file.close();
-			info.format = "mp3";
-		}
-		FileRef f(originalFilePath.c_str());
-		auto tag = f.tag();
-		info.artist.push_back(tag->artist().to8Bit(true));
-		info.musicName = tag->title().to8Bit(true);
-		return info;
-	}
+            msk8 = 0;
+            offset = pos >> 4;
+            while (offset >= 0x11)
+            {
+                // 注意：这里需要你上面定义的 table1 和 table2
+                msk8 ^= table1[offset % 272];
+                offset >>= 4;
+                msk8 ^= table2[offset % 272];
+                offset >>= 4;
+            }
+            msk8 = MaskV2PreDef[pos % 272] ^ msk8;
+            msk8 ^= (msk8 & 15) << 4;
 
-	void Rename(const musicInfo& info, const std::filesystem::path& originalFilePath, const std::filesystem::path& tempFilePath)
-	{
-		std::string name;
-		std::vector<std::string> artist;
-		if (info.artist.size() > 3) { artist = { info.artist[0],info.artist[1],info.artist[2],"..." }; }
-		else { artist = info.artist; };
-
-		//空文件名处理
-		if ("" == info.musicName)
-		{
-			name = ("[未命名]" + std::string((char*)originalFilePath.filename().u8string().c_str()) + "." + info.format);
-		}
-		else
-		{
-			name = (info.musicName + " - " + join(artist, (std::string)",") + "." + info.format);
-		}
-
-		//替换为全角字符,防止出错
-		name = replace_(name, "?", { "？" });
-		name = replace_(name, "*", { "＊" });
-		name = replace_(name, ":", { "：" });
-		name = replace_(name, "<", { "＜" });
-		name = replace_(name, ">", { "＞" });
-		name = replace_(name, "/", { "／" });
-		name = replace_(name, "\\", { "＼" });
-		name = replace_(name, "|", { "｜" });
-		name = replace_(name, "\"", "＂");
-
-		//utf-8文件名
-		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-		std::wstring wideFilename = converter.from_bytes(name);
-
-		std::filesystem::path save_path = tempFilePath.parent_path().append(wideFilename);
-		rename(tempFilePath, save_path);
-	}
-
-	void Save(const std::filesystem::path& originalFilePath, std::stringstream& ms, const std::filesystem::path& tempFilePath, std::ofstream& fs)
-	{
-		auto info = GetMusicInfo(originalFilePath);
-
-		//复制文件
-		ms.seekg(0, std::ios_base::beg);
-		fs << ms.rdbuf();
-		fs.flush();
-		fs.close();
-		Rename(info, originalFilePath, tempFilePath);
-	}
+            buffer[i] = med8 ^ msk8;
+            if (type == VPR) { buffer[i] ^= VprMaskDiff[pos % 17]; }
+            pos++;
+        }
+    }
 
 public:
-	void KGMADecrypt(const std::filesystem::path& originalFilePath, std::filesystem::path _outputPath)
-	{
-		std::ifstream f(originalFilePath, std::ios::binary);
-		if (!f) { throw std::runtime_error("打开文件失败"); return; };
+    /**
+     * @brief 静态调用解密函数
+     * @return 成功返回解密后文件的绝对路径字符串，失败返回 ""
+     */
+    static std::string KGMADecrypt(const std::filesystem::path& originalFilePath, std::filesystem::path _outputPath = "")
+    {
+        namespace fs = std::filesystem;
 
-		//读入文件
-		std::stringstream ms;
-		ms << f.rdbuf();
-		f.close();
+        // 使用 try-catch 捕获所有潜在错误，保证失败时返回 ""
+        try {
+            std::ifstream inFile(originalFilePath, std::ios::binary);
+            if (!inFile) return "";
 
-		//临时文件
-		std::filesystem::path tempFilePath;
-		if (_outputPath.empty())
-		{
-			tempFilePath = CreateTempFile(originalFilePath.parent_path());
-		}
-		else
-		{
-			tempFilePath = CreateTempFile(_outputPath);
-		}
-		std::ofstream fs(tempFilePath, std::ios::out | std::ios_base::binary);
+            // 局部变量存储类型
+            MType currentType = OTHER;
 
-		//检查文件头
-		if (!CheakHeader(ms)) { f.close(); Save(originalFilePath, ms, tempFilePath, fs); return; };
-		//头部数据长度
-		int length = HeaderLength(ms);
-		//key
-		auto key = GetKey(ms);
+            // 1. 检查文件头
+            if (!CheckHeader(inFile, currentType)) {
+                // 不是加密文件，返回空字符串表示“未执行解密”或“失败”
+                return "";
+            }
 
-		//正式解密
-		ms.seekg(length, std::ios_base::beg);
-		DecodeAudio(ms, fs, key);
+            // 2. 获取Key
+            inFile.seekg(16, std::ios::beg);
+            int headerLen = 0;
+            inFile.read(reinterpret_cast<char*>(&headerLen), 4);
+            std::string key = GetKey(inFile);
 
-		auto info = GetMusicInfo(tempFilePath);
-		// Rename(info, originalFilePath, tempFilePath);
-	}
+            // 3. 准备输出目录
+            if (_outputPath.empty()) {
+                _outputPath = originalFilePath.parent_path();
+            }
+            if (!fs::exists(_outputPath)) {
+                fs::create_directories(_outputPath);
+            }
+
+            // 4. 准备缓冲区
+            const size_t BUFFER_SIZE = 1024 * 64; // 64KB
+            std::vector<char> buffer(BUFFER_SIZE);
+            size_t pos = 0;
+
+            // 定位数据区
+            inFile.seekg(headerLen, std::ios::beg);
+
+            std::ofstream outFile;
+            std::string resultPathString = ""; // 用于存储最终返回的路径
+            bool firstBlock = true;
+
+            // 5. 循环处理
+            while (inFile) {
+                inFile.read(buffer.data(), BUFFER_SIZE);
+                std::streamsize bytesRead = inFile.gcount();
+                if (bytesRead <= 0) break;
+
+                // 传入 currentType 进行解密
+                ProcessBuffer(buffer.data(), static_cast<size_t>(bytesRead), pos, key, currentType);
+
+                // 在第一块解密后确定后缀名并创建文件
+            	if (firstBlock) {
+            		std::string ext = ".mp3"; // 默认
+            		if (bytesRead >= 4 && std::memcmp(buffer.data(), FLAC_HEAD, 4) == 0) {
+            			ext = ".flac";
+            		} else if (bytesRead >= 3 && std::memcmp(buffer.data(), MP3_HEAD, 3) == 0) {
+            			ext = ".mp3";
+            		}
+
+            		// --- 修改开始 ---
+
+            		// 1. 获取不带后缀的文件名 (例如: "G.E.M. 邓紫棋 - 天空没有极限")
+            		fs::path stemName = originalFilePath.stem();
+
+            		// 2. 直接拼接后缀，而不是替换后缀
+            		// std::filesystem::path 重载了 += 运算符，这样是安全的，不会误判点号
+            		stemName += ext;
+
+            		// 3. 组合完整路径
+            		fs::path fullOutputPath = _outputPath / stemName;
+
+            		// --- 修改结束 ---
+
+            		outFile.open(fullOutputPath, std::ios::binary);
+            		if (!outFile) return ""; // 创建失败
+
+            		resultPathString = fullOutputPath.string();
+
+            		firstBlock = false;
+            	}
+
+                outFile.write(buffer.data(), bytesRead);
+            }
+
+            outFile.close();
+            inFile.close();
+
+            return resultPathString; // 返回成功路径
+
+        } catch (...) {
+            return ""; // 发生任何异常返回空
+        }
+    }
 };

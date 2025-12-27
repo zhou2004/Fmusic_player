@@ -33,9 +33,10 @@
 #include <QFutureWatcher>
 #include <QStandardPaths>
 #include <QRandomGenerator>
-
 #include <QVector>
 #include <QString>
+
+#include "AudioProcessor.h"
 
 #include "interface.h" // 引入 TrackModel / AudioState 等模型
 #include "../db/LocalTrackTable.h"   // 新增：本地歌曲表操作类

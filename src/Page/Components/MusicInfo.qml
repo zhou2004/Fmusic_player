@@ -66,7 +66,6 @@ Rectangle {
             width: parent.height * 0.9
             height: parent.height * 0.9
             radius: 10
-            smooth: false
             anchors.verticalCenter: parent.verticalCenter
         }
         FluText {

@@ -1,255 +1,217 @@
-#include <taglib/fileref.h>
-#include <taglib/tag.h>
-#include <taglib/tpropertymap.h>
-#include <taglib/mpegfile.h>
-#include <taglib/id3v2tag.h>
-#include <taglib/id3v2frame.h>
-#include <taglib/id3v2header.h>
-#include <taglib/attachedpictureframe.h>
-#include <taglib/flacfile.h>
-#include <taglib/flacpicture.h>
-#include <taglib/xiphcomment.h>
-#include <taglib/id3v2framefactory.h>
-#include <taglib/textidentificationframe.h>
+#pragma once
 
-#include <filesystem>
+#include <string>
 #include <fstream>
+#include <vector>
+#include <filesystem>
+#include <cstring>
+#include <algorithm>
+#include "Cde.h" // 必须包含：提供 aes_ecb_decrypt 函数
 
-#include <rapidjson/document.h>
-#include <rapidjson/istreamwrapper.h>
-
-#include "Cde.h"
-
-
-// using namespace std;
 class NCM
 {
-	constexpr static const char NCM_hander[] = { 0x43, 0x54, 0x45, 0x4e, 0x46, 0x44, 0x41, 0x4d, 0x01 };//文件头
-	constexpr static const char _info_key[] = { 0x23,0x31,0x34,0x6C,0x6A,0x6B,0x5F,0x21,0x5C,0x5D,0x26,0x30,0x55,0x3C,0x27,0x28 };//"#14ljk_!\]&0U<'(";//163key
-	constexpr static const char _core_key[] = { 0x68,0x7A,0x48,0x52,0x41,0x6D,0x73,0x6F,0x35,0x6B,0x49,0x6E,0x62,0x61,0x78,0x57 };//"hzHRAmso5kInbaxW";//rc4corekey
+private:
+    // NCM 核心 AES 密钥 (用于解密 RC4 Key)
+    constexpr static const unsigned char CORE_KEY[] = { 0x68, 0x7A, 0x48, 0x52, 0x41, 0x6D, 0x73, 0x6F, 0x35, 0x6B, 0x49, 0x6E, 0x62, 0x61, 0x78, 0x57 };
 
-	void CheakHeader(std::stringstream& ms)
-	{
-		char magic_hander[10];
-		ms.read(magic_hander, 10);
-		if (strncmp(NCM_hander, magic_hander, 9) != 0) { throw std::runtime_error("ncm已损坏或不是一个ncm文件"); }
-	}
+    // 文件头标识
+    constexpr static const unsigned char NCM_HEADER_MAGIC[] = { 0x43, 0x54, 0x45, 0x4e, 0x46, 0x44, 0x41, 0x4d };
 
-	std::string GetRC4Key(std::stringstream& ms)
-	{
-		int length = 0;//加密RC4密钥的密钥长度
-		ms.read((char*)&length, 4);
+    // 格式探测头
+    constexpr static char FLAC_HEAD[4] = { 'f', 'L', 'a', 'C' };
+    constexpr static char MP3_HEAD[3] = { 'I', 'D', '3' };
 
-		std::string data(length, '\0');//加密后的RC4密钥
-		ms.read(data.data(), length);
-		for (int i = 0; i <= (length - 1); i++)
-		{
-			data[i] ^= 0x64;//对每个字节与0x64进行异或
-		}
-		auto RC4_key = aes_ecb_decrypt(data, _core_key).substr(17);//AES后 去除前17位
-		return RC4_key;
-	}
+    // ----------------------------------------------------------------------
+    // [静态辅助函数]
+    // ----------------------------------------------------------------------
 
-	musicInfo GetMusicInfo(std::stringstream& ms)
-	{
-		musicInfo inf;
-		int length = 0;//音乐信息长度
-		ms.read((char*)&length, 4);
+    /**
+     * @brief 校验是否为 NCM 文件
+     * 读取前 8 字节对比 CTENFDAM，并跳过随后的 2 字节空隙
+     */
+    static bool CheckNCMHeader(std::ifstream& inFile) {
+        char magic[10]; // 读取 8字节头 + 2字节保留位
+        inFile.read(magic, 10);
 
-		std::string data(length, '\0');//信息数据
-		ms.read(data.data(), length);
-		for (int i = 0; i < length; i++)
-		{ //对每个字节与0x63进行异或
-			data[i] ^= 0x63;
-		}
-		inf.ncmkey = data;
-		data = data.substr(22);//去除前22位
-		data = base64_decode(data);//base64
-		std::string info = aes_ecb_decrypt(data, _info_key).substr(6);//aes后去除前6位
+        if (inFile.gcount() < 10) return false;
 
-		rapidjson::Document doc;
-		doc.Parse(info.c_str());
+        // 对比前 8 字节
+        if (std::memcmp(magic, NCM_HEADER_MAGIC, 8) != 0) {
+            return false;
+        }
+        return true;
+    }
 
-		//音乐名
-		if (doc.HasMember("musicName"))
-		{
-			rapidjson::Value& a = doc["musicName"];
-			inf.musicName = a.GetString();
-		}
+    /**
+     * @brief 构建 NCM 专用的 KeyBox (非标准 RC4)
+     * @param keybox 输出的 256 字节 S-Box
+     * @param key 解密后的 RC4 密钥
+     * @param keyLen 密钥长度
+     */
+    static void BuildKeyBox(unsigned char* keybox, const unsigned char* key, int keyLen) {
+        // 1. 初始化 0-255
+        for (int i = 0; i < 256; ++i) {
+            keybox[i] = (unsigned char)i;
+        }
 
-		//后缀名
-		if (doc.HasMember("format"))
-		{
-			rapidjson::Value& a = doc["format"];
-			inf.format = a.GetString();
-		}
+        // 2. NCM 专用的打乱逻辑
+        unsigned char last_byte = 0;
+        unsigned char key_offset = 0;
 
-		//歌手
-		if (doc.HasMember("artist"))
-		{
-			auto artists = doc["artist"].GetArray();
-			for (int i = 0; i < artists.Size(); i++)
-			{
-				inf.artist.push_back(artists[i][0].GetString());
-			}
-		}
+        for (int i = 0; i < 256; ++i) {
+            unsigned char swap = keybox[i];
+            // 核心差异：引入了 last_byte 参与运算
+            unsigned char c = (swap + last_byte + key[key_offset]) & 0xff;
 
-		//专辑
-		if (doc.HasMember("album"))
-		{
-			rapidjson::Value& a = doc["album"];
-			inf.album = a.GetString();
-		}
+            key_offset++;
+            if (key_offset >= keyLen) key_offset = 0;
 
-		return inf;
-	}
-
-	int GetCRCCode(std::stringstream& ms)
-	{
-		int CRC = 0;
-		ms.read((char*)&CRC, 4);
-		return CRC;
-	}
-
-	std::string GetImage(std::stringstream& ms)
-	{
-		int length = 0;
-		ms.read((char*)&length, 4);
-
-		std::string data(length, '\0');
-		ms.read(data.data(), length);
-		return data;
-	}
-
-	void DecodeAudio(std::stringstream& ms, std::ofstream& f, const std::string& RC4_key)
-	{
-		//初始化
-		char S[256] = {};
-		char K[256] = {};
-		for (int i = 0; i < 256; i++) { S[i] = i; }
-
-		//初始替换
-		int j = 0;
-		for (int i = 0, temp; i < 256; i++)
-		{
-			j = (j + S[i] + (RC4_key)[i % RC4_key.size()]) & 255;
-			temp = S[i];
-			S[i] = S[j];
-			S[j] = temp;
-		}
-
-		//密钥流
-		for (int i = 0, a, b; i < 256; i++)
-		{
-			a = (i + 1) & 255;
-			b = S[(a + S[a]) & 255];
-			K[i] = (S[(S[a] + b) & 255] & 255);
-		}
-
-		//解密流
-		char buffer[256];
-		std::stringstream output;
-		while (!ms.eof())
-		{
-			ms.read(buffer, 256);
-			for (int i = 0; i < 256; i++) { buffer[i] ^= K[i]; };
-			f.write(buffer, ms.gcount());
-		};
-		f.flush();
-		f.close();
-	}
-
-	void SetMusicInfo(std::filesystem::path& originalFilePath, musicInfo& info, bool write163Key)
-	{
-		using namespace TagLib;
-		if (info.format == "flac")
-		{
-			FLAC::File file(originalFilePath.c_str());
-			auto img = new FLAC::Picture();
-			img->setData(ByteVector(info.cover.data(), info.cover.length()));
-			img->setMimeType("image/jpeg");
-			img->setType(FLAC::Picture::FrontCover);
-			file.addPicture(img);
-			auto xiph = file.xiphComment(true);
-			if (write163Key)xiph->addField("DESCRIPTION", String(info.ncmkey, String::UTF8));
-			xiph->addField("ALBUM", String(info.album, String::UTF8));
-			xiph->addField("ARTIST", String(join(info.artist, ";"), String::UTF8));
-
-			file.save();
-		}
-		else
-		{
-			MPEG::File file(originalFilePath.c_str());
-			auto tag = file.ID3v2Tag(true);
-			auto img = new ID3v2::AttachedPictureFrame();
-			img->setMimeType("image/jpeg");
-			img->setType(ID3v2::AttachedPictureFrame::FrontCover);
-			img->setPicture(ByteVector(info.cover.data(), info.cover.length()));
-			tag->removeFrames("APIC");
-			tag->addFrame(img);
-			if (write163Key)tag->setComment(String(info.ncmkey, String::UTF8));
-			tag->setArtist(String(join(info.artist, ";"), String::UTF8));
-			tag->setAlbum(String(info.album, String::UTF8));
-
-			file.save();
-		}
-	}
+            keybox[i] = keybox[c];
+            keybox[c] = swap;
+            last_byte = c;
+        }
+    }
 
 public:
-	void NCMDecrypt(const std::filesystem::path& originalFilePath, bool write163Key, std::filesystem::path _outputPath)
-	{
-		std::ifstream f(originalFilePath, std::ios::binary);
-		if (!f) { throw std::runtime_error("打开文件失败"); return; };
+    /**
+     * @brief 静态 NCM 解密函数
+     * @param originalFilePath 源文件路径
+     * @param _outputPath 输出目录 (可选)
+     * @return 成功返回文件的绝对路径字符串，失败返回 ""
+     */
+    static std::string NCMDecrypt(const std::filesystem::path& originalFilePath, std::filesystem::path _outputPath = "")
+    {
+        namespace fs = std::filesystem;
 
-		std::stringstream ms;
-		ms << f.rdbuf();
-		f.close();
+        try {
+            std::ifstream inFile(originalFilePath, std::ios::binary);
+            if (!inFile) return "";
 
+            // 1. 校验文件头 "CTENFDAM"
+            unsigned int header[2];
+            inFile.read(reinterpret_cast<char*>(header), 8);
+            if (header[0] != 0x4e455443 || header[1] != 0x4d414446) { // CTEN 和 FDAM
+                return "";
+            }
+            inFile.seekg(2, std::ios::cur); // 跳过 2 字节保留位
 
-		CheakHeader(ms);
-		auto RC4_key = GetRC4Key(ms);
-		auto info = GetMusicInfo(ms);
-		int CRC = GetCRCCode(ms);
-		ms.seekg(5, std::ios::cur);
-		//获取封面
-		info.cover = GetImage(ms);
+            // 2. 读取 Key 长度
+            unsigned int keyLen = 0;
+            inFile.read(reinterpret_cast<char*>(&keyLen), 4);
+            if (keyLen == 0) return "";
 
-		//拼接文件名
-		if (info.artist.size() > 3) { info.artist = { info.artist[0],info.artist[1],info.artist[2],"..." }; };
-		std::string name = (info.musicName + " - " + join(info.artist, (std::string)",") + "." + info.format);
+            // 3. 读取 Key 数据并预处理
+            std::vector<char> rawKeyData(keyLen);
+            inFile.read(rawKeyData.data(), keyLen);
+            for (unsigned int i = 0; i < keyLen; i++) {
+                rawKeyData[i] ^= 0x64; // NCM Key 混淆去除
+            }
 
-		//替换为全角字符,防止出错
-		name = replace_(name, "?", { "？" });
-		name = replace_(name, "*", { "＊" });
-		name = replace_(name, ":", { "：" });
-		name = replace_(name, "<", { "＜" });
-		name = replace_(name, ">", { "＞" });
-		name = replace_(name, "/", { "／" });
-		name = replace_(name, "\\", { "＼" });
-		name = replace_(name, "|", { "｜" });
-		name = replace_(name, "\"", "＂");
+            // 4. AES 解密 Key
+            // 构造 CoreKey 字符串
+            std::string coreKeyStr(reinterpret_cast<const char*>(CORE_KEY), 16);
+            std::string rawKeyString(rawKeyData.begin(), rawKeyData.end());
 
-		//utf-8文件名
-		std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-		std::wstring wideFilename = converter.from_bytes(name);
+            // 调用 Cde.h 中的 AES 解密
+            std::string decryptedKey = aes_ecb_decrypt(rawKeyString, coreKeyStr);
 
-		std::filesystem::path outputPath = _outputPath;
+            // 去除前 17 字节 ("neteasecloudmusic")
+            if (decryptedKey.length() <= 17) return "";
+            const unsigned char* finalKey = reinterpret_cast<const unsigned char*>(decryptedKey.data() + 17);
+            int finalKeyLen = decryptedKey.length() - 17;
 
-		std::filesystem::path outoriginalFilePath;
-		if (outputPath.empty())
-		{
-			outoriginalFilePath = originalFilePath.parent_path().append(wideFilename);
-		}
-		else
-		{
-			outoriginalFilePath = outputPath.wstring() + (L"\\" + wideFilename);
-		}
+            // 5. 构建 KeyBox
+            unsigned char keyBox[256];
+            BuildKeyBox(keyBox, finalKey, finalKeyLen);
 
-		//正式解密文件
-		std::ofstream file(outoriginalFilePath, std::ios::out | std::ios::binary);
-		if (!file.good()) { throw std::runtime_error("写文件错误"); }
-		DecodeAudio(ms, file, RC4_key);
+            // 6. 智能跳过元数据 (Info Chunk)
+            unsigned int infoLen = 0;
+            inFile.read(reinterpret_cast<char*>(&infoLen), 4);
+            inFile.seekg(infoLen, std::ios::cur); // 跳过 JSON
 
-		SetMusicInfo(outoriginalFilePath, info, write163Key);
-	}
+            // 7. 跳过 CRC (4) + Gap (5)
+            inFile.seekg(9, std::ios::cur);
+
+            // 8. 智能跳过封面 (Image Chunk)
+            unsigned int imgLen = 0;
+            inFile.read(reinterpret_cast<char*>(&imgLen), 4);
+            inFile.seekg(imgLen, std::ios::cur); // 跳过图片
+
+            // --------------------------------------------------
+            // 准备解密输出
+            // --------------------------------------------------
+            if (_outputPath.empty()) {
+                _outputPath = originalFilePath.parent_path();
+            }
+            if (!fs::exists(_outputPath)) {
+                fs::create_directories(_outputPath);
+            }
+
+            const size_t BUFFER_SIZE = 1024 * 64; // 64KB 缓冲区
+            std::vector<unsigned char> buffer(BUFFER_SIZE);
+
+            std::ofstream outFile;
+            std::string resultPathString = "";
+            bool firstBlock = true;
+
+            // 维护全局文件偏移量 (音乐数据部分的)
+            // 注意：NCM 的异或逻辑依赖于字节在音乐数据中的绝对位置
+            size_t musicDataOffset = 0;
+
+            // 9. 流式解密循环
+            while (inFile) {
+                inFile.read(reinterpret_cast<char*>(buffer.data()), BUFFER_SIZE);
+                std::streamsize bytesRead = inFile.gcount();
+                if (bytesRead <= 0) break;
+
+                // NCM 异或逻辑 (移植自 decrypt_handler.hpp)
+                for (std::streamsize k = 0; k < bytesRead; ++k) {
+                    // j 是基于 (当前绝对位置 + 1) 的低8位
+                    unsigned char j = (unsigned char)((musicDataOffset + k + 1) & 0xff);
+
+                    // NCM 魔法异或公式
+                    unsigned char box_j = keyBox[j]; // keybox[j]
+                    unsigned char box_next = keyBox[(box_j + j) & 0xff]; // keybox[(keybox[j] + j) & 0xff]
+                    unsigned char mask = keyBox[(box_j + box_next) & 0xff];
+
+                    buffer[k] ^= mask;
+                }
+
+                // 更新全局偏移量
+                musicDataOffset += bytesRead;
+
+                // 10. 格式探测 (仅第一次)
+                if (firstBlock) {
+                    std::string ext = ".mp3"; // 默认为 mp3
+                    // 检测 FLAC
+                    if (bytesRead >= 4 && std::memcmp(buffer.data(), FLAC_HEAD, 4) == 0) {
+                        ext = ".flac";
+                    }
+                    // 检测 MP3 (ID3)
+                    else if (bytesRead >= 3 && std::memcmp(buffer.data(), MP3_HEAD, 3) == 0) {
+                        ext = ".mp3";
+                    }
+
+                    fs::path outputFileName = originalFilePath.stem();
+                    outputFileName += ext;
+                    fs::path fullOutputPath = _outputPath / outputFileName;
+
+                    outFile.open(fullOutputPath, std::ios::binary);
+                    if (!outFile) return "";
+
+                    resultPathString = fullOutputPath.string();
+                    firstBlock = false;
+                }
+
+                outFile.write(reinterpret_cast<char*>(buffer.data()), bytesRead);
+            }
+
+            outFile.close();
+            inFile.close();
+            return resultPathString;
+
+        } catch (...) {
+            return "";
+        }
+    }
 };

@@ -23,8 +23,6 @@ Item {
             width: root.width * 0.7
             height: width
             radius: 16
-            smooth: false
-            // anchors.verticalCenter: parent.verticalCenter
         }
 
         // Rectangle {

@@ -28,7 +28,7 @@ bool DatabaseManager::init()
     if (m_inited)
         return true;
 
-    QString dataDir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
+    QString dataDir = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + "/FMusic";
     if (dataDir.isEmpty()) {
         qWarning() << "DatabaseManager: AppLocalDataLocation is empty";
         return false;

@@ -175,7 +175,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width * 0.6
 
-            lyricData: trackInfo && trackInfo.lyrics ? lyricParser.parseLyrics(apiClient.getKrcContent(trackInfo.title,trackInfo.artist)) : []
+            lyricData: trackInfo && trackInfo.lyrics ? lyricParser.parseLyrics(trackInfo.lyrics) : lyricParser.parseLyrics(apiClient.getKrcContent(trackInfo.title,trackInfo.artist))
 
         }
     }
