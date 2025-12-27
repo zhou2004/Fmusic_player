@@ -1,0 +1,86 @@
+name: Windows MSIX Build
+
+on:
+  push:
+    branches: [ "master" ]
+    tags:
+      - 'v*' # 当推送 v1.0.0 这样的标签时触发发布流程
+  pull_request:
+    branches: [ "master" ]
+
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install Conan
+        run: pip install conan
+
+      - name: Configure Conan Profile
+        shell: powershell
+        run: |
+          conan profile detect --force
+          $profilePath = conan profile path default
+          Write-Host "Profile path: $profilePath"
+          (Get-Content $profilePath) -replace 'compiler\.cppstd=\d+', 'compiler.cppstd=20' | Set-Content $profilePath
+          Get-Content $profilePath
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v3
+        with:
+          version: '6.8.1'
+          host: 'windows'
+          target: 'desktop'
+          arch: 'win64_msvc2022_64'
+          modules: 'qtmultimedia qttools qt5compat'
+
+      - uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: 'x64'
+          vsversion: '2022'
+          toolset: "19.44"
+          sdk: "10.0.26100.0"
+
+      - name: Decode Signing Certificate
+        id: write_file
+        shell: powershell
+        run: |
+          $base64String = "${{ secrets.SIGNING_CERT_BASE64 }}"
+          $certByteArray = [System.Convert]::FromBase64String($base64String)
+          [IO.File]::WriteAllBytes("certificate.pfx", $certByteArray)
+
+      - name: Configure CMake
+        run: >
+          cmake --preset FMusic-release
+
+      - name: Build
+        run: cmake --build --preset release
+
+      - name: Install to dist
+        run: cmake --build build\FMusic-release --target install
+
+      - name: Create MSIX Package
+        run: |
+          makepri.exe new /pr "dist" /cf "dist\priconfig.xml"
+          MakeAppx pack /d "dist" /p "FMusic.msix"
+
+      - name: Sign MSIX Package
+        run: |
+          SignTool sign /fd SHA256 /a /f "certificate.pfx" /p "${{ secrets.SIGNING_CERT_PASSWORD }}" "FMusic.msix"
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: FMusic-MSIX
+          path: FMusic.msix
