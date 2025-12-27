@@ -9,5 +9,7 @@ CMakePresets.json
 CMakeUserPresets.json
 out/
 .vs/
+.idea/
+WinDist/
 
 
