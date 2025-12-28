@@ -4,14 +4,15 @@ set(VERSION "1.0.0")
 
 project(FMusic VERSION ${VERSION} LANGUAGES CXX)
 
+set(APPLICATION_DIR_PATH ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
+set(CMAKE_INSTALL_LIBDIR ".")
+
 find_package(Qt6 REQUIRED COMPONENTS Core Quick Qml Multimedia Network Sql LinguistTools Widgets PrintSupport)
 
 qt_standard_project_setup()
 
-set(APPLICATION_DIR_PATH ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
-
 # Option to enable SMTC support
-option(ENABLE_SMTC "Enable SMTC support" OFF)
+option(ENABLE_SMTC "Enable SMTC support" ON)
 
 if(ENABLE_SMTC)
     add_compile_definitions(ENABLE_SMTC=1)
@@ -165,7 +166,7 @@ include(GNUInstallDirs)
 install(TARGETS ${PROJECT_NAME}
         RUNTIME DESTINATION .
         BUNDLE  DESTINATION .
-        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+        LIBRARY DESTINATION .
 )
 
 # 安装翻译文件
@@ -176,6 +177,10 @@ qt_generate_deploy_qml_app_script(
         TARGET ${PROJECT_NAME}
         OUTPUT_SCRIPT qt_deploy_script
         NO_UNSUPPORTED_PLATFORM_ERROR
-        DEPLOY_TOOL_OPTIONS "--no-translations"
+        DEPLOY_TOOL_OPTIONS "--no-translations --libdir ${CMAKE_INSTALL_LIBDIR}"
 )
 install(SCRIPT ${qt_deploy_script})
+
+install(FILES "${CMAKE_SOURCE_DIR}/packages/AppxManifest.xml" DESTINATION .)
+install(FILES "${CMAKE_SOURCE_DIR}/packages/priconfig.xml" DESTINATION .)
+install(DIRECTORY "${CMAKE_SOURCE_DIR}/packages/Assets" DESTINATION .)

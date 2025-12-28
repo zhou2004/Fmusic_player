@@ -1,6 +1,5 @@
 #include <ApiClient.h>
 #include <Http.h>
-
 #include <QApplication> // FluentUI 依赖 Widgets，必须用 QApplication
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
@@ -9,11 +8,7 @@
 #include <QJsonObject>
 #include <QDebug>
 #include <QDir> // 【新增】用于处理路径
-
 #include <MusicPlayer.h>
-#if defined(ENABLE_SMTC) && defined(Q_OS_WIN)
-#include "WinSMTCController.h"
-#endif
 #include "AudioProcessor.h"
 #include "KRCDecryptor.h"
 #include "KGMADecryptor.h"
@@ -23,48 +18,15 @@
 #include "KLyricsParser.h"
 #include <iostream>
 
-#ifdef Q_OS_WIN
-#include <windows.h>
-#include <shobjidl.h>
+#if defined(ENABLE_SMTC)
+#include "WinSMTCController.h"
 #endif
 
-// 强制弹出控制台用于调试
-static void openConsole()
-{
-#ifdef _WIN32
-    AllocConsole();
-    freopen("CONOUT$", "w", stdout);
-    freopen("CONOUT$", "w", stderr);
-#endif
-    std::cout << "Console Initialized..." << std::endl;
-}
-
-#ifdef Q_OS_WIN
-// 设置 AUMID
-static void setAumidEarly()
-{
-    const wchar_t* appId = L"FeelLiao.Fmusic.Player";
-    HRESULT hr = SetCurrentProcessExplicitAppUserModelID(appId);
-    if (SUCCEEDED(hr)) {
-        qDebug() << "Successfully set AUMID to:" << QString::fromWCharArray(appId);
-    } else {
-        qWarning() << "Failed to set AUMID. HRESULT =" << Qt::hex << (qulonglong)hr;
-    }
-}
-#endif
 
 int main(int argc, char *argv[])
 {
     // openConsole();
     qDebug() << "--- Program Starting ---";
-
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-    QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-#endif
-
-#ifdef Q_OS_WIN
-    setAumidEarly();
-#endif
 
     QApplication app(argc, argv);
 

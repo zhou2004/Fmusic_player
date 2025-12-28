@@ -7,3 +7,4 @@ bin/
 build/
 /CMakeUserPresets.json
 dist/
+WinDist/
