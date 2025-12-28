@@ -12,8 +12,8 @@ Qt-based Cross-Platform Music Player 🎵🎉
 
 English | [简体中文](README_zh_CN.md)
 
-[![Status](https://img.shields.io/badge/status-active%20development-yellowgreen)](https://github.com/zhou2004/Fmusic_player)
-[![License](https://img.shields.io/badge/license-TBD-lightgrey)](#license)
+[![Windows](https://github.com/zhou2004/Fmusic_player/actions/workflows/build_msix.yml/badge.svg)](https://github.com/zhou2004/Fmusic_player/actions/workflows/build_msix.yml)
+[![License](https://img.shields.io/badge/license-GPL-lightgrey)](./LICENSE)
 [![Qt](https://img.shields.io/badge/Qt-6.8.1-41b883?logo=qt)](https://www.qt.io)
 [![Language](https://img.shields.io/badge/language-C%2B%2B-blue?logo=c%2B%2B)](https://isocpp.org)
 [![Platforms](https://img.shields.io/badge/platforms-Windows%20%7C%20macOS%20%7C%20Linux-lightgrey)](#)
@@ -130,4 +130,4 @@ This project stands on the shoulders of giants. We utilize the following open-so
 
 ## License 📜
 
-This project is licensed under the GPL License - see the LICENSE file for details.
+This project is licensed under the GPL License - see the [LICENSE](./LICENSE) file for details.
