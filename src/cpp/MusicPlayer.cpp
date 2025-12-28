@@ -300,7 +300,7 @@ QJsonObject MusicPlayer::currentTrackInfo() const
 {
     if (m_state.currentSongIndex < 0
         || m_state.currentSongIndex >= m_state.trackList.size()) {
-        return QJsonObject();
+        return QJsonObject({});
     }
     return trackToJson(m_state.trackList[m_state.currentSongIndex]);
 }

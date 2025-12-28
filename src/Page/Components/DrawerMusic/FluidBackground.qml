@@ -4,6 +4,8 @@ import Qt5Compat.GraphicalEffects 1.0
 
 Item {
     id: root
+    width: parent.width
+    height: parent.height
 
     property string rawSource: ""
     property string fluidSource: ""
@@ -72,7 +74,7 @@ Item {
                     smooth: true
                     // 巨大化：光斑尺寸是屏幕的 2 倍
                     width: Math.max(root.width, root.height) * 2.0
-                    height: width
+                    height: Math.max(root.width, root.height) * 2.0
                     // 居中起始
                     x: (parent.width - width) / 2
                     y: (parent.height - height) / 2
@@ -172,41 +174,43 @@ Item {
         }
     }
 
+    // 【修复版】游走动画
+    /*当 Loader 重新加载（例如切歌导致封面变化）时，旧的 item（光斑图片）会被销毁。但是，依附于它的动画对象（wanderAnim）在销毁的一瞬间，
+    可能还会尝试计算最后一次 from 和 to 的绑定值。此时 target（即那个图片 item）已经变成了 null，所以去读取 target.width 就报错了。
+    解决方法： 我们需要在计算动画数值时，加一个安全判断。如果 target 是 null，直接返回 0，不再去读它的宽高。*/
     Component {
         id: wanderAnim
         SequentialAnimation {
+            id: seqAnim
             loops: Animation.Infinite
-            property var target
-            property string prop // "x" or "y"
-            property real range  // 游走范围
+            running: root.isRunning && target !== null // 安全检查
+
+            property var target: null
+            property string prop
+            property real range
             property int duration
 
-            // 这里的逻辑是：在原始位置的基础上，增加/减少 range
-            // 注意：因为 Image 的 x/y 是左上角坐标，我们需要基于当前值偏移
-            // 这里的 from/to 必须动态计算比较麻烦，我们用简单的 PathAnimation 或者相对值
-            // 简化方案：使用 Sine 曲线控制 offset
+            // 安全计算函数
+            function getVal(isStart) {
+                if (!target) return 0;
+                var center = (prop === "x" ? (root.width - target.width)/2 : (root.height - target.height)/2);
+                return isStart ? (center - range) : (center + range);
+            }
 
-            // 下面这个是错的写法，修正为 NumberAnimation 控制 anchors 偏移或者 transform Translate
-            // 但因为我们用了 Image 的 x,y 属性，最简单的方法是用 Translate
-
-            // --- 修正后的游走逻辑 ---
-            // 我们不直接改 x/y，而是让它做一个往复运动
-            // 这里的 from/to 是相对于初始布局的偏移
             NumberAnimation {
-                target: target
-                property: prop
-                // 稍微偏移一点，模拟漂浮
-                from: (prop === "x" ? (root.width - target.width)/2 - range : (root.height - target.height)/2 - range)
-                to:   (prop === "x" ? (root.width - target.width)/2 + range : (root.height - target.height)/2 + range)
-                duration: duration
-                easing.type: Easing.InOutSine // 正弦波让运动像水流一样丝滑
+                target: seqAnim.target
+                property: seqAnim.prop
+                from: seqAnim.getVal(true)
+                to:   seqAnim.getVal(false)
+                duration: seqAnim.duration / root.speed
+                easing.type: Easing.InOutSine
             }
             NumberAnimation {
-                target: target
-                property: prop
-                from: (prop === "x" ? (root.width - target.width)/2 + range : (root.height - target.height)/2 + range)
-                to:   (prop === "x" ? (root.width - target.width)/2 - range : (root.height - target.height)/2 - range)
-                duration: duration
+                target: seqAnim.target
+                property: seqAnim.prop
+                from: seqAnim.getVal(false)
+                to:   seqAnim.getVal(true)
+                duration: seqAnim.duration / root.speed
                 easing.type: Easing.InOutSine
             }
         }

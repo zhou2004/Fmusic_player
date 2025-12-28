@@ -10,15 +10,26 @@ Item {
     id: root
 
     // trackInfo 不再在定义时调用函数
-    property var trackInfo: ({})
+    property var trackInfo: {}
+    // 歌词数据
+    property var lyricData: []
     property int music_pos: 0
 
     signal requestClose()
 
-    // 初始化时从 C\+\+ 拉一次
+    // 初始化,获取当前曲目信息，然后更新歌词等信息
     Component.onCompleted: {
-        if (musicPlayer && musicPlayer.currentTrackInfo) {
-            trackInfo = musicPlayer.currentTrackInfo()
+        // 获取当前曲目信息
+        trackInfo = musicPlayer.currentTrackInfo()
+        // 获取歌词
+        if (trackInfo && trackInfo.title) {
+            if (trackInfo.lyrics) {
+                lyricData = []
+            } else {
+                lyricData = lyricParser.parseLyrics(apiClient.getKrcContent(trackInfo.title,trackInfo.artist))
+            }
+        } else {
+            lyricData = []
         }
     }
 
@@ -175,7 +186,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width * 0.6
 
-            lyricData: trackInfo && trackInfo.lyrics ? lyricParser.parseLyrics(trackInfo.lyrics) : lyricParser.parseLyrics(apiClient.getKrcContent(trackInfo.title,trackInfo.artist))
+            lyricData: root.lyricData
 
         }
     }
