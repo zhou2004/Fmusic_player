@@ -1,13 +1,12 @@
 #include <ApiClient.h>
 #include <Http.h>
-#include <QApplication> // FluentUI 依赖 Widgets，必须用 QApplication
+#include <QApplication>
 #include <QQmlApplicationEngine>
-#include <QQmlContext>
 #include <QTranslator>
 #include <QLocale>
 #include <QJsonObject>
 #include <QDebug>
-#include <QDir> // 【新增】用于处理路径
+#include <QDir>
 #include <MusicPlayer.h>
 #include "AudioProcessor.h"
 #include "KRCDecryptor.h"
@@ -29,11 +28,6 @@ int main(int argc, char *argv[])
     qDebug() << "--- Program Starting ---";
 
     QApplication app(argc, argv);
-
-    QCoreApplication::setOrganizationName("FeelLiao");
-    QCoreApplication::setOrganizationDomain("feelliao.com");
-    QCoreApplication::setApplicationName("Fmusic");
-
     // =========================================================
     // 1. 翻译加载 (适配 CMake 的 copy_if_different 逻辑)
     // =========================================================
@@ -93,7 +87,7 @@ int main(int argc, char *argv[])
 
 
 
-#if defined(ENABLE_SMTC) && defined(Q_OS_WIN)
+#if defined(ENABLE_SMTC)
     auto smtc = std::make_unique<WinSMTCController>(&engine);
 
     QObject::connect(smtc.get(), &WinSMTCController::playRequested,     &musicPlayer, &MusicPlayer::play);
@@ -117,6 +111,8 @@ int main(int argc, char *argv[])
     engine.rootContext()->setContextProperty("apiClient", &apiClient);
     engine.rootContext()->setContextProperty("lyricParser", &lyricParser);
     engine.rootContext()->setContextProperty("audioProcessor", &audioProcessor);
+    engine.rootContext()->setContextProperty("appVersion", QStringLiteral(APP_VERSION));
+    qDebug() << "App Version:" << APP_VERSION;
 
     // =========================================================
     // 4. 加载主界面 (适配 QTP0004 NEW 策略)

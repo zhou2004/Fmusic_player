@@ -4,7 +4,7 @@
         xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
         xmlns:uap10="http://schemas.microsoft.com/appx/manifest/uap/windows10/10"
         xmlns:rescap="http://schemas.microsoft.com/appx/manifest/foundation/windows10/restrictedcapabilities">
-    <Identity Name="FeelLiao.FMusic" Version="1.0.0.0" Publisher="CN=37A01BFF-1DAB-45E5-9B67-AA76C0655A7C" ProcessorArchitecture="x64" />
+    <Identity Name="FeelLiao.FMusic" Version="@CMAKE_PROJECT_VERSION@" Publisher="CN=37A01BFF-1DAB-45E5-9B67-AA76C0655A7C" ProcessorArchitecture="x64" />
     <Properties>
         <DisplayName>FMusic</DisplayName>
         <PublisherDisplayName>FeelLiao</PublisherDisplayName>

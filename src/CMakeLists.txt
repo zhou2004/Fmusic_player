@@ -1,9 +1,6 @@
 cmake_minimum_required(VERSION 3.30)
 
-set(VERSION "1.0.0")
-
-project(FMusic VERSION ${VERSION} LANGUAGES CXX)
-
+add_compile_definitions(APP_VERSION="${CMAKE_PROJECT_VERSION}")
 set(APPLICATION_DIR_PATH ${CMAKE_SOURCE_DIR}/bin/${CMAKE_BUILD_TYPE})
 set(CMAKE_INSTALL_LIBDIR ".")
 
@@ -156,9 +153,13 @@ if(APPLE)
     list(APPEND PROJECT_SOURCES "${APP_ICON_MACOS}")
 endif()
 
-
-
 qt_finalize_executable(${PROJECT_NAME})
+
+configure_file(
+    ${CMAKE_SOURCE_DIR}/packages/AppxManifest.xml
+    ${APPLICATION_DIR_PATH}/AppxManifest.xml
+    @ONLY
+)
 
 include(GNUInstallDirs)
 
@@ -181,6 +182,6 @@ qt_generate_deploy_qml_app_script(
 )
 install(SCRIPT ${qt_deploy_script})
 
-install(FILES "${CMAKE_SOURCE_DIR}/packages/AppxManifest.xml" DESTINATION .)
+install(FILES "${APPLICATION_DIR_PATH}/AppxManifest.xml" DESTINATION .)
 install(FILES "${CMAKE_SOURCE_DIR}/packages/priconfig.xml" DESTINATION .)
 install(DIRECTORY "${CMAKE_SOURCE_DIR}/packages/Assets" DESTINATION .)

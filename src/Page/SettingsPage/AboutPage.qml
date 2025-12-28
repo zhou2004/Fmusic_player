@@ -135,7 +135,7 @@ ColumnLayout {
                     wrapMode: Text.WrapAnywhere
                     color: FluTheme.dark ? FluColors.Grey50 : FluColors.Grey130
                     text: "Version: " + appVersion
-                        + " (PackageID: com.example.fmusicplayer)"
+                        + " (PackageID: FeelLiao.FMusic)"
                 }
             }
         }
