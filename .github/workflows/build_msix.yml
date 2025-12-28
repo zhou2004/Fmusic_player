@@ -67,12 +67,9 @@ jobs:
       - name: Install to dist
         run: cmake --build build\FMusic-release --target install
 
-      - name: Prepare MSIX Resources
-        run: |
-          makepri.exe new /pr "dist" /cf "dist\priconfig.xml"
-
       - name: Create MSIX Package
         run: |
+          makepri.exe new /pr "dist" /cf "dist\priconfig.xml" /OutputFile "dist"
           MakeAppx pack /d "dist" /p "FMusic.msix"
 
       - name: Sign MSIX Package
