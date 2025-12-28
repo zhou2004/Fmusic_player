@@ -137,6 +137,12 @@ if (TS_FILES)
             COMMAND ${CMAKE_COMMAND} -E make_directory "${I18N_OUTPUT_PATH}"
             COMMENT "Creating i18n directory structure..."
     )
+
+    qt6_add_lupdate(${PROJECT_NAME}
+            TS_FILES ${TS_FILES}
+            SOURCES  ${ALL_QML_FILES}
+    )
+
     qt6_add_lrelease(${PROJECT_NAME}
             TS_FILES ${TS_FILES}
     )

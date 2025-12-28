@@ -23,7 +23,7 @@ ColumnLayout {
 
         FluText {
             id: settingsAboutLogoText
-            text: "FMusicPlayer"
+            text: "FMusic"
             font.pixelSize: 40
             font.bold: true
             Layout.leftMargin: 10
@@ -48,7 +48,7 @@ ColumnLayout {
 
         FluTextButton {
             id: settingsAboutLinksGitHub
-            text: qsTr("GitHub")
+            text: "GitHub"
             font.pixelSize: 14
             textColor: FluTheme.dark ? linkColorDark:linkColor
             onClicked: {
@@ -59,7 +59,7 @@ ColumnLayout {
 
         FluTextButton {
             id: settingsAboutLinksGitee
-            text: qsTr("Gitee")
+            text: "Gitee"
             font.pixelSize: 14
             textColor: FluTheme.dark ? linkColorDark:linkColor
             onClicked: {
@@ -71,7 +71,7 @@ ColumnLayout {
 
     FluText {
         id: settingsAboutCopyright
-        text: qsTr("Copyright © 2025 FMusicPlayer Team")
+        text: qsTr("Copyright © 2025 FMusic Team")
         font.pixelSize: 14
         horizontalAlignment: Text.AlignHCenter
         verticalAlignment: Text.AlignVCenter
@@ -222,7 +222,7 @@ ColumnLayout {
 
                     FluText {
                         id: settingsAboutAuthors1Name
-                        text: qsTr("Feel Zhou")
+                        text: "Feel Zhou"
                         font.pixelSize: 16
                         font.bold: true
                     }
@@ -237,7 +237,7 @@ ColumnLayout {
                         }
 
                         FluText {
-                            text: qsTr("kawai ( ﹁ ﹁ ) ~→")
+                            text: "kawai ( ﹁ ﹁ ) ~→"
                             font.pixelSize: 14
                             color: FluTheme.dark ? FluColors.Grey50 : FluColors.Grey130
                         }
@@ -256,7 +256,7 @@ ColumnLayout {
                 layoutDirection: Qt.RightToLeft
 
                 FluTextButton {
-                    text: qsTr("GitHub")
+                    text: "GitHub"
                     font.pixelSize: 14
                     textColor: FluTheme.dark ? linkColorDark:linkColor
                     onClicked: {Qt.openUrlExternally("https://github.com/zhou2004")}
@@ -303,7 +303,7 @@ ColumnLayout {
 
                     FluText {
                         id: settingsAboutAuthors2Name
-                        text: qsTr("Feel Liao")
+                        text: "Feel Liao"
                         font.pixelSize: 16
                         font.bold: true
                     }
@@ -318,7 +318,7 @@ ColumnLayout {
                         }
 
                         FluText {
-                            text: qsTr("Beauty is everywhere")
+                            text: "Beauty is everywhere"
                             font.pixelSize: 14
                             color: FluTheme.dark ? FluColors.Grey50 : FluColors.Grey130
                         }
@@ -344,14 +344,14 @@ ColumnLayout {
                 }
 
                 FluTextButton {
-                    text: qsTr("Blog")
+                    text: "Blog"
                     font.pixelSize: 14
                     textColor: FluTheme.dark ? linkColorDark:linkColor
                     onClicked: {Qt.openUrlExternally("https://blog.stariverfeel.eu.org/")}
                 }
 
                 FluTextButton {
-                    text: qsTr("GitHub")
+                    text: "GitHub"
                     font.pixelSize: 14
                     textColor: FluTheme.dark ? linkColorDark:linkColor
                     onClicked: {Qt.openUrlExternally("https://github.com/FeelLiao")}

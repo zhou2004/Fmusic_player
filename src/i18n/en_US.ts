@@ -9,20 +9,8 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="51"/>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="261"/>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="358"/>
-        <source>GitHub</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="62"/>
-        <source>Gitee</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../Page/SettingsPage/AboutPage.qml" line="74"/>
-        <source>Copyright © 2025 FMusicPlayer Team</source>
+        <source>Copyright © 2025 FMusic Team</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -36,38 +24,13 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="227"/>
-        <source>Feel Zhou</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="237"/>
+        <location filename="../Page/SettingsPage/AboutPage.qml" line="235"/>
         <source>Developer</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="242"/>
-        <source>kawai ( ﹁ ﹁ ) ~→</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="310"/>
-        <source>Feel Liao</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="320"/>
+        <location filename="../Page/SettingsPage/AboutPage.qml" line="316"/>
         <source>Designer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="325"/>
-        <source>Beauty is everywhere</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="351"/>
-        <source>Blog</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -258,22 +221,22 @@
 <context>
     <name>Settings</name>
     <message>
-        <location filename="../Page/NavigationPage/Settings.qml" line="22"/>
+        <location filename="../Page/NavigationPage/Settings.qml" line="20"/>
         <source>Settings</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Page/NavigationPage/Settings.qml" line="38"/>
+        <location filename="../Page/NavigationPage/Settings.qml" line="36"/>
         <source>Play</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Page/NavigationPage/Settings.qml" line="59"/>
+        <location filename="../Page/NavigationPage/Settings.qml" line="57"/>
         <source>Display</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="../Page/NavigationPage/Settings.qml" line="74"/>
+        <location filename="../Page/NavigationPage/Settings.qml" line="72"/>
         <source>About</source>
         <translation type="unfinished"></translation>
     </message>

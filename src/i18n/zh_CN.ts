@@ -10,69 +10,32 @@
     <message>
         <location filename="../Page/SettingsPage/AboutPage.qml" line="35"/>
         <source>This is an open source-project under GPL-3.0 license.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="51"/>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="261"/>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="358"/>
-        <source>GitHub</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="62"/>
-        <source>Gitee</source>
-        <translation type="unfinished"></translation>
+        <translation>本项目在 GPL-3.0 许可证下开源</translation>
     </message>
     <message>
         <location filename="../Page/SettingsPage/AboutPage.qml" line="74"/>
-        <source>Copyright © 2025 FMusicPlayer Team</source>
-        <translation type="unfinished"></translation>
+        <source>Copyright © 2025 FMusic Team</source>
+        <translation>保留所有权力 2025 FMusic 开发团队</translation>
     </message>
     <message>
         <location filename="../Page/SettingsPage/AboutPage.qml" line="126"/>
         <source>Version Information</source>
-        <translation type="unfinished"></translation>
+        <translation>版本信息</translation>
     </message>
     <message>
         <location filename="../Page/SettingsPage/AboutPage.qml" line="171"/>
         <source>Device ID</source>
-        <translation type="unfinished"></translation>
+        <translation>设备ID</translation>
     </message>
     <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="227"/>
-        <source>Feel Zhou</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="237"/>
+        <location filename="../Page/SettingsPage/AboutPage.qml" line="235"/>
         <source>Developer</source>
-        <translation type="unfinished"></translation>
+        <translation>开发者</translation>
     </message>
     <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="242"/>
-        <source>kawai ( ﹁ ﹁ ) ~→</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="310"/>
-        <source>Feel Liao</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="320"/>
+        <location filename="../Page/SettingsPage/AboutPage.qml" line="316"/>
         <source>Designer</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="325"/>
-        <source>Beauty is everywhere</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="../Page/SettingsPage/AboutPage.qml" line="351"/>
-        <source>Blog</source>
-        <translation type="unfinished"></translation>
+        <translation>设计者</translation>
     </message>
 </context>
 <context>
@@ -140,7 +103,7 @@
     <message>
         <location filename="../Page/NavigationPage/Favorite.qml" line="9"/>
         <source>Favorite</source>
-        <translation type="unfinished"></translation>
+        <translation>喜欢</translation>
     </message>
 </context>
 <context>
@@ -148,7 +111,7 @@
     <message>
         <location filename="../Page/NavigationPage/Home.qml" line="9"/>
         <source>Home</source>
-        <translation type="unfinished"></translation>
+        <translation>首页</translation>
     </message>
 </context>
 <context>
@@ -156,42 +119,42 @@
     <message>
         <location filename="../Page/NavigationPage/Local.qml" line="59"/>
         <source>Local Music</source>
-        <translation type="unfinished"></translation>
+        <translation>本地音乐</translation>
     </message>
     <message>
         <location filename="../Page/NavigationPage/Local.qml" line="74"/>
         <source>Open</source>
-        <translation type="unfinished">展开</translation>
+        <translation>打开目录</translation>
     </message>
     <message>
         <location filename="../Page/NavigationPage/Local.qml" line="81"/>
         <source>PlayAll</source>
-        <translation type="unfinished"></translation>
+        <translation>播放所有</translation>
     </message>
     <message>
         <location filename="../Page/NavigationPage/Local.qml" line="92"/>
         <source>Prev</source>
-        <translation type="unfinished"></translation>
+        <translation>上一页</translation>
     </message>
     <message>
         <location filename="../Page/NavigationPage/Local.qml" line="102"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>下一页</translation>
     </message>
     <message>
         <location filename="../Page/NavigationPage/Local.qml" line="129"/>
         <source>Music</source>
-        <translation type="unfinished"></translation>
+        <translation>音乐</translation>
     </message>
     <message>
         <location filename="../Page/NavigationPage/Local.qml" line="158"/>
         <source>Album</source>
-        <translation type="unfinished"></translation>
+        <translation>专辑</translation>
     </message>
     <message>
         <location filename="../Page/NavigationPage/Local.qml" line="186"/>
         <source>Singer</source>
-        <translation type="unfinished"></translation>
+        <translation>歌手</translation>
     </message>
 </context>
 <context>
@@ -199,7 +162,7 @@
     <message>
         <location filename="../Page/Main.qml" line="73"/>
         <source>Search</source>
-        <translation type="unfinished">搜索</translation>
+        <translation>搜索</translation>
     </message>
 </context>
 <context>
@@ -215,12 +178,12 @@
     <message>
         <location filename="../Page/NavigationItemsFooter.qml" line="12"/>
         <source>Login</source>
-        <translation type="unfinished"></translation>
+        <translation>登录</translation>
     </message>
     <message>
         <location filename="../Page/NavigationItemsFooter.qml" line="21"/>
         <source>Settings</source>
-        <translation type="unfinished">设置</translation>
+        <translation>设置</translation>
     </message>
 </context>
 <context>
@@ -228,27 +191,27 @@
     <message>
         <location filename="../Page/NavigationItemsOriginal.qml" line="9"/>
         <source>Home</source>
-        <translation type="unfinished"></translation>
+        <translation>首页</translation>
     </message>
     <message>
         <location filename="../Page/NavigationItemsOriginal.qml" line="20"/>
         <source>Recommendation</source>
-        <translation type="unfinished"></translation>
+        <translation>推荐</translation>
     </message>
     <message>
         <location filename="../Page/NavigationItemsOriginal.qml" line="30"/>
         <source>MyCollection</source>
-        <translation type="unfinished"></translation>
+        <translation>歌单</translation>
     </message>
     <message>
         <location filename="../Page/NavigationItemsOriginal.qml" line="40"/>
         <source>Local</source>
-        <translation type="unfinished"></translation>
+        <translation>本地</translation>
     </message>
     <message>
         <location filename="../Page/NavigationItemsOriginal.qml" line="50"/>
         <source>AIRecom</source>
-        <translation type="unfinished"></translation>
+        <translation>推荐</translation>
     </message>
 </context>
 <context>
@@ -256,30 +219,30 @@
     <message>
         <location filename="../Page/NavigationPage/Recommendation.qml" line="9"/>
         <source>Recommendation</source>
-        <translation type="unfinished"></translation>
+        <translation>推荐</translation>
     </message>
 </context>
 <context>
     <name>Settings</name>
     <message>
-        <location filename="../Page/NavigationPage/Settings.qml" line="22"/>
+        <location filename="../Page/NavigationPage/Settings.qml" line="20"/>
         <source>Settings</source>
-        <translation type="unfinished">设置</translation>
+        <translation>设置</translation>
     </message>
     <message>
-        <location filename="../Page/NavigationPage/Settings.qml" line="38"/>
+        <location filename="../Page/NavigationPage/Settings.qml" line="36"/>
         <source>Play</source>
-        <translation type="unfinished">播放</translation>
+        <translation>播放</translation>
     </message>
     <message>
-        <location filename="../Page/NavigationPage/Settings.qml" line="59"/>
+        <location filename="../Page/NavigationPage/Settings.qml" line="57"/>
         <source>Display</source>
-        <translation type="unfinished">显示</translation>
+        <translation>显示</translation>
     </message>
     <message>
-        <location filename="../Page/NavigationPage/Settings.qml" line="74"/>
+        <location filename="../Page/NavigationPage/Settings.qml" line="72"/>
         <source>About</source>
-        <translation type="unfinished">关于</translation>
+        <translation>关于</translation>
     </message>
 </context>
 <context>
@@ -294,7 +257,7 @@
         <location filename="../Page/NavigationPage/UserLogin.qml" line="115"/>
         <location filename="../Page/NavigationPage/UserLogin.qml" line="175"/>
         <source>Login</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">登录</translation>
     </message>
     <message>
         <location filename="../Page/NavigationPage/UserLogin.qml" line="49"/>
