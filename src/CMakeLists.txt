@@ -12,7 +12,7 @@ find_package(Qt6 REQUIRED COMPONENTS Core Quick Qml Multimedia Network Sql Lingu
 qt_standard_project_setup()
 
 # Option to enable SMTC support
-option(ENABLE_SMTC "Enable SMTC support" ON)
+option(ENABLE_SMTC "Enable SMTC support" OFF)
 
 if(ENABLE_SMTC)
     add_compile_definitions(ENABLE_SMTC=1)
