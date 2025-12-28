@@ -27,24 +27,26 @@ FluFrame {
 
     Connections {
         target: musicPlayer
-        onPlayingChanged: function(playing) {
+
+        function onPlayingChanged(playing) {
             isPlaying = playing
         }
-        onCurrentTrackInfoChanged: function(info) {
+
+        function onCurrentTrackInfoChanged(info) {
             if (!info)
                 return
             songName = info.title || songName
             singerName = info.artist || singerName
             albumCover = info.cover || albumCover
 
-
-            // 更新时长显示（如果有），使用 info.durationMs 或 duration 估算
+            // 更新时长显示
             var durMs = 0
             if (info.durationMs !== undefined) {
                 durMs = info.durationMs
             } else if (info.duration !== undefined) {
                 durMs = info.duration * 1000
             }
+
             if (durMs > 0) {
                 var totalSec = Math.floor(durMs / 1000)
                 var m = Math.floor(totalSec / 60)
@@ -54,9 +56,13 @@ FluFrame {
                 slider.to = durMs
             }
         }
-        onPositionChanged: function(pos) {
-            // pos 为毫秒，将其映射到 slider 范围
-            slider.value = pos
+
+        function onPositionChanged(pos) {
+            // 注意避免循环绑定：这里只设置 value，不调用 seek
+            // 只有当用户拖拽 slider 时 (onMoved) 才调用 seek
+            if (!slider.pressed) {
+                slider.value = pos
+            }
 
             var curSec = Math.floor(pos / 1000)
             var m = Math.floor(curSec / 60)

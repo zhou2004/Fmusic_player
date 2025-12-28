@@ -59,7 +59,7 @@ jobs:
 
       - name: Configure CMake
         run: >
-          cmake --preset FMusic-release
+          cmake --preset FMusic-release -DENABLE_WINRT=ON
 
       - name: Build
         run: cmake --build --preset release --parallel
