@@ -179,7 +179,7 @@ ColumnLayout {
                     width: settingsAboutDeviceFrame.width - 20
                     wrapMode: Text.WrapAnywhere
                     color: FluTheme.dark ? FluColors.Grey50 : FluColors.Grey130
-                    text: appDeviceID
+                    text: deviceId
                 }
             }
         }

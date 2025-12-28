@@ -10,7 +10,6 @@ ColumnLayout {
 
     // 在这里设置参数
     property int leftMarginSet: 10 //全局左边距
-    property string appDeviceID: "c8a30833-8e3d-c158-598c-2961b30048f5" //设备ID
     property color linkColor: "#4A3C1D" // 链接颜色
     property color linkColorDark: "#b5a64c" // 深色主题下的链接颜色
     property url feelzhouAvatar: "qrc:/qt/qml/FMusic/Assets/feelzhou.jpg" // 作者头像

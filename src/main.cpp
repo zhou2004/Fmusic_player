@@ -16,9 +16,10 @@
 #include <SystemMediaTransportControlsInterop.h>
 #include "KLyricsParser.h"
 #include <iostream>
+#include <QQmlContext>
 
-#if defined(ENABLE_SMTC)
-#include "WinSMTCController.h"
+#if defined(ENABLE_WINRT)
+#include "WinRTUtils.h"
 #endif
 
 
@@ -87,9 +88,20 @@ int main(int argc, char *argv[])
 
 
 
-#if defined(ENABLE_SMTC)
-    auto smtc = std::make_unique<WinSMTCController>(&engine);
 
+
+    // =========================================================
+    // 3. 注册上下文属性
+    // =========================================================
+    // 注意：在新策略下，手动 addImportPath("qrc:/") 通常是不需要的，
+    // Qt 会自动处理模块导入路径。
+
+    QString myDeviceId = "NOT_MSVC_UNDEFINED_DEVICE_ID";
+
+#if defined(ENABLE_WINRT)
+
+    myDeviceId = DeviceInfo::getWindowsDeviceId();
+    auto smtc = std::make_unique<WinSMTCController>(&engine);
     QObject::connect(smtc.get(), &WinSMTCController::playRequested,     &musicPlayer, &MusicPlayer::play);
     QObject::connect(smtc.get(), &WinSMTCController::pauseRequested,    &musicPlayer, &MusicPlayer::pause);
     QObject::connect(smtc.get(), &WinSMTCController::nextRequested,     &musicPlayer, &MusicPlayer::next);
@@ -99,20 +111,18 @@ int main(int argc, char *argv[])
     QObject::connect(&musicPlayer, &MusicPlayer::currentTrackInfoChanged, smtc.get(), &WinSMTCController::updateMetadata);
     QObject::connect(&musicPlayer, &MusicPlayer::playingChanged,          smtc.get(), &WinSMTCController::setPlaybackState);
     QObject::connect(&musicPlayer, &MusicPlayer::positionChanged,         smtc.get(), &WinSMTCController::setPosition);
-#endif
 
-    // =========================================================
-    // 3. 注册上下文属性
-    // =========================================================
-    // 注意：在新策略下，手动 addImportPath("qrc:/") 通常是不需要的，
-    // Qt 会自动处理模块导入路径。
+
+#endif
 
     engine.rootContext()->setContextProperty("musicPlayer", &musicPlayer);
     engine.rootContext()->setContextProperty("apiClient", &apiClient);
     engine.rootContext()->setContextProperty("lyricParser", &lyricParser);
     engine.rootContext()->setContextProperty("audioProcessor", &audioProcessor);
     engine.rootContext()->setContextProperty("appVersion", QStringLiteral(APP_VERSION));
+    engine.rootContext()->setContextProperty("deviceId", myDeviceId);
     qDebug() << "App Version:" << APP_VERSION;
+    qDebug() << "Device ID:" << myDeviceId;
 
     // =========================================================
     // 4. 加载主界面 (适配 QTP0004 NEW 策略)

@@ -8,11 +8,11 @@ find_package(Qt6 REQUIRED COMPONENTS Core Quick Qml Multimedia Network Sql Lingu
 
 qt_standard_project_setup()
 
-# Option to enable SMTC support
-option(ENABLE_SMTC "Enable SMTC support" OFF)
+# Option to enable WINRT support
+option(ENABLE_WINRT "Enable WINRT support" OFF)
 
-if(ENABLE_SMTC)
-    add_compile_definitions(ENABLE_SMTC=1)
+if(ENABLE_WINRT)
+    add_compile_definitions(ENABLE_WINRT=1)
 endif()
 
 # 查找所需的包
@@ -26,7 +26,7 @@ file(GLOB PROJECT_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp
 )
 
-list(REMOVE_ITEM PROJECT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/cpp/WinSMTCController.cpp")
+list(REMOVE_ITEM PROJECT_SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/cpp/WinRTUtils.cpp")
 
 # 嵌入可执行文件图标
 # 1. 设置你的图标路径 (请修改这里为你的实际 .ico 路径)
@@ -101,9 +101,9 @@ qt_add_qml_module(${PROJECT_NAME}
         ${ASSETS_FILES}
 )
 
-if(ENABLE_SMTC)
+if(ENABLE_WINRT)
     target_sources(${PROJECT_NAME} PRIVATE
-            ${CMAKE_CURRENT_SOURCE_DIR}/cpp/WinSMTCController.cpp
+            ${CMAKE_CURRENT_SOURCE_DIR}/cpp/WinRTUtils.cpp
     )
 
     find_package(cppwinrt QUIET)

@@ -1,6 +1,6 @@
-#include "WinSMTCController.h"
+#include "WinRTUtils.h"
 
-#ifdef ENABLE_SMTC
+#ifdef ENABLE_WINRT
 
 #include <QDebug>
 #include <QDateTime>
@@ -12,33 +12,36 @@
 #include <QStandardPaths>
 #include <QUrl>
 #include <QWindow>
-
-// 注意：Q_OS_WIN 的判断最好保留在内部，作为双重保险
-#ifdef Q_OS_WIN
 #include <windows.h>
 #include <SystemMediaTransportControlsInterop.h>
-
 #include <winrt/base.h>
+#include <winrt/Windows.System.Profile.h>
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Media.h>
 #include <winrt/Windows.Storage.h>
 #include <winrt/Windows.Storage.Streams.h>
+#include <winrt/Windows.Security.Cryptography.h>
+#include <winrt/Windows.Storage.Streams.h>
+#include <winrt/Windows.Security.ExchangeActiveSyncProvisioning.h>
 
+// 使用 WinRT 命名空间简化代码
 using namespace winrt;
+using namespace winrt::Windows::System::Profile;
+using namespace winrt::Windows::Security::Cryptography;
+using namespace winrt::Windows::Storage::Streams;
+using namespace winrt::Windows::Security::ExchangeActiveSyncProvisioning;
 using namespace Windows::Foundation;
 using namespace Windows::Media;
 using namespace Windows::Storage;
 using namespace Windows::Storage::Streams;
-#endif
 
-#ifdef Q_OS_WIN
 static inline TimeSpan msToTimeSpan(qint64 ms)
 {
     if (ms < 0) ms = 0;
     return TimeSpan{ ms * 10000 }; // 100ns ticks
 }
 
-// 选一个最可能的主窗口 HWND（Qt Quick：topLevelWindows）
+
 static HWND findMainHwnd()
 {
     const auto wins = QGuiApplication::topLevelWindows();
@@ -53,7 +56,7 @@ static HWND findMainHwnd()
     return nullptr;
 }
 
-// qrc:/ 或 :/ 资源落地到临时文件（SMTC 不能直接读 Qt 资源协议）
+
 static QString materializeQtResourceToTempFile(const QString& qrcPath)
 {
     QString path = qrcPath;
@@ -86,64 +89,50 @@ static QString materializeQtResourceToTempFile(const QString& qrcPath)
     return outPath;
 }
 
-// 关键：把 cover 输入最终变成 Windows 原生路径（C:\... 并且用反斜杠）
 static QString toNativeWindowsPathForCover(const QString& coverRaw)
 {
     if (coverRaw.trimmed().isEmpty()) return {};
 
     QString absPath;
 
-    // 1) Qt 资源 -> 临时文件
     if (coverRaw.startsWith("qrc:/", Qt::CaseInsensitive) || coverRaw.startsWith(":/")) {
         const QString tempFile = materializeQtResourceToTempFile(coverRaw);
         if (tempFile.isEmpty()) return {};
         absPath = QFileInfo(tempFile).absoluteFilePath();
     }
-    // 2) file:///...
+
     else if (coverRaw.startsWith("file:", Qt::CaseInsensitive)) {
         QUrl u(coverRaw);
         const QString local = u.toLocalFile();
         if (local.isEmpty()) return {};
         absPath = QFileInfo(local).absoluteFilePath();
     }
-    // 3) 普通本地路径
+
     else {
         absPath = QFileInfo(QDir::cleanPath(coverRaw)).absoluteFilePath();
     }
 
-    // 强制转换为 Windows 原生分隔符：E:\Temp\xxx.jpg
     absPath = QDir::toNativeSeparators(absPath);
     return absPath;
 }
-#endif
-
-// ========================================================
-// 只有在 ENABLE_SMTC 开启时，WinSMTCController 类才存在
-// 所以下面的实现代码必须包裹在 #ifdef ENABLE_SMTC 内部
-// ========================================================
 
 WinSMTCController::WinSMTCController(QObject* parent) : QObject(parent)
 {
-#ifdef Q_OS_WIN
-    initWinRT();
-#endif
+    initSMTC();
 }
 
 WinSMTCController::~WinSMTCController()
 {
-#ifdef Q_OS_WIN
-    shutdownWinRT();
-#endif
+    shutdownSMTC();
 }
 
-#ifdef Q_OS_WIN
 bool WinSMTCController::ensureSmtcReady()
 {
     if (m_smtc) return true;
 
     HWND hwnd = findMainHwnd();
     if (!hwnd) {
-        qWarning() << "[SMTC] No HWND yet. Call after QML window is created/shown.";
+        qWarning() << "WinRT SMTC No HWND yet. Call after QML window is created/shown.";
         return false;
     }
 
@@ -199,13 +188,11 @@ bool WinSMTCController::ensureSmtcReady()
 
     return false;
 }
-#endif
 
 void WinSMTCController::updateMetadata(const QJsonObject& info)
 {
     m_lastMetadata = info;
 
-#ifdef Q_OS_WIN
     if (!ensureSmtcReady()) return;
 
     try {
@@ -289,12 +276,10 @@ void WinSMTCController::updateMetadata(const QJsonObject& info)
     } catch (winrt::hresult_error const& e) {
         qWarning() << "[SMTC] updateMetadata WinRT error:" << QString::fromWCharArray(e.message().c_str());
     } catch (...) {}
-#endif
 }
 
 void WinSMTCController::setPosition(qint64 ms)
 {
-#ifdef Q_OS_WIN
     if (!ensureSmtcReady()) return;
 
     try {
@@ -318,32 +303,28 @@ void WinSMTCController::setPosition(qint64 ms)
         m_smtc.UpdateTimelineProperties(t);
 
     } catch (...) {}
-#endif
 }
 
 void WinSMTCController::setPlaybackState(bool playing)
 {
-#ifdef Q_OS_WIN
     if (!ensureSmtcReady()) return;
     try {
         m_smtc.PlaybackStatus(playing ? MediaPlaybackStatus::Playing : MediaPlaybackStatus::Paused);
         m_lastUpdateTime = 0;
     } catch (...) {}
-#endif
 }
 
-#ifdef Q_OS_WIN
-void WinSMTCController::initWinRT()
+void WinSMTCController::initSMTC()
 {
     try {
         winrt::init_apartment(winrt::apartment_type::single_threaded);
-        qDebug() << "[SMTC] WinRT apartment initialized.";
+        qDebug() << "WinRT SMTC support element successfully initialized.";
     } catch (...) {
-        qWarning() << "[SMTC] WinRT init failed.";
+        qWarning() << "WinRT SMTC support element initialize failed.";
     }
 }
 
-void WinSMTCController::shutdownWinRT()
+void WinSMTCController::shutdownSMTC()
 {
     try {
         if (m_smtc) {
@@ -359,9 +340,41 @@ void WinSMTCController::shutdownWinRT()
         m_updater = nullptr;
         m_smtc = nullptr;
         winrt::uninit_apartment();
-        qDebug() << "[SMTC] WinRT apartment uninitialized.";
+        qDebug() << "WinRT SMTC support element shutdown.";
     } catch (...) {}
 }
-#endif
 
-#endif // ENABLE_SMTC  <--- 【关键修改】文件末尾闭合
+QString DeviceInfo::getWindowsDeviceId()
+{
+    try {
+        // 1. 获取系统标识 (针对当前发布者)
+        // 注意：这需要你的应用有合法的 Identity (AppxManifest.xml)
+        SystemIdentificationInfo systemIdInfo = SystemIdentification::GetSystemIdForPublisher();
+
+        if (!systemIdInfo) {
+            return "WinRT DeviceInfo Error: SystemIdInfo is null";
+        }
+
+        // 2. 拿到原始的二进制 buffer
+        IBuffer buffer = systemIdInfo.Id();
+
+        // 3. 使用 WinRT 工具转换成 Hex 字符串
+        hstring hexString = CryptographicBuffer::EncodeToHexString(buffer);
+
+        // 4. 转换为 Qt 的 QString (hstring -> wchar_t* -> QString)
+        QString deviceID = QString::fromWCharArray(hexString.c_str());
+        qDebug() << "WinRT DeviceInfo Device ID: " << deviceID;
+        return deviceID;
+
+    } catch (const hresult_error& ex) {
+        // 捕获 WinRT 特有的异常
+        QString errorMsg = QString::fromWCharArray(ex.message().c_str());
+        qWarning() << "WinRT DeviceInfo Error getting Device ID:" << errorMsg;
+        return "Unknown-Device-ID";
+    } catch (...) {
+        return "Unknown-Device-ID";
+    }
+}
+
+
+#endif

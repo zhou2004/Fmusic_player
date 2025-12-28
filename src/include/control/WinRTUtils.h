@@ -3,7 +3,7 @@
 #include <QObject>
 #include <QJsonObject>
 
-#ifdef ENABLE_SMTC
+#ifdef ENABLE_WINRT
 #include <winrt/Windows.Foundation.h>
 #include <winrt/Windows.Media.h>
 #include <winrt/Windows.Storage.Streams.h>
@@ -30,8 +30,8 @@ signals:
 
 private:
     // Platform-specific initialization helpers
-    void initWinRT();
-    void shutdownWinRT();
+    void initSMTC();
+    void shutdownSMTC();
 
     // Lazy init: bind SMTC to the app's top-level HWND using GetForWindow(HWND)
     bool ensureSmtcReady();
@@ -50,5 +50,13 @@ private:
 
     // Store last metadata provided by application
     QJsonObject m_lastMetadata;
+};
+
+class DeviceInfo
+{
+public:
+    // 获取当前用户的唯一设备ID
+    static QString getWindowsDeviceId();
+
 };
 #endif
