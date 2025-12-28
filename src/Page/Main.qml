@@ -5,7 +5,7 @@ import FluentUI 1.0
 import QtQuick.Layouts
 import QtMultimedia
 import Qt.labs.platform
-import "Components/DrawerMusic"
+import "./MusicPage"
 
 FluWindow {
     id: mainWindow
@@ -138,7 +138,7 @@ FluWindow {
             opacity: musicPlayerPageVisible ? 0.5 : 0.0
             visible: musicPlayerPageVisible
         }
-        MusicPlayerPage {
+        MusicDetail {
             id: musicPlayerPage
 
             anchors.left: parent.left

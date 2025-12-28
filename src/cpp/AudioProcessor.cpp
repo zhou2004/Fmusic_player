@@ -10,6 +10,7 @@ TrackModel AudioProcessor::getAudioMetaData(QString &filePath) {
     // Basic info
     t.id  = filePath;
     t.url = QUrl::fromLocalFile(filePath).toString();
+    t.lyrics = "";
 
     // Ensure cache directories exist (Do this ONCE in your class constructor/init, not here)
     if (!QDir(cacheSongs).exists()) QDir().mkpath(cacheSongs);

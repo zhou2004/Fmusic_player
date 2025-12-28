@@ -10,15 +10,30 @@ Item {
     id: root
 
     // trackInfo 不再在定义时调用函数
-    property var trackInfo: ({})
+    property var trackInfo: {}
+    // 歌词数据
+    property var lyricData: []
     property int music_pos: 0
 
     signal requestClose()
 
-    // 初始化时从 C\+\+ 拉一次
+    // 初始化,获取当前曲目信息，然后更新歌词等信息
     Component.onCompleted: {
-        if (musicPlayer && musicPlayer.currentTrackInfo) {
-            trackInfo = musicPlayer.currentTrackInfo()
+        // 获取当前曲目信息
+        trackInfo = musicPlayer.currentTrackInfo()
+        // 获取歌词
+        lyricData = get_lyrics()
+    }
+
+    function get_lyrics () {
+        if (trackInfo && trackInfo.title) {
+            if (trackInfo.lyrics) {
+                return []
+            } else {
+                return lyricParser.parseLyrics(apiClient.getKrcContent(trackInfo.title,trackInfo.artist))
+            }
+        } else {
+            return []
         }
     }
 
@@ -38,6 +53,8 @@ Item {
                 trackInfo = musicPlayer.currentTrackInfo()
             }
             console.log("MusicPlayerPage trackInfo updated:", JSON.stringify(trackInfo))
+            // 获取歌词
+            lyricData = get_lyrics()
         }
 
     }
@@ -114,15 +131,6 @@ Item {
             trackInfo.cover :
             "qrc:/qt/qml/FMusic/Assets/defaultAlbum.jpg"
     }
-    // FluidBackground {
-    //     id: fluidBg
-    //     anchors.fill: parent
-    //     // 传入原始图片路径，组件内部会自动拼接 "image://fluid/" 前缀调用 C++
-    //     source: trackInfo && trackInfo.cover ? trackInfo.cover : "qrc:/qt/qml/FMusic/Assets/defaultAlbum.jpg"
-    // }
-
-
-
 
 
     Row {
@@ -159,7 +167,7 @@ Item {
         anchors.margins: 32
         spacing: 24
 
-        LeftPanel {
+        MusicAlbum {
             id: leftPanel
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width * 0.4
@@ -170,12 +178,12 @@ Item {
             cover: trackInfo && trackInfo.cover ? trackInfo.cover : "qrc:/qt/qml/FMusic/Assets/defaultAlbum.jpg"
         }
 
-        RightPanel {
+        LyricList {
             id: rightPanel
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width * 0.6
 
-            lyricData: trackInfo && trackInfo.lyrics ? lyricParser.parseLyrics(trackInfo.lyrics) : lyricParser.parseLyrics(apiClient.getKrcContent(trackInfo.title,trackInfo.artist))
+            lyricData: root.lyricData
 
         }
     }
