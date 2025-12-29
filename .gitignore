@@ -8,3 +8,4 @@ build/
 /CMakeUserPresets.json
 dist/
 WinDist/
+.vs/

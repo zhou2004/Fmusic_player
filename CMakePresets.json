@@ -18,7 +18,6 @@
     },
     {
       "name": "FMusic-release",
-      "displayName": "Release Build",
       "description": "Release build with Conan dependencies",
       "inherits": "base",
       "cacheVariables": {
@@ -28,7 +27,6 @@
     },
     {
       "name": "FMusic-debug",
-      "displayName": "Debug Build",
       "description": "Debug build with Conan dependencies",
       "inherits": "base",
       "cacheVariables": {

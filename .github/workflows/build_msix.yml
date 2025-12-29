@@ -2,11 +2,12 @@ name: Windows
 
 on:
   push:
-    branches: [ "master" ]
     tags:
       - 'v*' # 当推送 v1.0.0 这样的标签时触发发布流程
-  pull_request:
-    branches: [ "master" ]
+
+permissions:
+  contents: write
+  pull-requests: read # 读取 PR 信息需要这个权限
 
 jobs:
   build:
@@ -76,8 +77,58 @@ jobs:
         run: |
           SignTool sign /fd SHA256 /a /f "certificate.pfx" /p "${{ secrets.SIGNING_CERT_PASSWORD }}" "FMusic.msix"
 
+      - name: Rename Release Asset
+        run: |
+          Rename-Item -Path "FMusic.msix" -NewName "FMusic-${{ github.ref_name }}-Windows-x64.msix"
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: FMusic-Windows-x64.msix
-          path: FMusic.msix
+          name: FMusic-${{ github.ref_name }}-Windows-x64.zip
+          path: FMusic-${{ github.ref_name }}-Windows-x64.msix
+          compression-level: 0
+      
+      - name: Build Changelog
+        id: build_changelog
+        uses: mikepenz/release-changelog-builder-action@v4
+        with:
+          commitMode: true
+          # 配置生成的样式
+          configurationJson: |
+            {
+              "template": "#{{CHANGELOG}}\n\n<details>\n<summary>Uncategorized</summary>\n\n#{{UNCATEGORIZED}}\n</details>",
+              "categories": [
+                {
+                    "title": "## 🚀 Features",
+                    "labels": ["^feature", "^enhancement", "^feat"]
+                },
+                {
+                    "title": "## 🐛 Fixes",
+                    "labels": ["^fix", "^bug", "^patch"]
+                },
+                {
+                    "title": "## 🛠 Refactor & Perf",
+                    "labels": ["^refactor", "^perf", "^style", "^chore"]
+                }
+              ]
+            }
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # 3. 发布 Release (合并手动文案 + 自动日志)
+      - name: Release to GitHub
+        uses: softprops/action-gh-release@v1
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: FMusic-${{ github.ref_name }}-Windows-x64.msix
+          # 这里拼接你的“固定营销文案”和“自动生成的日志”
+          body: |
+            # 🎉 FMusic ${{ github.ref_name }} Update
+            
+            Welcome to the new version of FMusic! This update brings a modern UI and better performance.
+            
+            ---
+            
+            ${{ steps.build_changelog.outputs.changelog }}
+          draft: false
+          prerelease: false
